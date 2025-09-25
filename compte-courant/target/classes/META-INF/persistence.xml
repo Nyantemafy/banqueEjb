@@ -1,71 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence xmlns="http://java.sun.com/xml/ns/persistence"
-                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                xsi:schemaLocation="http://java.sun.com/xml/ns/persistence 
-                http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
-                version="2.0">
-
-    <persistence-unit name="compteCourantPU" transaction-type="JTA">
-        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        
-        <!-- Source de données JNDI -->
-        <jta-data-source>java:jboss/datasources/BanqueDS</jta-data-source>
-        
-        <!-- Classes d'entités -->
-        <class>com.banque.comptecourant.entity.CompteCourant</class>
-        <class>com.banque.comptecourant.model.Transaction</class>
-        
-        <!-- Exclure les classes non listées -->
-        <exclude-unlisted-classes>true</exclude-unlisted-classes>
-        
-        <properties>
-            <!-- Configuration Hibernate -->
-            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
-            <property name="hibernate.hbm2ddl.auto" value="update"/>
-            <property name="hibernate.show_sql" value="true"/>
-            <property name="hibernate.format_sql" value="true"/>
-            <property name="hibernate.use_sql_comments" value="true"/>
-            
-            <!-- Configuration du cache -->
-            <property name="hibernate.cache.use_second_level_cache" value="true"/>
-            <property name="hibernate.cache.use_query_cache" value="true"/>
-            <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.EhCacheRegionFactory"/>
-            
-            <!-- Configuration de la connection pool -->
-            <property name="hibernate.connection.pool_size" value="10"/>
-            
-            <!-- Configuration des statistiques -->
-            <property name="hibernate.generate_statistics" value="true"/>
-            
-            <!-- Configuration de validation -->
-            <property name="hibernate.validator.apply_to_ddl" value="true"/>
-            
-            <!-- Configuration de logging -->
-            <property name="hibernate.connection.characterEncoding" value="utf8"/>
-            <property name="hibernate.connection.CharSet" value="utf8"/>
-            <property name="hibernate.connection.useUnicode" value="true"/>
-        </properties>
-    </persistence-unit>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
     
-    <!-- Unit de persistance pour les tests -->
-    <persistence-unit name="compteCourantTestPU" transaction-type="RESOURCE_LOCAL">
-        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+    <!-- Unité de persistance = configuration de la base -->
+    <persistence-unit name="compteCourantPU" transaction-type="JTA">
         
+        <!-- Dire quelles classes sont des tables -->
         <class>com.banque.comptecourant.entity.CompteCourant</class>
         <class>com.banque.comptecourant.model.Transaction</class>
         
-        <exclude-unlisted-classes>true</exclude-unlisted-classes>
-        
         <properties>
-            <!-- Configuration pour base de données en mémoire H2 pour tests -->
-            <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
-            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"/>
-            <property name="javax.persistence.jdbc.user" value="sa"/>
-            <property name="javax.persistence.jdbc.password" value=""/>
-            
+            <!-- Base de données H2 en mémoire pour tests -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
             <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
-            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.show_sql" value="true"/>  <!-- Afficher les requêtes SQL -->
         </properties>
+        
     </persistence-unit>
 </persistence>

@@ -1,0 +1,96 @@
+Application Prêts Java/EJB - Version Ultra Simple
+🎯 Ce qu'on va faire :
+
+Demande de prêt : Un client demande un prêt
+Calcul mensualité : Calculer combien il va payer par mois
+Approuver/Rejeter : Accepter ou refuser le prêt
+Historique : Voir les demandes d'un client
+
+Structure minimale
+application-prets/
+├── pom.xml
+├── src/main/java/com/banque/pret/
+│   ├── ejb/
+│   │   ├── PretRemote.java (Interface)
+│   │   └── PretBean.java (Implémentation)
+│   ├── entity/
+│   │   ├── DemandePret.java (Table demandes)
+│   │   └── Pret.java (Table prêts actifs)
+│   └── src/main/resources/META-INF/
+│       └── persistence.xml
+
+Comment ça marche :
+1. Demander un prêt :
+java// Le client appelle :
+String numeroDemande = pretService.demanderPret("CLIENT001", new BigDecimal("50000"), 120, "Achat voiture");
+
+// Résultat : "DEM-ABC12345" 
+// + Calcul automatique de la mensualité
+// + Statut "EN_ATTENTE"
+2. Calculer une mensualité :
+java// Avant de faire la demande, voir combien ça coûte :
+BigDecimal mensualite = pretService.calculerMensualite(new BigDecimal("50000"), 4.5, 120);
+// Résultat : environ 522,67€/mois
+3. Traiter les demandes :
+java// Récupérer les demandes en attente :
+List<DemandePret> demandes = pretService.getDemandesEnAttente();
+
+// Approuver une demande :
+pretService.approuverDemande("DEM-ABC12345");
+// → Crée automatiquement un prêt actif
+
+// Ou rejeter :
+pretService.rejeterDemande("DEM-ABC12345", "Revenus insuffisants");
+
+💡 Points clés :
+
+UUID → Génère des numéros uniques automatiquement
+Calcul mensualité → Formule mathématique standard des banques
+Statuts simples → EN_ATTENTE → APPROUVEE/REJETEE → Prêt créé
+Logs partout → Tu vois tout ce qui se passe
+Base H2 → Pas besoin d'installer une vraie base
+
+Super simple et ça marche ! Tu peux compiler avec mvn clean install et déployer sur ton serveur d'application ! 😊
+
+🎯 Ce qu'elle fait (très simple) :
+1. Demander un prêt :
+
+Client dit : "Je veux 50 000€ sur 10 ans pour acheter une voiture"
+Système calcule : "OK, ça fera 522€/mois"
+Système crée une demande avec statut "EN_ATTENTE"
+
+2. Traiter les demandes :
+
+Banquier voit toutes les demandes en attente
+Il peut approuver → Ça crée un prêt actif
+Ou rejeter → Ça ferme la demande avec un motif
+
+3. Consulter :
+
+Voir toutes les demandes en attente
+Voir tous les prêts d'un client
+Chercher une demande précise
+
+🔧 Les calculs simples :
+
+Taux fixe : 4,5% pour tout le monde
+Mensualité : Formule mathématique standard des banques
+Durée : Entre 12 mois (1 an) et 360 mois (30 ans)
+
+🚀 Pour tester :
+bash# Compiler
+mvn clean install
+
+# Déployer sur WildFly/GlassFish
+# Puis depuis une autre app :
+
+// 1. Demander un prêt
+String demande = pretService.demanderPret("CLIENT001", new BigDecimal("50000"), 120, "Voiture");
+// → "DEM-ABC12345"
+
+// 2. Voir les demandes en attente
+List<DemandePret> attente = pretService.getDemandesEnAttente();
+
+// 3. Approuver
+pretService.approuverDemande("DEM-ABC12345");
+// → Crée automatiquement un prêt actif

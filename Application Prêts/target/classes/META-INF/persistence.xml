@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
+    
+    <persistence-unit name="pretsPU" transaction-type="JTA">
+        
+        <!-- Nos entités -->
+        <class>com.banque.pret.entity.DemandePret</class>
+        <class>com.banque.pret.entity.Pret</class>
+        
+        <properties>
+            <!-- Base H2 en mémoire pour simplicité -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+            <property name="hibernate.show_sql" value="true"/>
+        </properties>
+        
+    </persistence-unit>
+</persistence>
