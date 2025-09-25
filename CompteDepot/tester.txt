@@ -1,0 +1,8 @@
+# Restaurer les packages
+dotnet restore
+
+# Construire la solution
+dotnet build
+
+# Lancer l'application
+dotnet run --project CompteDepot.Host
