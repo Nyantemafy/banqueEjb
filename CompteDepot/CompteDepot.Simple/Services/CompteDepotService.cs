@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using CompteDepot.Simple.Data;
 using CompteDepot.Simple.Models;
 using Microsoft.EntityFrameworkCore;
