@@ -5,20 +5,18 @@ import java.math.BigDecimal;
 import java.util.List;
 import com.banque.comptecourant.model.Transaction;
 
+// @Remote = cette interface peut être appelée depuis d'autres applications
 @Remote
 public interface CompteCourantRemote {
-    // Opérations de base
+
+    // Méthodes de base - SIMPLE
     BigDecimal consulterSolde(String numeroCompte);
 
-    boolean deposer(String numeroCompte, BigDecimal montant, String description);
+    boolean deposer(String numeroCompte, BigDecimal montant);
 
-    boolean retirer(String numeroCompte, BigDecimal montant, String description);
+    boolean retirer(String numeroCompte, BigDecimal montant);
 
-    // Historique
-    List<Transaction> getHistoriqueTransactions(String numeroCompte);
-
-    // Gestion compte
     boolean creerCompte(String numeroCompte, String proprietaire);
 
-    boolean compteExiste(String numeroCompte);
+    List<Transaction> getHistorique(String numeroCompte);
 }
