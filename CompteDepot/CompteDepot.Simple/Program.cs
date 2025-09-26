@@ -6,14 +6,13 @@ using CompteDepot.Simple.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Ajouter le DbContext
+// Ajouter le DbContext avec injection
 builder.Services.AddDbContext<BanqueContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseInMemoryDatabase("BanqueSimple")); // ou UseSqlServer(...) si tu as SQL Server
 
 // Injection du service
 builder.Services.AddScoped<ICompteDepotService, CompteDepotService>();
 
-// Ajouter support JSON et controllers si besoin
 builder.Services.AddControllers();
 
 var app = builder.Build();

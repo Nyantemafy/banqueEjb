@@ -1,0 +1,5 @@
+com\banque\principale\BanqueApplication.class
+com\banque\principale\service\ClientService.class
+com\banque\principale\model\Client.class
+com\banque\principale\ui\MenuConsole.class
+com\banque\principale\service\BanqueService.class

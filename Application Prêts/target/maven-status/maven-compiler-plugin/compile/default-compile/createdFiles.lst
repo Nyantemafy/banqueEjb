@@ -1,4 +1,0 @@
-com\banque\pret\entity\DemandePret.class
-com\banque\pret\entity\Pret.class
-com\banque\pret\ejb\PretBean.class
-com\banque\pret\ejb\PretRemote.class

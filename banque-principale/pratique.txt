@@ -1,0 +1,72 @@
+
+🚀 Pour tester le système complet :
+Prérequis :
+bash# 1. Démarrer WildFly avec vos EJB déployés
+# 2. Démarrer le service .NET CompteDepot sur localhost:8081
+# 3. Vérifier que PostgreSQL est démarré (pour les EJB)
+2. Compiler et lancer :
+bash# Dans le dossier banque-principale
+mvn clean compile
+
+# Lancer l'application
+mvn exec:java -Dexec.mainClass="com.banque.principale.Banque
+
+bash# Terminal 1: Service .NET
+cd CompteDepot/CompteDepot.Simple
+dotnet run
+
+# Terminal 2: WildFly avec les EJB
+# Déployer compte-courant-1.0.jar et application-prets-1.0.jar
+
+# Terminal 3: Application principale
+cd banque-principale
+mvn clean compile
+mvn exec:java
+
+1. Démarrer les services :
+bash# Terminal 1: Service .NET
+cd CompteDepot/CompteDepot.Simple
+dotnet run
+
+# Terminal 2: WildFly avec les EJB
+# Déployer compte-courant-1.0.jar et application-prets-1.0.jar
+
+# Terminal 3: Application principale
+cd banque-principale
+mvn clean compile
+mvn exec:java
+2. Scénario de test complet :
+1. Menu Administration → Test connexions (vérifier que tout marche)
+2. Menu Clients → Créer nouveau client "CLIENT999"
+3. Menu Compte Courant → Déposer 1000€ sur CC-CLIENT999
+4. Menu Compte Dépôt → Déposer 5000€ sur DEP-CLIENT999
+5. Menu Prêts → Demander 50000€ pour "Achat maison"
+6. Menu Prêts → Approuver la demande
+7. Menu Clients → Voir synthèse CLIENT999
+3. Ce que tu verras :
+🏦 === BIENVENUE DANS LE SYSTÈME BANCAIRE HÉTÉROGÈNE ===
+   Java EJB + .NET WCF + Interface Unifiée
+
+✅ Service Compte Courant (Java/EJB): OK
+✅ Service Prêts (Java/EJB): OK  
+✅ Service Compte Dépôt (.NET/WCF): OK
+🎉 Tous les services sont opérationnels!
+
+=== SYNTHÈSE CLIENT ===
+👤 Jean Dupont (CLIENT999)
+📧 jean@example.com
+
+💰 COMPTES:
+  • Compte Courant: 1000.00€
+  • Compte Dépôt: 5000.00€
+  • Total Prêts: 50000.00€
+  • Patrimoine Net: -44000.00€
+
+ Scénario de test complet :
+1. Menu Administration → Test connexions (vérifier que tout marche)
+2. Menu Clients → Créer nouveau client "CLIENT999"
+3. Menu Compte Courant → Déposer 1000€ sur CC-CLIENT999
+4. Menu Compte Dépôt → Déposer 5000€ sur DEP-CLIENT999
+5. Menu Prêts → Demander 50000€ pour "Achat maison"
+6. Menu Prêts → Approuver la demande
+7. Menu Clients → Voir synthèse CLIENT999
