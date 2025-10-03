@@ -48,8 +48,8 @@ namespace CompteDepot.Simple.Services
                 NumeroCompte = numeroCompte,
                 Proprietaire = proprietaire,
                 TauxInteret = tauxInteret,
-                DateCreation = DateTime.Now,
-                DateEcheance = DateTime.Now.AddMonths(12),
+                DateCreation = DateTime.UtcNow,
+                DateEcheance = DateTime.UtcNow.AddMonths(12),
                 Solde = 0
             };
             

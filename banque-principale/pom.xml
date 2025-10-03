@@ -59,6 +59,13 @@
             <artifactId>application-prets</artifactId>
             <version>1.0</version>
         </dependency>
+
+        <!-- Hibernate core to deserialize server-side Hibernate exceptions coming via EJB -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>5.6.15.Final</version>
+        </dependency>
     </dependencies>
     
     <build>

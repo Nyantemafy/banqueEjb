@@ -22,7 +22,7 @@ namespace CompteDepot.Simple.Models
         
         public CompteDepot()
         {
-            DateCreation = DateTime.Now;
+            DateCreation = DateTime.UtcNow;
             Solde = 0;
             MontantRetireMois = 0;
             MontantRetireAnnee = 0;
