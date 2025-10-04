@@ -16,7 +16,7 @@ namespace CompteDepot.Simple.Models
         
         public OperationDepot()
         {
-            DateOperation = DateTime.Now;
+            DateOperation = DateTime.UtcNow;
         }
         
         public OperationDepot(string numeroCompte, decimal montant, string type, string description)
@@ -25,7 +25,7 @@ namespace CompteDepot.Simple.Models
             Montant = montant;
             Type = type;
             Description = description;
-            DateOperation = DateTime.Now;
+            DateOperation = DateTime.UtcNow;
         }
         
         public override string ToString()

@@ -3,10 +3,13 @@ package com.banque.pret.entity;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "prets")
-public class Pret {
+public class Pret implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "numero_pret")

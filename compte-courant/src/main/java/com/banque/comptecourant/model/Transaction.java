@@ -3,10 +3,13 @@ package com.banque.comptecourant.model;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "transactions")
-public class Transaction {
+public class Transaction implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     // @GeneratedValue = L'ID s'auto-incrémente
     @Id

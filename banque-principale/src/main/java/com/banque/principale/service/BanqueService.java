@@ -3,6 +3,8 @@ package com.banque.principale.service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Properties;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -28,8 +30,8 @@ public class BanqueService {
     private CompteCourantRemote compteCourantService;
     private PretRemote pretService;
 
-    // Service .NET
-    private static final String DEPOT_SERVICE_URL = "http://localhost:5000/CompteDepot";
+    // Service .NET (Minimal API)
+    private static final String DEPOT_SERVICE_URL = "http://localhost:5000";
 
     // Service client (injection)
     private ClientService clientService;
@@ -137,7 +139,8 @@ public class BanqueService {
 
     public BigDecimal consulterSoldeCompteDepot(String numeroCompte) {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpGet request = new HttpGet(DEPOT_SERVICE_URL + "/ConsulterSolde?numeroCompte=" + numeroCompte);
+            String numeroEnc = URLEncoder.encode(numeroCompte, StandardCharsets.UTF_8.name());
+            HttpGet request = new HttpGet(DEPOT_SERVICE_URL + "/solde/" + numeroEnc);
             request.setHeader("Accept", "application/json");
 
             try (CloseableHttpResponse response = client.execute(request)) {
@@ -153,14 +156,12 @@ public class BanqueService {
 
     public boolean creerCompteDepot(String numeroCompte, String proprietaire, double tauxInteret) {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpPost request = new HttpPost(DEPOT_SERVICE_URL + "/CreerCompte");
-            request.setHeader("Content-Type", "application/json");
-
-            String json = String.format(
-                    "{\"numeroCompte\":\"%s\",\"proprietaire\":\"%s\",\"tauxInteret\":%.2f}",
-                    numeroCompte, proprietaire, tauxInteret);
-
-            request.setEntity(new StringEntity(json));
+            String numeroEnc = URLEncoder.encode(numeroCompte, StandardCharsets.UTF_8.name());
+            String proprietaireEnc = URLEncoder.encode(proprietaire, StandardCharsets.UTF_8.name());
+            String tauxStr = String.format("%.2f", tauxInteret);
+            HttpPost request = new HttpPost(DEPOT_SERVICE_URL + 
+                    "/creercompte?numero=" + numeroEnc + "&proprietaire=" + proprietaireEnc + "&taux=" + tauxStr);
+            request.setHeader("Accept", "application/json");
 
             try (CloseableHttpResponse response = client.execute(request)) {
                 String result = EntityUtils.toString(response.getEntity());
@@ -183,11 +184,11 @@ public class BanqueService {
 
     private boolean operationDepotRetrait(String numeroCompte, BigDecimal montant, String action) {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpPost request = new HttpPost(DEPOT_SERVICE_URL + "/" + action);
-            request.setHeader("Content-Type", "application/json");
-
-            String json = String.format("{\"numeroCompte\":\"%s\",\"montant\":%.2f}", numeroCompte, montant);
-            request.setEntity(new StringEntity(json));
+            String path = action.equalsIgnoreCase("Deposer") ? "/depot" : "/retrait";
+            String numeroEnc = URLEncoder.encode(numeroCompte, StandardCharsets.UTF_8.name());
+            String montantEnc = URLEncoder.encode(montant.toPlainString(), StandardCharsets.UTF_8.name());
+            HttpPost request = new HttpPost(DEPOT_SERVICE_URL + path + "?numero=" + numeroEnc + "&montant=" + montantEnc);
+            request.setHeader("Accept", "application/json");
 
             try (CloseableHttpResponse response = client.execute(request)) {
                 String result = EntityUtils.toString(response.getEntity());
