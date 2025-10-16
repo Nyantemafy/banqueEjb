@@ -18,11 +18,15 @@ namespace CompteDepot.Simple.Data
         {
             modelBuilder.Entity<CompteDepot.Simple.Models.CompteDepot>()
                 .Property(c => c.DateCreation)
-                .HasColumnType("timestamp without time zone");
+                .HasColumnType("timestamp with time zone");
 
             modelBuilder.Entity<CompteDepot.Simple.Models.CompteDepot>()
                 .Property(c => c.DateEcheance)
-                .HasColumnType("timestamp without time zone");
+                .HasColumnType("timestamp with time zone");
+
+            modelBuilder.Entity<OperationDepot>()
+                .Property(o => o.DateOperation)
+                .HasColumnType("timestamp with time zone");
 
             modelBuilder.Entity<CompteDepot.Simple.Models.CompteDepot>().HasData(
                 new CompteDepot.Simple.Models.CompteDepot 
@@ -31,8 +35,8 @@ namespace CompteDepot.Simple.Data
                     Proprietaire = "Jean Dupont", 
                     Solde = 5000m,
                     TauxInteret = 2.5m,
-                    DateCreation = new DateTime(2024, 01, 01, 0, 0, 0, DateTimeKind.Unspecified),
-                    DateEcheance = new DateTime(2024, 07, 01, 0, 0, 0, DateTimeKind.Unspecified)
+                    DateCreation = new DateTime(2024, 01, 01, 0, 0, 0, DateTimeKind.Utc),
+                    DateEcheance = new DateTime(2024, 07, 01, 0, 0, 0, DateTimeKind.Utc)
                 },
                 new CompteDepot.Simple.Models.CompteDepot 
                 { 
@@ -40,8 +44,8 @@ namespace CompteDepot.Simple.Data
                     Proprietaire = "Marie Martin", 
                     Solde = 10000m,
                     TauxInteret = 3.0m,
-                    DateCreation = new DateTime(2024, 04, 01, 0, 0, 0, DateTimeKind.Unspecified),
-                    DateEcheance = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Unspecified)
+                    DateCreation = new DateTime(2024, 04, 01, 0, 0, 0, DateTimeKind.Utc),
+                    DateEcheance = new DateTime(2025, 01, 01, 0, 0, 0, DateTimeKind.Utc)
                 }
             );
         }

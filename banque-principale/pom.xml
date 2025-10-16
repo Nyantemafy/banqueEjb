@@ -8,8 +8,8 @@
     <groupId>com.banque</groupId>
     <artifactId>banque-principale</artifactId>
     <version>1.0</version>
-    <packaging>jar</packaging>
-    <name>Banque Principale Simple</name>
+    <packaging>war</packaging>
+    <name>Banque Principale - Interface Web</name>
     
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -18,11 +18,12 @@
     </properties>
 
     <dependencies>
-        <!-- Java EE pour EJB -->
+        <!-- Java EE pour EJB et JAX-RS -->
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
             <version>8.0</version>
+            <scope>provided</scope>
         </dependency>
         
         <!-- Client EJB WildFly -->
@@ -46,6 +47,21 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.15.2</version>
         </dependency>
+
+        <!-- JAX-RS pour REST API -->
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jaxrs</artifactId>
+            <version>3.15.3.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jackson2-provider</artifactId>
+            <version>3.15.3.Final</version>
+            <scope>provided</scope>
+        </dependency>
         
         <!-- Interfaces des EJB -->
         <dependency>
@@ -60,16 +76,27 @@
             <version>1.0</version>
         </dependency>
 
-        <!-- Hibernate core to deserialize server-side Hibernate exceptions coming via EJB -->
+        <!-- Hibernate core -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>5.6.15.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Servlet API -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     
     <build>
+        <finalName>banque-principale</finalName>
         <plugins>
+            <!-- Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -80,14 +107,24 @@
                 </configuration>
             </plugin>
 
-            
-            <!-- Plugin pour exécuter l'application -->
+            <!-- WAR Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.2</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <warSourceDirectory>src/main/webapp</warSourceDirectory>
+                </configuration>
+            </plugin>
+
+            <!-- Plugin pour exécuter l'application console -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <mainClass>com.banque.principale.BanqueApplication</mainClass>
+                    <mainClass>com.banque.principale.BanqueConsoleApp</mainClass>
                 </configuration>
             </plugin>
         </plugins>

@@ -63,3 +63,15 @@ CREATE TABLE prets (
     statut_pret      VARCHAR(20) DEFAULT 'ACTIF', -- ACTIF, REMBOURSE, SUSPENDU
     echeances_payees INTEGER DEFAULT 0
 );
+
+CREATE TABLE IF NOT EXISTS clients (
+  numero_client    VARCHAR(50) PRIMARY KEY,
+  nom              VARCHAR(100) NOT NULL,
+  prenom           VARCHAR(100) NOT NULL,
+  email            VARCHAR(200),
+  telephone        VARCHAR(50),
+  date_inscription TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_clients_nom ON clients (nom);
+CREATE INDEX IF NOT EXISTS idx_clients_prenom ON clients (prenom);

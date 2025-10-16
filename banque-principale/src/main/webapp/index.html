@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Système Bancaire Hétérogène</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>🏦 Système Bancaire Hétérogène</h1>
+        </div>
+
+        <!-- NAVIGATION PAR ONGLETS -->
+        <div class="tabs">
+            <button class="tab active" data-tab="clients">👤 Clients</button>
+            <button class="tab" data-tab="compteCourant">💳 Compte Courant</button>
+            <button class="tab" data-tab="compteDepot">💰 Compte Dépôt</button>
+            <button class="tab" data-tab="prets">🏠 Prêts</button>
+        </div>
+
+        <!-- =================== TAB CLIENTS =================== -->
+        <div id="clients" class="content active">
+            <h2>👤 Gestion des Clients</h2>
+            <div class="alert" id="clientAlert"></div>
+
+            <!-- Créer un client -->
+            <div class="card">
+                <h3>Créer un nouveau client</h3>
+                <div class="grid">
+                    <div class="form-group">
+                        <label>Numéro client *</label>
+                        <input type="text" id="clientNumero" placeholder="Ex: CLIENT999">
+                    </div>
+                    <div class="form-group">
+                        <label>Nom *</label>
+                        <input type="text" id="clientNom" placeholder="Dupont">
+                    </div>
+                    <div class="form-group">
+                        <label>Prénom *</label>
+                        <input type="text" id="clientPrenom" placeholder="Jean">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="clientEmail" placeholder="jean.dupont@email.com">
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="createClientBtn">Créer Client</button>
+            </div>
+
+            <hr>
+
+            <!-- Rechercher un client -->
+            <div class="card">
+                <h3>Rechercher un client</h3>
+                <div style="display: flex; gap: 10px; align-items: end;">
+                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                        <label>Numéro client</label>
+                        <input type="text" id="searchClientNumero" placeholder="CLIENT001">
+                    </div>
+                    <button class="btn btn-primary" id="searchClientBtn">Rechercher</button>
+                </div>
+            </div>
+
+            <!-- Détails du client -->
+            <div id="clientDetails"></div>
+        </div>
+
+        <!-- =================== TAB COMPTE COURANT =================== -->
+        <div id="compteCourant" class="content">
+            <h2>💳 Compte Courant (Java EJB)</h2>
+            <div class="alert" id="ccAlert"></div>
+
+            <div class="form-group">
+                <label>Numéro de compte</label>
+                <input type="text" id="ccNumero" placeholder="CC-CLIENT001">
+            </div>
+
+            <div class="grid">
+                <!-- Consulter solde -->
+                <div class="card">
+                    <h3>Consulter Solde</h3>
+                    <button class="btn btn-primary" id="ccSoldeBtn">Voir Solde</button>
+                    <div id="ccSolde" style="margin-top: 15px; font-size: 1.5em;"></div>
+                </div>
+
+                <!-- Déposer -->
+                <div class="card">
+                    <h3>Déposer</h3>
+                    <div class="form-group">
+                        <label>Montant (€)</label>
+                        <input type="number" id="ccDepotMontant" placeholder="1000" min="0" step="0.01">
+                    </div>
+                    <button class="btn btn-success" id="ccDepotBtn">Déposer</button>
+                </div>
+
+                <!-- Retirer -->
+                <div class="card">
+                    <h3>Retirer</h3>
+                    <div class="form-group">
+                        <label>Montant (€)</label>
+                        <input type="number" id="ccRetraitMontant" placeholder="500" min="0" step="0.01">
+                    </div>
+                    <button class="btn btn-danger" id="ccRetraitBtn">Retirer</button>
+                </div>
+            </div>
+
+            <hr>
+
+            <!-- Historique -->
+            <div class="card">
+                <h3>Historique des transactions</h3>
+                <button class="btn btn-primary" id="ccHistoriqueBtn">Voir Historique</button>
+                <div id="ccHistorique"></div>
+            </div>
+        </div>
+
+        <!-- =================== TAB COMPTE DÉPÔT =================== -->
+        <div id="compteDepot" class="content">
+            <h2>💰 Compte Dépôt (.NET Minimal API)</h2>
+            <div class="alert" id="depotAlert"></div>
+
+            <div class="form-group">
+                <label>Numéro de compte</label>
+                <input type="text" id="depotNumero" placeholder="DEP-CLIENT001">
+            </div>
+
+            <div class="grid">
+                <!-- Consulter solde -->
+                <div class="card">
+                    <h3>Consulter Solde</h3>
+                    <button class="btn btn-primary" id="depotSoldeBtn">Voir Solde</button>
+                    <div id="depotSolde" style="margin-top: 15px; font-size: 1.5em;"></div>
+                </div>
+
+                <!-- Déposer -->
+                <div class="card">
+                    <h3>Déposer</h3>
+                    <div class="form-group">
+                        <label>Montant (€)</label>
+                        <input type="number" id="depotDepotMontant" placeholder="5000" min="0" step="0.01">
+                    </div>
+                    <button class="btn btn-success" id="depotDepotBtn">Déposer</button>
+                </div>
+
+                <!-- Retirer -->
+                <div class="card">
+                    <h3>Retirer</h3>
+                    <div class="form-group">
+                        <label>Montant (€)</label>
+                        <input type="number" id="depotRetraitMontant" placeholder="1000" min="0" step="0.01">
+                    </div>
+                    <button class="btn btn-danger" id="depotRetraitBtn">Retirer</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- =================== TAB PRÊTS =================== -->
+        <div id="prets" class="content">
+            <h2>🏠 Gestion des Prêts</h2>
+            <div class="alert" id="pretAlert"></div>
+
+            <div class="grid">
+                <!-- Demander un prêt -->
+                <div class="card">
+                    <h3>Demander un prêt</h3>
+                    <div class="form-group">
+                        <label>Numéro client</label>
+                        <input type="text" id="pretClientNumero" placeholder="CLIENT001">
+                    </div>
+                    <div class="form-group">
+                        <label>Montant (€)</label>
+                        <input type="number" id="pretMontant" placeholder="50000" min="0" step="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Durée (mois)</label>
+                        <input type="number" id="pretDuree" placeholder="240" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Objet du prêt</label>
+                        <input type="text" id="pretObjet" placeholder="Achat immobilier">
+                    </div>
+                    <button class="btn btn-primary" id="pretDemandeBtn">Soumettre Demande</button>
+                </div>
+
+                <!-- Calculer mensualité -->
+                <div class="card">
+                    <h3>Calculer Mensualité</h3>
+                    <div class="form-group">
+                        <label>Montant (€)</label>
+                        <input type="number" id="calcMontant" placeholder="50000" min="0" step="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Durée (mois)</label>
+                        <input type="number" id="calcDuree" placeholder="240" min="1">
+                    </div>
+                    <button class="btn btn-primary" id="pretCalculBtn">Calculer</button>
+                    <div id="mensualiteResult" style="margin-top: 15px; font-size: 1.1em;"></div>
+                </div>
+
+                <!-- Admin -->
+                <div class="card">
+                    <h3>Admin</h3>
+                    <div class="form-group">
+                        <label>Numéro client admin</label>
+                        <input type="text" id="adminClientNumero" placeholder="CLIENT19">
+                    </div>
+                    <button class="btn btn-primary" id="adminLoginBtn">Se connecter (admin)</button>
+                    <div id="adminStatus" style="margin-top:8px;color:#666;"></div>
+                </div>
+            </div>
+
+            <hr>
+
+            <!-- Liste des demandes -->
+            <div class="card">
+                <h3>Demandes en attente</h3>
+                <button class="btn btn-primary" id="pretListeBtn">Actualiser la liste</button>
+                <div id="demandesList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts JavaScript -->
+    <script src="js/config.js"></script>
+    <script src="js/api-client.js"></script>
+    <script src="js/clients.js"></script>
+    <script src="js/compte-courant.js"></script>
+    <script src="js/compte-depot.js"></script>
+    <script src="js/prets.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
