@@ -28,10 +28,10 @@ namespace CompteDepot.Simple.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("DateCreation")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DateEcheance")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<decimal>("MontantRetireAnnee")
                         .HasColumnType("numeric");
@@ -57,8 +57,8 @@ namespace CompteDepot.Simple.Migrations
                         new
                         {
                             NumeroCompte = "DEP001",
-                            DateCreation = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DateEcheance = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateCreation = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateEcheance = new DateTime(2024, 7, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             MontantRetireAnnee = 0m,
                             MontantRetireMois = 0m,
                             Proprietaire = "Jean Dupont",
@@ -68,8 +68,8 @@ namespace CompteDepot.Simple.Migrations
                         new
                         {
                             NumeroCompte = "DEP002",
-                            DateCreation = new DateTime(2024, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DateEcheance = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateCreation = new DateTime(2024, 4, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateEcheance = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             MontantRetireAnnee = 0m,
                             MontantRetireMois = 0m,
                             Proprietaire = "Marie Martin",

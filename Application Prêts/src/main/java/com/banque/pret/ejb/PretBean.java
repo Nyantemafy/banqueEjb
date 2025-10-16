@@ -141,6 +141,23 @@ public class PretBean implements PretRemote {
     }
 
     @Override
+    public List<DemandePret> getDemandes(String statut) {
+        System.out.println("📋 Récupération demandes - statut=" + statut);
+        if (statut == null || statut.trim().isEmpty()) {
+            return em.createQuery(
+                    "SELECT d FROM DemandePret d ORDER BY d.dateDemande DESC",
+                    DemandePret.class)
+                    .getResultList();
+        } else {
+            return em.createQuery(
+                    "SELECT d FROM DemandePret d WHERE d.statut = :statut ORDER BY d.dateDemande DESC",
+                    DemandePret.class)
+                    .setParameter("statut", statut)
+                    .getResultList();
+        }
+    }
+
+    @Override
     public List<Pret> getPretsClient(String numeroClient) {
         System.out.println("📋 Récupération prêts du client: " + numeroClient);
 

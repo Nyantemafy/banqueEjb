@@ -248,6 +248,15 @@ public class BanqueService {
         }
     }
 
+    public List<DemandePret> getDemandes(String statut) {
+        try {
+            return pretService.getDemandes(statut);
+        } catch (Exception e) {
+            System.err.println("❌ Erreur récupération demandes (statut): " + e.getMessage());
+            return null;
+        }
+    }
+
     public List<Pret> getPretsClient(String numeroClient) {
         try {
             return pretService.getPretsClient(numeroClient);

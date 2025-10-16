@@ -25,4 +25,7 @@ public interface PretRemote {
         List<Pret> getPretsClient(String numeroClient);
 
         DemandePret getDemande(String numeroDemande);
+
+        // Nouveau: lister demandes par statut (null => toutes)
+        List<DemandePret> getDemandes(String statut);
 }
