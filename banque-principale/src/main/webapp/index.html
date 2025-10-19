@@ -3,233 +3,506 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Système Bancaire Hétérogène</title>
+    <title>NexusBanque | Interface de Gestion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class="container">
-        <!-- HEADER -->
-        <div class="header">
-            <h1>🏦 Système Bancaire Hétérogène</h1>
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-university"></i>
+                </div>
+                <div class="logo-text">NexusBanque</div>
+            </div>
+            <nav class="nav">
+                <a href="#" class="nav-item active" data-tab="clients">
+                    <i class="fas fa-users"></i>
+                    <span class="nav-text">Clients</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="compteCourant">
+                    <i class="fas fa-credit-card"></i>
+                    <span class="nav-text">Compte Courant</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="compteDepot">
+                    <i class="fas fa-piggy-bank"></i>
+                    <span class="nav-text">Compte Dépôt</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="prets">
+                    <i class="fas fa-hand-holding-usd"></i>
+                    <span class="nav-text">Prêts</span>
+                </a>
+            </nav>
         </div>
 
-        <!-- NAVIGATION PAR ONGLETS -->
-        <div class="tabs">
-            <button class="tab active" data-tab="clients">👤 Clients</button>
-            <button class="tab" data-tab="compteCourant">💳 Compte Courant</button>
-            <button class="tab" data-tab="compteDepot">💰 Compte Dépôt</button>
-            <button class="tab" data-tab="prets">🏠 Prêts</button>
-        </div>
-
-        <!-- =================== TAB CLIENTS =================== -->
-        <div id="clients" class="content active">
-            <h2>👤 Gestion des Clients</h2>
-            <div class="alert" id="clientAlert"></div>
-
-            <!-- Créer un client -->
-            <div class="card">
-                <h3>Créer un nouveau client</h3>
-                <div class="grid">
-                    <div class="form-group">
-                        <label>Numéro client *</label>
-                        <input type="text" id="clientNumero" placeholder="Ex: CLIENT999">
-                    </div>
-                    <div class="form-group">
-                        <label>Nom *</label>
-                        <input type="text" id="clientNom" placeholder="Dupont">
-                    </div>
-                    <div class="form-group">
-                        <label>Prénom *</label>
-                        <input type="text" id="clientPrenom" placeholder="Jean">
-                    </div>
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" id="clientEmail" placeholder="jean.dupont@email.com">
-                    </div>
-                </div>
-                <button class="btn btn-primary" id="createClientBtn">Créer Client</button>
-            </div>
-
-            <hr>
-
-            <!-- Rechercher un client -->
-            <div class="card">
-                <h3>Rechercher un client</h3>
-                <div style="display: flex; gap: 10px; align-items: end;">
-                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
-                        <label>Numéro client</label>
-                        <input type="text" id="searchClientNumero" placeholder="CLIENT001">
-                    </div>
-                    <button class="btn btn-primary" id="searchClientBtn">Rechercher</button>
+        <!-- CONTENU PRINCIPAL -->
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="page-title" id="pageTitle">Gestion des Clients</div>
+                <div class="user-menu">
+                    <div class="user-avatar">AD</div>
                 </div>
             </div>
 
-            <!-- Détails du client -->
-            <div id="clientDetails"></div>
-        </div>
+            <div class="content-area">
+                <!-- =================== TAB CLIENTS =================== -->
+                <div id="clients" class="tab-content">
+                    <div class="section">
+                        <div class="section-header">
+                            <h2 class="section-title">Gestion des Clients</h2>
+                        </div>
+                        <div class="alert" id="clientAlert"></div>
 
-        <!-- =================== TAB COMPTE COURANT =================== -->
-        <div id="compteCourant" class="content">
-            <h2>💳 Compte Courant (Java EJB)</h2>
-            <div class="alert" id="ccAlert"></div>
+                        <div class="card-grid">
+                            <!-- Créer un client -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-user-plus"></i>
+                                    </div>
+                                    <h3 class="card-title">Nouveau Client</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label class="form-label">Numéro client *</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-id-card"></i>
+                                            <input type="text" id="clientNumero" class="form-input" placeholder="CLIENT999">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Nom *</label>
+                                        <input type="text" id="clientNom" class="form-input" placeholder="Dupont">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Prénom *</label>
+                                        <input type="text" id="clientPrenom" class="form-input" placeholder="Jean">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Email</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-envelope"></i>
+                                            <input type="email" id="clientEmail" class="form-input" placeholder="jean.dupont@email.com">
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary btn-full" id="createClientBtn">
+                                        <i class="fas fa-plus-circle"></i> Créer Client
+                                    </button>
+                                </div>
+                            </div>
 
-            <div class="form-group">
-                <label>Numéro de compte</label>
-                <input type="text" id="ccNumero" placeholder="CC-CLIENT001">
-            </div>
+                            <!-- Rechercher un client -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-search"></i>
+                                    </div>
+                                    <h3 class="card-title">Rechercher Client</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label class="form-label">Numéro client</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-id-card"></i>
+                                            <input type="text" id="searchClientNumero" class="form-input" placeholder="CLIENT001">
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary btn-full" id="searchClientBtn">
+                                        <i class="fas fa-search"></i> Rechercher
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
 
-            <div class="grid">
-                <!-- Consulter solde -->
-                <div class="card">
-                    <h3>Consulter Solde</h3>
-                    <button class="btn btn-primary" id="ccSoldeBtn">Voir Solde</button>
-                    <div id="ccSolde" style="margin-top: 15px; font-size: 1.5em;"></div>
+                        <!-- Détails du client -->
+                        <div id="clientDetails" class="mt-20"></div>
+                    </div>
                 </div>
 
-                <!-- Déposer -->
-                <div class="card">
-                    <h3>Déposer</h3>
-                    <div class="form-group">
-                        <label>Montant (€)</label>
-                        <input type="number" id="ccDepotMontant" placeholder="1000" min="0" step="0.01">
+                <!-- =================== TAB COMPTE COURANT =================== -->
+                <div id="compteCourant" class="tab-content hidden">
+                    <div class="section">
+                        <div class="section-header">
+                            <h2 class="section-title">Compte Courant (Java EJB)</h2>
+                        </div>
+                        <div class="alert" id="ccAlert"></div>
+
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label class="form-label">Numéro de compte</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-credit-card"></i>
+                                        <input type="text" id="ccNumero" class="form-input" placeholder="CC-CLIENT001">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-grid">
+                            <!-- Consulter solde -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-wallet"></i>
+                                    </div>
+                                    <h3 class="card-title">Solde</h3>
+                                </div>
+                                <div class="card-body">
+                                    <button class="btn btn-primary btn-full" id="ccSoldeBtn">
+                                        <i class="fas fa-eye"></i> Voir Solde
+                                    </button>
+                                    <div id="ccSolde" class="balance-display"></div>
+                                </div>
+                            </div>
+
+                            <!-- Déposer -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-arrow-down"></i>
+                                    </div>
+                                    <h3 class="card-title">Déposer</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label class="form-label">Montant (€)</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-euro-sign"></i>
+                                            <input type="number" id="ccDepotMontant" class="form-input" placeholder="1000" min="0" step="0.01">
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-success btn-full" id="ccDepotBtn">
+                                        <i class="fas fa-plus"></i> Déposer
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Retirer -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-arrow-up"></i>
+                                    </div>
+                                    <h3 class="card-title">Retirer</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label class="form-label">Montant (€)</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-euro-sign"></i>
+                                            <input type="number" id="ccRetraitMontant" class="form-input" placeholder="500" min="0" step="0.01">
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-danger btn-full" id="ccRetraitBtn">
+                                        <i class="fas fa-minus"></i> Retirer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Historique -->
+                        <div class="card mt-20">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="fas fa-history"></i>
+                                </div>
+                                <h3 class="card-title">Historique des transactions</h3>
+                            </div>
+                            <div class="card-body">
+                                <button class="btn btn-primary" id="ccHistoriqueBtn">
+                                    <i class="fas fa-list"></i> Voir Historique
+                                </button>
+                                <div id="ccHistorique" class="transaction-history mt-20"></div>
+                            </div>
+                        </div>
                     </div>
-                    <button class="btn btn-success" id="ccDepotBtn">Déposer</button>
                 </div>
 
-                <!-- Retirer -->
-                <div class="card">
-                    <h3>Retirer</h3>
-                    <div class="form-group">
-                        <label>Montant (€)</label>
-                        <input type="number" id="ccRetraitMontant" placeholder="500" min="0" step="0.01">
+                <!-- =================== TAB COMPTE DÉPÔT =================== -->
+                <div id="compteDepot" class="tab-content hidden">
+                    <div class="section">
+                        <div class="section-header">
+                            <h2 class="section-title">Compte Dépôt (.NET Minimal API)</h2>
+                        </div>
+                        <div class="alert" id="depotAlert"></div>
+
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label class="form-label">Numéro de compte</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-piggy-bank"></i>
+                                        <input type="text" id="depotNumero" class="form-input" placeholder="DEP-CLIENT001">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-grid">
+                            <!-- Consulter solde -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-wallet"></i>
+                                    </div>
+                                    <h3 class="card-title">Solde</h3>
+                                </div>
+                                <div class="card-body">
+                                    <button class="btn btn-primary btn-full" id="depotSoldeBtn">
+                                        <i class="fas fa-eye"></i> Voir Solde
+                                    </button>
+                                    <div id="depotSolde" class="balance-display"></div>
+                                </div>
+                            </div>
+
+                            <!-- Déposer -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-arrow-down"></i>
+                                    </div>
+                                    <h3 class="card-title">Déposer</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label class="form-label">Montant (€)</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-euro-sign"></i>
+                                            <input type="number" id="depotDepotMontant" class="form-input" placeholder="5000" min="0" step="0.01">
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-success btn-full" id="depotDepotBtn">
+                                        <i class="fas fa-plus"></i> Déposer
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Retirer -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-arrow-up"></i>
+                                    </div>
+                                    <h3 class="card-title">Retirer</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label class="form-label">Montant (€)</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-euro-sign"></i>
+                                            <input type="number" id="depotRetraitMontant" class="form-input" placeholder="1000" min="0" step="0.01">
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-danger btn-full" id="depotRetraitBtn">
+                                        <i class="fas fa-minus"></i> Retirer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <button class="btn btn-danger" id="ccRetraitBtn">Retirer</button>
-                </div>
-            </div>
-
-            <hr>
-
-            <!-- Historique -->
-            <div class="card">
-                <h3>Historique des transactions</h3>
-                <button class="btn btn-primary" id="ccHistoriqueBtn">Voir Historique</button>
-                <div id="ccHistorique"></div>
-            </div>
-        </div>
-
-        <!-- =================== TAB COMPTE DÉPÔT =================== -->
-        <div id="compteDepot" class="content">
-            <h2>💰 Compte Dépôt (.NET Minimal API)</h2>
-            <div class="alert" id="depotAlert"></div>
-
-            <div class="form-group">
-                <label>Numéro de compte</label>
-                <input type="text" id="depotNumero" placeholder="DEP-CLIENT001">
-            </div>
-
-            <div class="grid">
-                <!-- Consulter solde -->
-                <div class="card">
-                    <h3>Consulter Solde</h3>
-                    <button class="btn btn-primary" id="depotSoldeBtn">Voir Solde</button>
-                    <div id="depotSolde" style="margin-top: 15px; font-size: 1.5em;"></div>
-                </div>
-
-                <!-- Déposer -->
-                <div class="card">
-                    <h3>Déposer</h3>
-                    <div class="form-group">
-                        <label>Montant (€)</label>
-                        <input type="number" id="depotDepotMontant" placeholder="5000" min="0" step="0.01">
-                    </div>
-                    <button class="btn btn-success" id="depotDepotBtn">Déposer</button>
-                </div>
-
-                <!-- Retirer -->
-                <div class="card">
-                    <h3>Retirer</h3>
-                    <div class="form-group">
-                        <label>Montant (€)</label>
-                        <input type="number" id="depotRetraitMontant" placeholder="1000" min="0" step="0.01">
-                    </div>
-                    <button class="btn btn-danger" id="depotRetraitBtn">Retirer</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- =================== TAB PRÊTS =================== -->
-        <div id="prets" class="content">
-            <h2>🏠 Gestion des Prêts</h2>
-            <div class="alert" id="pretAlert"></div>
-
-            <div class="grid">
-                <!-- Demander un prêt -->
-                <div class="card">
-                    <h3>Demander un prêt</h3>
-                    <div class="form-group">
-                        <label>Numéro client</label>
-                        <input type="text" id="pretClientNumero" placeholder="CLIENT001">
-                    </div>
-                    <div class="form-group">
-                        <label>Montant (€)</label>
-                        <input type="number" id="pretMontant" placeholder="50000" min="0" step="100">
-                    </div>
-                    <div class="form-group">
-                        <label>Durée (mois)</label>
-                        <input type="number" id="pretDuree" placeholder="240" min="1">
-                    </div>
-                    <div class="form-group">
-                        <label>Objet du prêt</label>
-                        <input type="text" id="pretObjet" placeholder="Achat immobilier">
-                    </div>
-                    <button class="btn btn-primary" id="pretDemandeBtn">Soumettre Demande</button>
                 </div>
 
-                <!-- Calculer mensualité -->
-                <div class="card">
-                    <h3>Calculer Mensualité</h3>
-                    <div class="form-group">
-                        <label>Montant (€)</label>
-                        <input type="number" id="calcMontant" placeholder="50000" min="0" step="100">
+                <!-- =================== TAB PRÊTS =================== -->
+                <div id="prets" class="tab-content hidden">
+                    <div class="section">
+                        <div class="section-header">
+                            <h2 class="section-title">Gestion des Prêts</h2>
+                        </div>
+                        <div class="alert" id="pretAlert"></div>
+
+                        <div class="card-grid">
+                            <!-- Demander un prêt -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-file-contract"></i>
+                                    </div>
+                                    <h3 class="card-title">Demander un prêt</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label class="form-label">Numéro client</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-id-card"></i>
+                                            <input type="text" id="pretClientNumero" class="form-input" placeholder="CLIENT001">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Montant (€)</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-euro-sign"></i>
+                                            <input type="number" id="pretMontant" class="form-input" placeholder="50000" min="0" step="100">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Durée (mois)</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-calendar-alt"></i>
+                                            <input type="number" id="pretDuree" class="form-input" placeholder="240" min="1">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Objet du prêt</label>
+                                        <input type="text" id="pretObjet" class="form-input" placeholder="Achat immobilier">
+                                    </div>
+                                    <button class="btn btn-primary btn-full" id="pretDemandeBtn">
+                                        <i class="fas fa-paper-plane"></i> Soumettre Demande
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Calculer mensualité -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-calculator"></i>
+                                    </div>
+                                    <h3 class="card-title">Calculer Mensualité</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label class="form-label">Montant (€)</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-euro-sign"></i>
+                                            <input type="number" id="calcMontant" class="form-input" placeholder="50000" min="0" step="100">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Durée (mois)</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-calendar-alt"></i>
+                                            <input type="number" id="calcDuree" class="form-input" placeholder="240" min="1">
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary btn-full" id="pretCalculBtn">
+                                        <i class="fas fa-calculator"></i> Calculer
+                                    </button>
+                                    <div id="mensualiteResult" class="mt-20 text-center"></div>
+                                </div>
+                            </div>
+
+                            <!-- Admin -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-user-shield"></i>
+                                    </div>
+                                    <h3 class="card-title">Administration</h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label class="form-label">Numéro client admin</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-id-card"></i>
+                                            <input type="text" id="adminClientNumero" class="form-input" placeholder="CLIENT19">
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary btn-full" id="adminLoginBtn">
+                                        <i class="fas fa-sign-in-alt"></i> Se connecter (admin)
+                                    </button>
+                                    <div id="adminStatus" class="mt-20 text-center text-muted"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Liste des demandes -->
+                        <div class="card mt-20">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="fas fa-list"></i>
+                                </div>
+                                <h3 class="card-title">Demandes en attente</h3>
+                            </div>
+                            <div class="card-body">
+                                <button class="btn btn-primary" id="pretListeBtn">
+                                    <i class="fas fa-sync-alt"></i> Actualiser la liste
+                                </button>
+                                <div id="demandesList" class="mt-20"></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Durée (mois)</label>
-                        <input type="number" id="calcDuree" placeholder="240" min="1">
-                    </div>
-                    <button class="btn btn-primary" id="pretCalculBtn">Calculer</button>
-                    <div id="mensualiteResult" style="margin-top: 15px; font-size: 1.1em;"></div>
                 </div>
-
-                <!-- Admin -->
-                <div class="card">
-                    <h3>Admin</h3>
-                    <div class="form-group">
-                        <label>Numéro client admin</label>
-                        <input type="text" id="adminClientNumero" placeholder="CLIENT19">
-                    </div>
-                    <button class="btn btn-primary" id="adminLoginBtn">Se connecter (admin)</button>
-                    <div id="adminStatus" style="margin-top:8px;color:#666;"></div>
-                </div>
-            </div>
-
-            <hr>
-
-            <!-- Liste des demandes -->
-            <div class="card">
-                <h3>Demandes en attente</h3>
-                <button class="btn btn-primary" id="pretListeBtn">Actualiser la liste</button>
-                <div id="demandesList"></div>
             </div>
         </div>
     </div>
 
-    <!-- Scripts JavaScript -->
-    <script src="js/config.js"></script>
-    <script src="js/api-client.js"></script>
-    <script src="js/clients.js"></script>
-    <script src="js/compte-courant.js"></script>
-    <script src="js/compte-depot.js"></script>
-    <script src="js/prets.js"></script>
-    <script src="js/app.js"></script>
+    <script>
+        // Navigation entre les onglets
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Mettre à jour la navigation
+                document.querySelectorAll('.nav-item').forEach(nav => {
+                    nav.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Mettre à jour le contenu
+                const tabId = this.getAttribute('data-tab');
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.add('hidden');
+                });
+                document.getElementById(tabId).classList.remove('hidden');
+                
+                // Mettre à jour le titre de la page
+                const pageTitle = document.getElementById('pageTitle');
+                switch(tabId) {
+                    case 'clients':
+                        pageTitle.textContent = 'Gestion des Clients';
+                        break;
+                    case 'compteCourant':
+                        pageTitle.textContent = 'Compte Courant';
+                        break;
+                    case 'compteDepot':
+                        pageTitle.textContent = 'Compte Dépôt';
+                        break;
+                    case 'prets':
+                        pageTitle.textContent = 'Gestion des Prêts';
+                        break;
+                }
+            });
+        });
+
+        // Simulation d'alerte
+        function showAlert(alertId, message, type) {
+            const alert = document.getElementById(alertId);
+            alert.textContent = message;
+            alert.className = `alert alert-${type} show`;
+            
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+
+        // Simulation de fonctionnalités
+        document.getElementById('createClientBtn').addEventListener('click', () => {
+            showAlert('clientAlert', 'Client créé avec succès!', 'success');
+        });
+
+        document.getElementById('searchClientBtn').addEventListener('click', () => {
+            showAlert('clientAlert', 'Recherche effectuée!', 'success');
+        });
+
+        document.getElementById('ccSoldeBtn').addEventListener('click', () => {
+            document.getElementById('ccSolde').textContent = '2 450,75 €';
+        });
+
+        document.getElementById('pretCalculBtn').addEventListener('click', () => {
+            document.getElementById('mensualiteResult').innerHTML = `
+                <h3>Résultat du calcul</h3>
+                <p class="text-muted">Mensualité estimée:</p>
+                <div class="balance-display">312,50 €</div>
+            `;
+        });
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Interface NexusBanque initialisée');
+        });
+    </script>
 </body>
 </html>
