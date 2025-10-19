@@ -3,19 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusBanque | Interface de Gestion</title>
+    <title>BanqueEjb | Interface de Gestion</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class="app-container">
+    <!-- PAGE DE CONNEXION -->
+    <div id="loginPage" style="position:fixed; inset:0; display:none; align-items:center; justify-content:center; padding:24px; z-index:1000; background: var(--bg);">
+        <div class="card" style="max-width:680px; width:96%; margin:auto;">
+            <div class="card-header">
+                <div class="card-icon"><i class="fas fa-sign-in-alt"></i></div>
+                <h3 class="card-title" style="font-size: 1.4rem;">Connexion</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label class="form-label">Prénom</label>
+                    <input type="text" id="loginPrenom" class="form-input" placeholder="Jean">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mot de passe</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="loginPassword" class="form-input" placeholder="••••••">
+                    </div>
+                </div>
+                <button id="loginBtn" class="btn btn-primary btn-full"><i class="fas fa-unlock"></i> Se connecter</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- APPLICATION -->
+    <div id="appRoot" class="app-container" style="display:none;">
         <!-- SIDEBAR -->
         <div class="sidebar">
             <div class="logo">
                 <div class="logo-icon">
                     <i class="fas fa-university"></i>
                 </div>
-                <div class="logo-text">NexusBanque</div>
+                <div class="logo-text">BanqueEjb</div>
             </div>
             <nav class="nav">
                 <a href="#" class="nav-item active" data-tab="clients">
@@ -42,7 +67,7 @@
             <div class="top-bar">
                 <div class="page-title" id="pageTitle">Gestion des Clients</div>
                 <div class="user-menu">
-                    <div class="user-avatar">AD</div>
+                    <button id="logoutBtn" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Se déconnecter</button>
                 </div>
             </div>
 
@@ -87,13 +112,27 @@
                                             <input type="email" id="clientEmail" class="form-input" placeholder="jean.dupont@email.com">
                                         </div>
                                     </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Mot de passe</label>
+                                        <div class="input-with-icon">
+                                            <i class="fas fa-lock"></i>
+                                            <input type="password" id="clientPassword" class="form-input" placeholder="••••••">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Rôle</label>
+                                        <select id="clientRole" class="form-input">
+                                            <option value="USER">Utilisateur</option>
+                                            <option value="ADMIN">Administrateur</option>
+                                        </select>
+                                    </div>
                                     <button class="btn btn-primary btn-full" id="createClientBtn">
                                         <i class="fas fa-plus-circle"></i> Créer Client
                                     </button>
                                 </div>
                             </div>
 
-                            <!-- Rechercher un client -->
+                            <!-- Rechercher un client + Détails -->
                             <div class="card">
                                 <div class="card-header">
                                     <div class="card-icon">
@@ -102,22 +141,29 @@
                                     <h3 class="card-title">Rechercher Client</h3>
                                 </div>
                                 <div class="card-body">
-                                    <div class="form-group">
-                                        <label class="form-label">Numéro client</label>
-                                        <div class="input-with-icon">
-                                            <i class="fas fa-id-card"></i>
-                                            <input type="text" id="searchClientNumero" class="form-input" placeholder="CLIENT001">
+                                    <div class="subgrid">
+                                        <div class="panel">
+                                            <h4><i class="fas fa-search"></i> Recherche</h4>
+                                            <div class="form-group">
+                                                <label class="form-label">Numéro client</label>
+                                                <div class="input-with-icon">
+                                                    <i class="fas fa-id-card"></i>
+                                                    <input type="text" id="searchClientNumero" class="form-input" placeholder="CLIENT001">
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-primary btn-full" id="searchClientBtn">
+                                                <i class="fas fa-search"></i> Rechercher
+                                            </button>
+                                        </div>
+                                        <div class="panel">
+                                            <h4><i class="fas fa-user"></i> Détails</h4>
+                                            <div id="clientDetails"></div>
                                         </div>
                                     </div>
-                                    <button class="btn btn-primary btn-full" id="searchClientBtn">
-                                        <i class="fas fa-search"></i> Rechercher
-                                    </button>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Détails du client -->
-                        <div id="clientDetails" class="mt-20"></div>
+                        
                     </div>
                 </div>
 
@@ -141,64 +187,48 @@
                             </div>
                         </div>
 
-                        <div class="card-grid">
-                            <!-- Consulter solde -->
-                            <div class="card">
-                                <div class="card-header">
-                                    <div class="card-icon">
-                                        <i class="fas fa-wallet"></i>
-                                    </div>
-                                    <h3 class="card-title">Solde</h3>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="fas fa-tools"></i>
                                 </div>
-                                <div class="card-body">
-                                    <button class="btn btn-primary btn-full" id="ccSoldeBtn">
-                                        <i class="fas fa-eye"></i> Voir Solde
-                                    </button>
-                                    <div id="ccSolde" class="balance-display"></div>
-                                </div>
+                                <h3 class="card-title">Actions</h3>
                             </div>
-
-                            <!-- Déposer -->
-                            <div class="card">
-                                <div class="card-header">
-                                    <div class="card-icon">
-                                        <i class="fas fa-arrow-down"></i>
+                            <div class="card-body">
+                                <div class="subgrid">
+                                    <div class="panel">
+                                        <h4><i class="fas fa-wallet"></i> Solde</h4>
+                                        <button class="btn btn-primary btn-full" id="ccSoldeBtn">
+                                            <i class="fas fa-eye"></i> Voir Solde
+                                        </button>
+                                        <div id="ccSolde" class="balance-display"></div>
                                     </div>
-                                    <h3 class="card-title">Déposer</h3>
-                                </div>
-                                <div class="card-body">
-                                    <div class="form-group">
-                                        <label class="form-label">Montant (€)</label>
-                                        <div class="input-with-icon">
-                                            <i class="fas fa-euro-sign"></i>
-                                            <input type="number" id="ccDepotMontant" class="form-input" placeholder="1000" min="0" step="0.01">
+                                    <div class="panel">
+                                        <h4><i class="fas fa-arrow-down"></i> Déposer</h4>
+                                        <div class="form-group">
+                                            <label class="form-label">Montant (€)</label>
+                                            <div class="input-with-icon">
+                                                <i class="fas fa-euro-sign"></i>
+                                                <input type="number" id="ccDepotMontant" class="form-input" placeholder="1000" min="0" step="0.01">
+                                            </div>
                                         </div>
+                                        <button class="btn btn-success btn-full" id="ccDepotBtn">
+                                            <i class="fas fa-plus"></i> Déposer
+                                        </button>
                                     </div>
-                                    <button class="btn btn-success btn-full" id="ccDepotBtn">
-                                        <i class="fas fa-plus"></i> Déposer
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Retirer -->
-                            <div class="card">
-                                <div class="card-header">
-                                    <div class="card-icon">
-                                        <i class="fas fa-arrow-up"></i>
-                                    </div>
-                                    <h3 class="card-title">Retirer</h3>
-                                </div>
-                                <div class="card-body">
-                                    <div class="form-group">
-                                        <label class="form-label">Montant (€)</label>
-                                        <div class="input-with-icon">
-                                            <i class="fas fa-euro-sign"></i>
-                                            <input type="number" id="ccRetraitMontant" class="form-input" placeholder="500" min="0" step="0.01">
+                                    <div class="panel">
+                                        <h4><i class="fas fa-arrow-up"></i> Retirer</h4>
+                                        <div class="form-group">
+                                            <label class="form-label">Montant (€)</label>
+                                            <div class="input-with-icon">
+                                                <i class="fas fa-euro-sign"></i>
+                                                <input type="number" id="ccRetraitMontant" class="form-input" placeholder="500" min="0" step="0.01">
+                                            </div>
                                         </div>
+                                        <button class="btn btn-danger btn-full" id="ccRetraitBtn">
+                                            <i class="fas fa-minus"></i> Retirer
+                                        </button>
                                     </div>
-                                    <button class="btn btn-danger btn-full" id="ccRetraitBtn">
-                                        <i class="fas fa-minus"></i> Retirer
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -241,64 +271,48 @@
                             </div>
                         </div>
 
-                        <div class="card-grid">
-                            <!-- Consulter solde -->
-                            <div class="card">
-                                <div class="card-header">
-                                    <div class="card-icon">
-                                        <i class="fas fa-wallet"></i>
-                                    </div>
-                                    <h3 class="card-title">Solde</h3>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">
+                                    <i class="fas fa-tools"></i>
                                 </div>
-                                <div class="card-body">
-                                    <button class="btn btn-primary btn-full" id="depotSoldeBtn">
-                                        <i class="fas fa-eye"></i> Voir Solde
-                                    </button>
-                                    <div id="depotSolde" class="balance-display"></div>
-                                </div>
+                                <h3 class="card-title">Actions</h3>
                             </div>
-
-                            <!-- Déposer -->
-                            <div class="card">
-                                <div class="card-header">
-                                    <div class="card-icon">
-                                        <i class="fas fa-arrow-down"></i>
+                            <div class="card-body">
+                                <div class="subgrid">
+                                    <div class="panel">
+                                        <h4><i class="fas fa-wallet"></i> Solde</h4>
+                                        <button class="btn btn-primary btn-full" id="depotSoldeBtn">
+                                            <i class="fas fa-eye"></i> Voir Solde
+                                        </button>
+                                        <div id="depotSolde" class="balance-display"></div>
                                     </div>
-                                    <h3 class="card-title">Déposer</h3>
-                                </div>
-                                <div class="card-body">
-                                    <div class="form-group">
-                                        <label class="form-label">Montant (€)</label>
-                                        <div class="input-with-icon">
-                                            <i class="fas fa-euro-sign"></i>
-                                            <input type="number" id="depotDepotMontant" class="form-input" placeholder="5000" min="0" step="0.01">
+                                    <div class="panel">
+                                        <h4><i class="fas fa-arrow-down"></i> Déposer</h4>
+                                        <div class="form-group">
+                                            <label class="form-label">Montant (€)</label>
+                                            <div class="input-with-icon">
+                                                <i class="fas fa-euro-sign"></i>
+                                                <input type="number" id="depotDepotMontant" class="form-input" placeholder="5000" min="0" step="0.01">
+                                            </div>
                                         </div>
+                                        <button class="btn btn-success btn-full" id="depotDepotBtn">
+                                            <i class="fas fa-plus"></i> Déposer
+                                        </button>
                                     </div>
-                                    <button class="btn btn-success btn-full" id="depotDepotBtn">
-                                        <i class="fas fa-plus"></i> Déposer
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Retirer -->
-                            <div class="card">
-                                <div class="card-header">
-                                    <div class="card-icon">
-                                        <i class="fas fa-arrow-up"></i>
-                                    </div>
-                                    <h3 class="card-title">Retirer</h3>
-                                </div>
-                                <div class="card-body">
-                                    <div class="form-group">
-                                        <label class="form-label">Montant (€)</label>
-                                        <div class="input-with-icon">
-                                            <i class="fas fa-euro-sign"></i>
-                                            <input type="number" id="depotRetraitMontant" class="form-input" placeholder="1000" min="0" step="0.01">
+                                    <div class="panel">
+                                        <h4><i class="fas fa-arrow-up"></i> Retirer</h4>
+                                        <div class="form-group">
+                                            <label class="form-label">Montant (€)</label>
+                                            <div class="input-with-icon">
+                                                <i class="fas fa-euro-sign"></i>
+                                                <input type="number" id="depotRetraitMontant" class="form-input" placeholder="1000" min="0" step="0.01">
+                                            </div>
                                         </div>
+                                        <button class="btn btn-danger btn-full" id="depotRetraitBtn">
+                                            <i class="fas fa-minus"></i> Retirer
+                                        </button>
                                     </div>
-                                    <button class="btn btn-danger btn-full" id="depotRetraitBtn">
-                                        <i class="fas fa-minus"></i> Retirer
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -384,26 +398,19 @@
                                 </div>
                             </div>
 
-                            <!-- Admin -->
+                            <!-- Connexion / Statut -->
                             <div class="card">
                                 <div class="card-header">
                                     <div class="card-icon">
                                         <i class="fas fa-user-shield"></i>
                                     </div>
-                                    <h3 class="card-title">Administration</h3>
+                                    <h3 class="card-title">Connexion</h3>
                                 </div>
                                 <div class="card-body">
-                                    <div class="form-group">
-                                        <label class="form-label">Numéro client admin</label>
-                                        <div class="input-with-icon">
-                                            <i class="fas fa-id-card"></i>
-                                            <input type="text" id="adminClientNumero" class="form-input" placeholder="CLIENT19">
-                                        </div>
-                                    </div>
-                                    <button class="btn btn-primary btn-full" id="adminLoginBtn">
-                                        <i class="fas fa-sign-in-alt"></i> Se connecter (admin)
+                                    <div id="adminStatus" class="mt-10 text-center text-muted">Non connecté</div>
+                                    <button class="btn btn-primary btn-full" style="margin-top:12px;" onclick="showLoginPage()">
+                                        <i class="fas fa-user"></i> Changer d'utilisateur
                                     </button>
-                                    <div id="adminStatus" class="mt-20 text-center text-muted"></div>
                                 </div>
                             </div>
                         </div>
@@ -428,6 +435,17 @@
             </div>
         </div>
     </div>
+
+    <!-- (Overlay supprimé: passage à une vraie page de connexion) -->
+
+    <!-- Include JS modules -->
+    <script src="js/config.js"></script>
+    <script src="js/api-client.js"></script>
+    <script src="js/compte-courant.js"></script>
+    <script src="js/compte-depot.js"></script>
+    <script src="js/clients.js"></script>
+    <script src="js/prets.js"></script>
+    <script src="js/app.js"></script>
 
     <script>
         // Navigation entre les onglets
@@ -487,9 +505,7 @@
             showAlert('clientAlert', 'Recherche effectuée!', 'success');
         });
 
-        document.getElementById('ccSoldeBtn').addEventListener('click', () => {
-            document.getElementById('ccSolde').textContent = '2 450,75 €';
-        });
+        // L'événement ccSoldeBtn est géré par CompteCourantModule (via js/compte-courant.js)
 
         document.getElementById('pretCalculBtn').addEventListener('click', () => {
             document.getElementById('mensualiteResult').innerHTML = `
@@ -501,8 +517,109 @@
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('Interface NexusBanque initialisée');
+            console.log('Interface BanqueEjb initialisée');
+            initLoginGate();
+            updateLoginStatusUI();
         });
+
+        // Gestion page login / app
+        async function tryLogin() {
+            const prenom = (document.getElementById('loginPrenom').value || '').trim();
+            const password = (document.getElementById('loginPassword').value || '').trim();
+            if (!prenom || !password) {
+                UIManager.showAlert('loginAlert', 'Entrez prénom et mot de passe', true);
+                return false;
+            }
+            try {
+                // Auth coté front: récupère la liste des clients puis filtre par prenom et motDePasse (si disponible)
+                const clients = await apiClient.getAllClients();
+                const client = (clients || []).find(c => (c.prenom || '').toLowerCase() === prenom.toLowerCase());
+                if (!client) {
+                    UIManager.showAlert('loginAlert', 'Utilisateur introuvable', true);
+                    return false;
+                }
+                // Supporte c.motDePasse ou c.password si renvoyé par l'API
+                const storedPass = client.motDePasse || client.password || '';
+                if (storedPass && storedPass !== password) {
+                    UIManager.showAlert('loginAlert', 'Mot de passe invalide', true);
+                    return false;
+                }
+                // Connexion OK
+                window.localStorage.setItem('role', (client.role || 'USER').toString().toLowerCase());
+                window.localStorage.setItem('numeroClient', client.numeroClient || client.numero_client || '');
+                if ((client.role || '').toUpperCase() === 'ADMIN') {
+                    window.localStorage.setItem('adminClient', client.numeroClient || client.numero_client || '');
+                } else {
+                    window.localStorage.removeItem('adminClient');
+                }
+                return true;
+            } catch (e) {
+                UIManager.showAlert('loginAlert', 'Erreur de connexion au serveur', true);
+                return false;
+            }
+        }
+
+        function initLoginGate() {
+            const app = document.getElementById('appRoot');
+            const login = document.getElementById('loginPage');
+            const loginBtn = document.getElementById('loginBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            const hasRole = !!window.localStorage.getItem('role');
+            if (hasRole) {
+                if (login) login.style.display = 'none';
+                if (app) app.style.display = 'flex';
+            } else {
+                if (login) login.style.display = 'flex';
+                if (app) app.style.display = 'none';
+            }
+
+            if (loginBtn) {
+                loginBtn.addEventListener('click', async () => {
+                    const ok = await tryLogin();
+                    if (ok) {
+                        if (login) login.style.display = 'none';
+                        if (app) app.style.display = 'flex';
+                        updateLoginStatusUI();
+                        // Forcer l'onglet prêts à refléter les boutons si besoin
+                        // (rien à faire ici, PretsModule lit localStorage au rendu)
+                    }
+                });
+            }
+
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    window.localStorage.removeItem('role');
+                    window.localStorage.removeItem('adminClient');
+                    window.localStorage.removeItem('numeroClient');
+                    if (app) app.style.display = 'none';
+                    if (login) login.style.display = 'flex';
+                    updateLoginStatusUI();
+                });
+            }
+        }
+
+        function updateLoginStatusUI() {
+            const status = document.getElementById('adminStatus');
+            const role = window.localStorage.getItem('role');
+            const adminNumero = window.localStorage.getItem('adminClient');
+            if (!status) return;
+            if (role === 'admin') {
+                status.textContent = `Connecté en admin: ${adminNumero || ''}`;
+            } else if (role === 'user') {
+                status.textContent = 'Connecté en utilisateur';
+            } else {
+                status.textContent = 'Non connecté';
+            }
+        }
+
+        // Raccourci global pour afficher la page de login
+        window.showLoginPage = function() {
+            const app = document.getElementById('appRoot');
+            const login = document.getElementById('loginPage');
+            if (app) app.style.display = 'none';
+            if (login) login.style.display = 'flex';
+        };
     </script>
 </body>
 </html>

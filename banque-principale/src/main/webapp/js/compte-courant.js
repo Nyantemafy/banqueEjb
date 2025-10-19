@@ -95,8 +95,12 @@ const CompteCourantModule = {
 
         try {
             UIManager.showLoading('ccHistorique', 'Chargement de l\'historique...');
-            const transactions = await apiClient.getHistoriqueCompteCourant(numero);
-            this.displayHistorique(transactions);
+            const [txs, soldeResp] = await Promise.all([
+                apiClient.getHistoriqueCompteCourant(numero),
+                apiClient.getSoldeCompteCourant(numero)
+            ]);
+            const soldeCourant = parseFloat(soldeResp.solde);
+            this.displayHistorique(txs, isNaN(soldeCourant) ? 0 : soldeCourant);
         } catch (error) {
             UIManager.showAlert('ccAlert', error.message, true);
             document.getElementById('ccHistorique').innerHTML = '';
@@ -106,7 +110,7 @@ const CompteCourantModule = {
     /**
      * Affiche l'historique
      */
-    displayHistorique(transactions) {
+    displayHistorique(transactions, soldeCourant) {
         const container = document.getElementById('ccHistorique');
 
         if (!transactions || transactions.length === 0) {
@@ -114,8 +118,24 @@ const CompteCourantModule = {
             return;
         }
 
+        // Trier par date décroissante (plus récente d'abord)
+        const txs = [...transactions].sort((a,b) => new Date(b.dateTransaction) - new Date(a.dateTransaction));
+
+        // Calculer solde après pour chaque transaction en partant du solde courant
+        let running = Number(soldeCourant || 0);
+        const rows = txs.map(tx => {
+            const dateStr = new Date(tx.dateTransaction).toLocaleString('fr-FR');
+            const isDepot = tx.type === 'DEPOT';
+            const typeColor = isDepot ? '#28a745' : '#dc3545';
+            const montant = Number(tx.montant || 0);
+            const soldeApres = running; // solde juste après cette transaction
+            // Remonter dans le temps pour l'itération suivante
+            running = isDepot ? (running - montant) : (running + montant);
+            return { dateStr, type: tx.type, typeColor, montant, soldeApres };
+        });
+
         let html = `
-            <table>
+            <table class="table table-striped">
                 <thead>
                     <tr>
                         <th>Date</th>
@@ -127,16 +147,13 @@ const CompteCourantModule = {
                 <tbody>
         `;
 
-        transactions.forEach(tx => {
-            const date = new Date(tx.dateTransaction).toLocaleString('fr-FR');
-            const typeColor = tx.type === 'DEPOT' ? '#28a745' : '#dc3545';
-            
+        rows.forEach(r => {
             html += `
                 <tr>
-                    <td>${date}</td>
-                    <td style="color: ${typeColor}; font-weight: bold;">${tx.type}</td>
-                    <td>${formatCurrency(tx.montant)}</td>
-                    <td>${formatCurrency(tx.soldeApres)}</td>
+                    <td>${r.dateStr}</td>
+                    <td style="color: ${r.typeColor}; font-weight: bold;">${r.type}</td>
+                    <td>${formatCurrency(r.montant)}</td>
+                    <td>${formatCurrency(r.soldeApres)}</td>
                 </tr>
             `;
         });

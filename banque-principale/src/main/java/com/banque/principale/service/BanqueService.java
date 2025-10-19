@@ -223,7 +223,20 @@ public class BanqueService {
 
     public boolean approuverDemandePret(String numeroDemande) {
         try {
-            return pretService.approuverDemande(numeroDemande);
+            // Récupérer la demande pour connaître le client et le montant
+            com.banque.pret.entity.DemandePret demande = pretService.getDemande(numeroDemande);
+            boolean ok = pretService.approuverDemande(numeroDemande);
+            if (ok && demande != null && demande.getNumeroClient() != null && demande.getMontantDemande() != null) {
+                // Créditer le compte courant du client avec le montant approuvé
+                String numeroCc = "CC-" + demande.getNumeroClient();
+                try {
+                    boolean credite = deposerCompteCourant(numeroCc, demande.getMontantDemande());
+                    System.out.println("💶 Crédit après approbation prêt sur " + numeroCc + " -> " + credite);
+                } catch (Exception ex) {
+                    System.err.println("⚠️ Approbation OK mais crédit CC a échoué: " + ex.getMessage());
+                }
+            }
+            return ok;
         } catch (Exception e) {
             System.err.println("❌ Erreur approbation: " + e.getMessage());
             return false;

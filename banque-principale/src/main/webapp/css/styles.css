@@ -2,8 +2,8 @@
 :root {
     --primary: #1a1f36;
     --secondary: #2d3748;
-    --accent: #805ad5;
-    --accent-light: #9f7aea;
+    --accent: #46e590; /* indigo-600 */
+    --accent-light: #46e590; /* indigo-500 */
     --text: #2d3748;
     --text-light: #718096;
     --bg: #f7fafc;
@@ -150,6 +150,29 @@ body {
     overflow-y: auto;
 }
 
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+.table thead th {
+    text-align: left;
+    padding: 12px 16px;
+    background: #f3f4f6;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+}
+.table tbody td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+}
+.table-striped tbody tr:nth-child(odd) {
+    background: #fafafa;
+}
+
 /* ========== SECTIONS ET CARTES ========== */
 .section {
     margin-bottom: 32px;
@@ -240,7 +263,7 @@ body {
 .form-input:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(128, 90, 213, 0.2);
+    box-shadow: 0 0 0 3px rgba(70, 229, 171, 0.2); /* indigo glow */
 }
 
 .input-with-icon {
@@ -358,6 +381,45 @@ body {
     max-height: 300px;
     overflow-y: auto;
 }
+
+/* Inner grid panels to modernize layout inside a single card */
+.subgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.panel {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+}
+
+.panel h4 {
+    font-size: 16px;
+    margin-bottom: 12px;
+    color: var(--primary);
+}
+
+/* Badges for statuses */
+.badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.badge-warning { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+.badge-success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+.badge-danger  { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+/* Demand card info layout */
+.card-info {
+    display: flex;
+    justify-content: space-between;
+    margin: 6px 0;
+}
+.action-btns { display: flex; gap: 8px; }
 
 .transaction-item {
     display: flex;
@@ -482,3 +544,31 @@ body {
 .hidden {
     display: none;
 }
+
+/* ========== LOGIN LAYOUT ========== */
+#loginPage {
+    /* inline styles handle positioning; here we ensure centering consistency if styles move */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#loginPage .card {
+    max-width: 720px;
+    width: 96%;
+}
+
+#loginPage .card-body {
+    padding: 28px;
+}
+
+#loginPage .form-input {
+    font-size: 18px;
+    padding: 14px 18px;
+}
+
+#loginPage .btn {
+    font-size: 17px;
+    padding: 14px 24px;
+}
+

@@ -33,9 +33,9 @@ public class ClientService {
 
     public void ajouterClient(Client client) {
         if (client == null || client.getNumeroClient() == null) return;
-        String sql = "INSERT INTO clients (numero_client, nom, prenom, email, telephone, date_inscription) " +
-                "VALUES (?, ?, ?, ?, ?, ?) " +
-                "ON CONFLICT (numero_client) DO UPDATE SET nom = EXCLUDED.nom, prenom = EXCLUDED.prenom, email = EXCLUDED.email, telephone = EXCLUDED.telephone";
+        String sql = "INSERT INTO clients (numero_client, nom, prenom, email, telephone, date_inscription, role, mot_de_passe) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?) " +
+                "ON CONFLICT (numero_client) DO UPDATE SET nom = EXCLUDED.nom, prenom = EXCLUDED.prenom, email = EXCLUDED.email, telephone = EXCLUDED.telephone, role = EXCLUDED.role, mot_de_passe = EXCLUDED.mot_de_passe";
         try (Connection cnx = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
              PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setString(1, client.getNumeroClient());
@@ -44,6 +44,8 @@ public class ClientService {
             ps.setString(4, client.getEmail());
             ps.setString(5, client.getTelephone());
             ps.setTimestamp(6, new Timestamp(client.getDateInscription() != null ? client.getDateInscription().getTime() : System.currentTimeMillis()));
+            ps.setString(7, client.getRole());
+            ps.setString(8, client.getMotDePasse());
             ps.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -52,7 +54,7 @@ public class ClientService {
 
     public Client getClient(String numeroClient) {
         if (numeroClient == null) return null;
-        String sql = "SELECT numero_client, nom, prenom, email, telephone, date_inscription FROM clients WHERE numero_client = ?";
+        String sql = "SELECT numero_client, nom, prenom, email, telephone, date_inscription, role, mot_de_passe FROM clients WHERE numero_client = ?";
         try (Connection cnx = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
              PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setString(1, numeroClient);
@@ -66,6 +68,8 @@ public class ClientService {
                     c.setTelephone(rs.getString(5));
                     Timestamp ts = rs.getTimestamp(6);
                     if (ts != null) c.setDateInscription(new java.util.Date(ts.getTime()));
+                    c.setRole(rs.getString(7));
+                    c.setMotDePasse(rs.getString(8));
                     return c;
                 }
             }
@@ -76,7 +80,7 @@ public class ClientService {
     }
 
     public List<Client> getTousLesClients() {
-        String sql = "SELECT numero_client, nom, prenom, email, telephone, date_inscription FROM clients ORDER BY numero_client";
+        String sql = "SELECT numero_client, nom, prenom, email, telephone, date_inscription, role, mot_de_passe FROM clients ORDER BY numero_client";
         List<Client> list = new ArrayList<>();
         try (Connection cnx = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
              PreparedStatement ps = cnx.prepareStatement(sql);
@@ -90,6 +94,8 @@ public class ClientService {
                 c.setTelephone(rs.getString(5));
                 Timestamp ts = rs.getTimestamp(6);
                 if (ts != null) c.setDateInscription(new java.util.Date(ts.getTime()));
+                c.setRole(rs.getString(7));
+                c.setMotDePasse(rs.getString(8));
                 list.add(c);
             }
             return list;

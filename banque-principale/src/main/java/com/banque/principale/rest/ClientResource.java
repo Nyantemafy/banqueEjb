@@ -24,6 +24,22 @@ public class ClientResource {
     }
 
     @GET
+    public Response getAllClients() {
+        try {
+            List<Client> clients = clientService.getTousLesClients();
+            return Response.ok(clients)
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+                .header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+                .build();
+        } catch (Exception e) {
+            return Response.status(500).entity("{\"error\":\"" + e.getMessage() + "\"}")
+                .header("Access-Control-Allow-Origin", "*")
+                .build();
+        }
+    }
+
+    @GET
     @Path("/{numeroClient}")
     public Response getClient(@PathParam("numeroClient") String numeroClient) {
         try {
@@ -51,16 +67,16 @@ public class ClientResource {
         try {
             boolean success = banqueService.creerClient(client);
             if (success) {
-                return Response.status(201).entity("{\"message\":\"Client créé avec succès\"}")
+                return Response.status(201).entity("{\"success\":true,\"message\":\"Client créé avec succès\"}")
                     .header("Access-Control-Allow-Origin", "*")
                     .build();
             } else {
-                return Response.status(400).entity("{\"error\":\"Échec création client\"}")
+                return Response.status(400).entity("{\"success\":false,\"error\":\"Échec création client\"}")
                     .header("Access-Control-Allow-Origin", "*")
                     .build();
             }
         } catch (Exception e) {
-            return Response.status(500).entity("{\"error\":\"" + e.getMessage() + "\"}")
+            return Response.status(500).entity("{\"success\":false,\"error\":\"" + e.getMessage() + "\"}")
                 .header("Access-Control-Allow-Origin", "*")
                 .build();
         }

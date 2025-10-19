@@ -75,3 +75,7 @@ CREATE TABLE IF NOT EXISTS clients (
 
 CREATE INDEX IF NOT EXISTS idx_clients_nom ON clients (nom);
 CREATE INDEX IF NOT EXISTS idx_clients_prenom ON clients (prenom);
+
+-- Ajout colonnes pour rôles et mot de passe (si absentes)
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS role VARCHAR(20);
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS mot_de_passe VARCHAR(255);

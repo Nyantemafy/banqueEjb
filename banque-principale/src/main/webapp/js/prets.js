@@ -18,8 +18,7 @@ const PretsModule = {
         // Afficher l'état admin si déjà défini
         const savedAdmin = window.localStorage.getItem('adminClient');
         if (savedAdmin) {
-            const status = document.getElementById('adminStatus');
-            if (status) status.textContent = `Connecté en admin: ${savedAdmin}`;
+            this.updateAdminStatus(savedAdmin);
         }
     },
 
@@ -33,39 +32,40 @@ const PretsModule = {
         const objet = document.getElementById('pretObjet').value.trim();
 
         if (!numeroClient || !montant || !duree || !objet) {
-            UIManager.showAlert('pretAlert', 'Veuillez remplir tous les champs', true);
+            this.showAlert('Veuillez remplir tous les champs', 'error');
             return;
         }
 
         if (montant <= 0 || duree <= 0) {
-            UIManager.showAlert('pretAlert', 'Montant et durée doivent être positifs', true);
+            this.showAlert('Montant et durée doivent être positifs', 'error');
             return;
         }
 
         try {
+            this.showLoading('Soumission en cours...');
             const result = await apiClient.demanderPret(numeroClient, montant, duree, objet);
-            UIManager.showAlert('pretAlert', 
-                `Demande créée avec succès. Numéro: ${result.numeroDemande}`);
+            this.showAlert(`✅ Demande créée avec succès. Numéro: ${result.numeroDemande}`, 'success');
             this.clearDemandeForm();
         } catch (error) {
-            UIManager.showAlert('pretAlert', error.message, true);
+            this.showAlert(error.message, 'error');
+        } finally {
+            this.hideLoading();
         }
     },
 
     /**
-     * Login admin (sauvegarde du numero client admin)
+     * Login admin
      */
     loginAdmin() {
         const input = document.getElementById('adminClientNumero');
         const adminNumero = input ? input.value.trim() : '';
         if (!adminNumero) {
-            UIManager.showAlert('pretAlert', 'Entrez un numéro client admin', true);
+            this.showAlert('Entrez un numéro client admin', 'error');
             return;
         }
         window.localStorage.setItem('adminClient', adminNumero);
-        const status = document.getElementById('adminStatus');
-        if (status) status.textContent = `Connecté en admin: ${adminNumero}`;
-        UIManager.showAlert('pretAlert', 'Admin défini. Vous pouvez approuver/rejeter.', false);
+        this.updateAdminStatus(adminNumero);
+        this.showAlert('🔐 Mode admin activé. Vous pouvez maintenant approuver/rejeter les demandes.', 'success');
     },
 
     /**
@@ -76,19 +76,63 @@ const PretsModule = {
         const duree = parseInt(document.getElementById('calcDuree').value);
 
         if (!montant || !duree || montant <= 0 || duree <= 0) {
-            UIManager.showAlert('pretAlert', 'Données invalides', true);
+            this.showAlert('Données invalides pour le calcul', 'error');
             return;
         }
 
         try {
+            this.showLoading('Calcul en cours...');
             const result = await apiClient.calculerMensualite(montant, duree);
-            document.getElementById('mensualiteResult').innerHTML = 
-                `<strong>Mensualité:</strong> ${formatCurrency(result.mensualite)}<br>
-                 <small>sur ${duree} mois (Taux: 4.5%)</small>`;
+            this.displayCalculResult(result.mensualite, duree, montant);
         } catch (error) {
-            UIManager.showAlert('pretAlert', error.message, true);
+            this.showAlert(error.message, 'error');
             document.getElementById('mensualiteResult').innerHTML = '';
+        } finally {
+            this.hideLoading();
         }
+    },
+
+    /**
+     * Afficher le résultat du calcul
+     */
+    displayCalculResult(mensualite, duree, montant) {
+        const totalInterets = (mensualite * duree) - montant;
+        const tauxAnnuel = 4.5; // Taux fixe pour l'exemple
+        
+        document.getElementById('mensualiteResult').innerHTML = `
+            <div class="calculation-card">
+                <div class="calculation-header">
+                    <i class="fas fa-calculator"></i>
+                    <h4>Simulation de Prêt</h4>
+                </div>
+                <div class="calculation-grid">
+                    <div class="calc-item">
+                        <span class="calc-label">Mensualité</span>
+                        <span class="calc-value highlight">${this.formatCurrency(mensualite)}</span>
+                    </div>
+                    <div class="calc-item">
+                        <span class="calc-label">Durée</span>
+                        <span class="calc-value">${duree} mois</span>
+                    </div>
+                    <div class="calc-item">
+                        <span class="calc-label">Montant</span>
+                        <span class="calc-value">${this.formatCurrency(montant)}</span>
+                    </div>
+                    <div class="calc-item">
+                        <span class="calc-label">Taux annuel</span>
+                        <span class="calc-value">${tauxAnnuel}%</span>
+                    </div>
+                    <div class="calc-item">
+                        <span class="calc-label">Intérêts totaux</span>
+                        <span class="calc-value">${this.formatCurrency(totalInterets)}</span>
+                    </div>
+                    <div class="calc-item">
+                        <span class="calc-label">Coût total</span>
+                        <span class="calc-value">${this.formatCurrency(mensualite * duree)}</span>
+                    </div>
+                </div>
+            </div>
+        `;
     },
 
     /**
@@ -96,78 +140,96 @@ const PretsModule = {
      */
     async listerDemandesEnAttente() {
         try {
-            UIManager.showLoading('demandesList', 'Chargement des demandes...');
+            this.showLoading('Chargement des demandes...', 'demandesList');
             const demandes = await apiClient.getDemandesEnAttente();
             this.displayDemandes(demandes);
         } catch (error) {
-            UIManager.showAlert('pretAlert', error.message, true);
+            this.showAlert(error.message, 'error');
             document.getElementById('demandesList').innerHTML = '';
+        } finally {
+            this.hideLoading();
         }
     },
 
     /**
-     * Affiche les demandes
+     * Affiche les demandes avec design moderne
      */
     displayDemandes(demandes) {
         const container = document.getElementById('demandesList');
 
         if (!demandes || demandes.length === 0) {
-            container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Aucune demande en attente</p>';
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <h3>Aucune demande en attente</h3>
+                    <p>Les nouvelles demandes de prêt apparaîtront ici</p>
+                </div>
+            `;
             return;
         }
 
-        let html = '<div style="margin-top: 20px;">';
+        let html = '<div class="demandes-grid">';
         
-        demandes.forEach(demande => {
-            const date = new Date(demande.dateDemande).toLocaleDateString('fr-FR');
+        const isAdmin = window.localStorage.getItem('adminClient');
+
+        demandes.forEach((demande, index) => {
+            const date = new Date(demande.dateDemande).toLocaleDateString('fr-FR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
             
+            const statut = (demande.statut || 'EN_ATTENTE').toUpperCase();
+            const statutConfig = this.getStatutConfig(statut);
+
             html += `
-                <div class="card" style="border-left-color: #ed8936;">
-                    <div style="display: flex; justify-content: space-between; align-items: start;">
-                        <div style="flex: 1;">
-                            <h4 style="color: #ed8936; margin-bottom: 10px;">
-                                📋 Demande ${demande.numeroDemande}
-                            </h4>
-                            <div class="card-info">
-                                <span>Client:</span>
-                                <span>${demande.numeroClient}</span>
-                            </div>
-                            <div class="card-info">
-                                <span>Montant:</span>
-                                <span style="font-weight: bold; color: #667eea;">
-                                    ${formatCurrency(demande.montant)}
-                                </span>
-                            </div>
-                            <div class="card-info">
-                                <span>Durée:</span>
-                                <span>${demande.dureeEnMois} mois</span>
-                            </div>
-                            <div class="card-info">
-                                <span>Objet:</span>
-                                <span>${demande.objet}</span>
-                            </div>
-                            <div class="card-info">
-                                <span>Date demande:</span>
-                                <span>${date}</span>
-                            </div>
-                            <div class="card-info">
-                                <span>Statut:</span>
-                                <span style="color: #ff9800; font-weight: bold;">
-                                    ${demande.statut}
-                                </span>
-                            </div>
+                <div class="demande-card ${statutConfig.class}" data-demand-id="${demande.numeroDemande}">
+                    <div class="demande-header">
+                        <div class="demande-badge ${statutConfig.badgeClass}">
+                            <i class="${statutConfig.icon}"></i>
+                            ${statutConfig.label}
                         </div>
-                        <div class="action-btns" style="flex-direction: column;">
-                            <button class="btn btn-success" 
-                                onclick="PretsModule.approuverDemande('${demande.numeroDemande}')">
-                                ✓ Approuver
-                            </button>
-                            <button class="btn btn-danger" 
-                                onclick="PretsModule.rejeterDemande('${demande.numeroDemande}')">
-                                ✗ Rejeter
-                            </button>
-                        </div>
+                        <div class="demande-numero">#${demande.numeroDemande}</div>
                     </div>
+                    
+                    <div class="demande-client">
+                        <i class="fas fa-user"></i>
+                        <span>${demande.numeroClient}</span>
+                    </div>
+                    
+                    <div class="demande-montant">
+                        <div class="montant">${this.formatCurrency(demande.montantDemande)}</div>
+                        <div class="duree">${demande.dureeEnMois} mois</div>
+                    </div>
+                    
+                    <div class="demande-objet">
+                        <i class="fas fa-tag"></i>
+                        ${demande.objetPret || demande.objet || 'Non spécifié'}
+                    </div>
+                    
+                    <div class="demande-date">
+                        <i class="fas fa-calendar"></i>
+                        Déposée le ${date}
+                    </div>
+                    
+                    ${isAdmin && statut === 'EN_ATTENTE' ? `
+                    <div class="demande-actions">
+                        <button class="btn-action btn-approve" onclick="PretsModule.approuverDemande('${demande.numeroDemande}')">
+                            <i class="fas fa-check"></i>
+                            Approuver
+                        </button>
+                        <button class="btn-action btn-reject" onclick="PretsModule.rejeterDemande('${demande.numeroDemande}')">
+                            <i class="fas fa-times"></i>
+                            Rejeter
+                        </button>
+                    </div>
+                    ` : ''}
+                    
+                    ${statut !== 'EN_ATTENTE' ? `
+                    <div class="demande-motif">
+                        <strong>Motif:</strong> ${demande.motifRejet || 'Demande traitée'}
+                    </div>
+                    ` : ''}
                 </div>
             `;
         });
@@ -177,19 +239,50 @@ const PretsModule = {
     },
 
     /**
+     * Configuration des statuts
+     */
+    getStatutConfig(statut) {
+        const configs = {
+            'EN_ATTENTE': {
+                label: 'En attente',
+                icon: 'fas fa-clock',
+                badgeClass: 'badge-waiting',
+                class: 'demande-waiting'
+            },
+            'APPROUVEE': {
+                label: 'Approuvée',
+                icon: 'fas fa-check-circle',
+                badgeClass: 'badge-approved',
+                class: 'demande-approved'
+            },
+            'REJETEE': {
+                label: 'Rejetée',
+                icon: 'fas fa-times-circle',
+                badgeClass: 'badge-rejected',
+                class: 'demande-rejected'
+            }
+        };
+        
+        return configs[statut] || configs['EN_ATTENTE'];
+    },
+
+    /**
      * Approuver une demande
      */
     async approuverDemande(numeroDemande) {
-        if (!confirm(`Confirmer l'approbation de la demande ${numeroDemande} ?`)) {
+        if (!confirm(`Êtes-vous sûr de vouloir approuver la demande ${numeroDemande} ?`)) {
             return;
         }
 
         try {
+            this.showLoading('Traitement en cours...');
             const result = await apiClient.approuverDemande(numeroDemande);
-            UIManager.showAlert('pretAlert', result.message || 'Demande approuvée');
+            this.showAlert('✅ Demande approuvée avec succès', 'success');
             this.listerDemandesEnAttente();
         } catch (error) {
-            UIManager.showAlert('pretAlert', error.message, true);
+            this.showAlert(error.message, 'error');
+        } finally {
+            this.hideLoading();
         }
     },
 
@@ -197,24 +290,73 @@ const PretsModule = {
      * Rejeter une demande
      */
     async rejeterDemande(numeroDemande) {
-        const motif = prompt('Motif du rejet:');
+        const motif = prompt('Veuillez saisir le motif du rejet:');
         
         if (!motif) {
+            this.showAlert('Le motif est obligatoire pour rejeter une demande', 'warning');
             return;
         }
 
         try {
+            this.showLoading('Traitement en cours...');
             const result = await apiClient.rejeterDemande(numeroDemande, motif);
-            UIManager.showAlert('pretAlert', result.message || 'Demande rejetée');
+            this.showAlert('❌ Demande rejetée', 'success');
             this.listerDemandesEnAttente();
         } catch (error) {
-            UIManager.showAlert('pretAlert', error.message, true);
+            this.showAlert(error.message, 'error');
+        } finally {
+            this.hideLoading();
         }
     },
 
     /**
-     * Réinitialise le formulaire de demande
+     * Mettre à jour le statut admin
      */
+    updateAdminStatus(adminNumero) {
+        const status = document.getElementById('adminStatus');
+        if (status) {
+            status.innerHTML = `
+                <div class="admin-status-active">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Connecté en tant qu'admin: <strong>${adminNumero}</strong></span>
+                </div>
+            `;
+        }
+    },
+
+    /**
+     * Helpers
+     */
+    showAlert(message, type = 'info') {
+        // Implémentez votre système d'alertes ici
+        console.log(`[${type.toUpperCase()}] ${message}`);
+        // Exemple basique :
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} show`;
+        alertDiv.textContent = message;
+        document.getElementById('pretAlert').appendChild(alertDiv);
+        
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 5000);
+    },
+
+    showLoading(message = 'Chargement...', containerId = null) {
+        // Implémentez votre système de loading
+        console.log(`[LOADING] ${message}`);
+    },
+
+    hideLoading() {
+        // Implémentez votre système de loading
+    },
+
+    formatCurrency(amount) {
+        return new Intl.NumberFormat('fr-FR', {
+            style: 'currency',
+            currency: 'EUR'
+        }).format(amount);
+    },
+
     clearDemandeForm() {
         document.getElementById('pretClientNumero').value = '';
         document.getElementById('pretMontant').value = '';

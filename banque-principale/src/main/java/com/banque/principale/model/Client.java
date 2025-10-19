@@ -12,6 +12,10 @@ public class Client {
     private String telephone;
     private Date dateInscription;
 
+    // Authentification et rôle
+    private String role;         // USER | ADMIN
+    private String motDePasse;   // en clair pour la démo (à hasher en prod)
+
     // Soldes des différents comptes
     private BigDecimal soldeCompteCourant = BigDecimal.ZERO;
     private BigDecimal soldeCompteDepot = BigDecimal.ZERO;
@@ -116,6 +120,22 @@ public class Client {
 
     public String getNumeroCompteDepot() {
         return "DEP-" + numeroClient;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getMotDePasse() {
+        return motDePasse;
+    }
+
+    public void setMotDePasse(String motDePasse) {
+        this.motDePasse = motDePasse;
     }
 
     @Override

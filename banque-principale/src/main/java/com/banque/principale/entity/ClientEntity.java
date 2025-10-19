@@ -27,6 +27,12 @@ public class ClientEntity {
     @Column(name = "date_inscription", nullable = false)
     private Date dateInscription = new Date();
 
+    @Column(name = "role", length = 20)
+    private String role;
+
+    @Column(name = "mot_de_passe", length = 255)
+    private String motDePasse;
+
     public String getNumeroClient() { return numeroClient; }
     public void setNumeroClient(String numeroClient) { this.numeroClient = numeroClient; }
 
@@ -44,4 +50,10 @@ public class ClientEntity {
 
     public Date getDateInscription() { return dateInscription; }
     public void setDateInscription(Date dateInscription) { this.dateInscription = dateInscription; }
+
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
+
+    public String getMotDePasse() { return motDePasse; }
+    public void setMotDePasse(String motDePasse) { this.motDePasse = motDePasse; }
 }

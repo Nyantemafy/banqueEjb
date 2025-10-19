@@ -30,12 +30,24 @@ const ClientsModule = {
             numeroClient: document.getElementById('clientNumero').value.trim(),
             nom: document.getElementById('clientNom').value.trim(),
             prenom: document.getElementById('clientPrenom').value.trim(),
-            email: document.getElementById('clientEmail').value.trim()
+            email: document.getElementById('clientEmail').value.trim(),
+            motDePasse: (document.getElementById('clientPassword')?.value || '').trim(),
+            role: (document.getElementById('clientRole')?.value || 'USER').toUpperCase()
         };
 
         // Validation
         if (!clientData.numeroClient || !clientData.nom || !clientData.prenom) {
             UIManager.showAlert('clientAlert', 'Veuillez remplir tous les champs obligatoires', true);
+            return;
+        }
+
+        if (!clientData.motDePasse) {
+            UIManager.showAlert('clientAlert', 'Veuillez saisir un mot de passe', true);
+            return;
+        }
+
+        if (!clientData.role || (clientData.role !== 'USER' && clientData.role !== 'ADMIN')) {
+            UIManager.showAlert('clientAlert', 'Rôle invalide (USER ou ADMIN)', true);
             return;
         }
 

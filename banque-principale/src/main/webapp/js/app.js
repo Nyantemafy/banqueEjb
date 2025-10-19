@@ -3,14 +3,56 @@ const UIManager = {
      * Affiche un message d'alerte
      */
     showAlert(elementId, message, isError = false) {
-        const alert = document.getElementById(elementId);
-        if (!alert) return;
+        let container = document.getElementById('ui-toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'ui-toast-container';
+            container.style.position = 'fixed';
+            container.style.top = '16px';
+            container.style.right = '16px';
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
+            container.style.gap = '10px';
+            container.style.zIndex = '9999';
+            document.body.appendChild(container);
+        }
 
-        alert.className = `alert ${isError ? 'alert-error' : 'alert-success'} show`;
-        alert.textContent = message;
+        const toast = document.createElement('div');
+        toast.style.minWidth = '260px';
+        toast.style.maxWidth = '360px';
+        toast.style.padding = '12px 14px';
+        toast.style.borderRadius = '8px';
+        toast.style.boxShadow = '0 6px 20px rgba(0,0,0,0.15)';
+        toast.style.color = isError ? '#7f1d1d' : '#064e3b';
+        toast.style.background = isError ? '#fee2e2' : '#d1fae5';
+        toast.style.border = isError ? '1px solid #fecaca' : '1px solid #a7f3d0';
+        toast.style.display = 'flex';
+        toast.style.alignItems = 'center';
+        toast.style.justifyContent = 'space-between';
+        toast.style.gap = '12px';
+
+        const text = document.createElement('div');
+        text.textContent = message;
+        text.style.flex = '1';
+
+        const btn = document.createElement('button');
+        btn.textContent = '×';
+        btn.style.border = 'none';
+        btn.style.background = 'transparent';
+        btn.style.cursor = 'pointer';
+        btn.style.fontSize = '18px';
+        btn.style.lineHeight = '1';
+        btn.style.color = 'inherit';
+        btn.onclick = () => {
+            if (toast && toast.parentNode) toast.parentNode.removeChild(toast);
+        };
+
+        toast.appendChild(text);
+        toast.appendChild(btn);
+        container.appendChild(toast);
 
         setTimeout(() => {
-            alert.classList.remove('show');
+            if (toast && toast.parentNode) toast.parentNode.removeChild(toast);
         }, CONFIG.ALERT_DURATION);
     },
 
