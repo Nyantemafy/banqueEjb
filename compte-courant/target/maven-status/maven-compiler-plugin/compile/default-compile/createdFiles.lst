@@ -1,4 +1,0 @@
-com\banque\comptecourant\ejb\CompteCourantBean.class
-com\banque\comptecourant\ejb\CompteCourantRemote.class
-com\banque\comptecourant\model\Transaction.class
-com\banque\comptecourant\entity\CompteCourant.class
