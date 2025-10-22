@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-@Stateless
+@Stateless(name = "CompteCourantBean")
 public class CompteBean implements CompteRemote {
 
     @PersistenceContext(unitName = "BanquePU")

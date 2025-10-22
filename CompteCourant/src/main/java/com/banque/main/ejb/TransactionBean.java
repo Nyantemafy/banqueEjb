@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-@Stateless
+@Stateless(name = "TransactionBeanCC")
 public class TransactionBean implements TransactionRemote {
 
     @PersistenceContext(unitName = "BanquePU")
@@ -30,12 +30,13 @@ public class TransactionBean implements TransactionRemote {
             }
 
             Transaction transaction = new Transaction();
-            transaction.setIdTransaction(generateTransactionId());
             transaction.setMontant(montant);
             transaction.setDateTransaction(new Date());
             transaction.setCompteCourant(compte);
+            
+            // Utiliser le type fourni
             transaction.setType(type);
-
+            
             em.persist(transaction);
             return transaction;
         } catch (Exception e) {
@@ -81,10 +82,5 @@ public class TransactionBean implements TransactionRemote {
         return em.find(Transaction.class, transactionId);
     }
 
-    private Integer generateTransactionId() {
-        TypedQuery<Integer> query = em.createQuery(
-            "SELECT MAX(t.idTransaction) FROM Transaction t", Integer.class);
-        Integer maxId = query.getSingleResult();
-        return (maxId != null ? maxId : 0) + 1;
-    }
+    
 }

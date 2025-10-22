@@ -1,3 +1,12 @@
+INSERT INTO compteDepot (montant_initial, taux_interet, date_debut, date_fin, id_user, id_status) VALUES
+(1000000, 5.5, '2025-01-01', '2025-12-31', 1, 1),
+(5000000, 6.2, '2025-02-01', '2026-02-01', 2, 1);
+
+INSERT INTO depot_operation (montant, date_op, id_compteDepot, id_type) VALUES
+(1000000, '2025-01-01', 1, 1),   
+(50000, '2025-03-01', 1, 2),     
+(5000000, '2025-02-01', 2, 1);   
+
 -- Insérer des status
 INSERT INTO status (id_status, libelle) VALUES (1, 'Actif');
 INSERT INTO status (id_status, libelle) VALUES (2, 'Inactif');
