@@ -5,6 +5,7 @@ import com.banque.comptecourant.entity.Transaction;
 import javax.ejb.Remote;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Date;
 
 @Remote
 public interface CompteRemote {
@@ -14,6 +15,8 @@ public interface CompteRemote {
     String getEtat(Integer compteId);
     boolean depot(Integer compteId, BigDecimal montant, String modeDepot);
     boolean retrait(Integer compteId, BigDecimal montant, String modeRetrait);
+    boolean depotAvecDate(Integer compteId, BigDecimal montant, String modeDepot, Date date);
+    boolean retraitAvecDate(Integer compteId, BigDecimal montant, String modeRetrait, Date date);
     List<Transaction> getTransactions(Integer compteId);
     List<Transaction> getRecentTransactions(Integer compteId, int limit);
     Integer createUtilisateurEtCompte(String username,

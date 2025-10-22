@@ -37,6 +37,66 @@ public class CompteBean implements CompteRemote {
     }
 
     @Override
+    public boolean depotAvecDate(Integer compteId, BigDecimal montant, String modeDepot, Date date) {
+        try {
+            CompteCourant compte = em.find(CompteCourant.class, compteId);
+            if (compte == null || montant.compareTo(BigDecimal.ZERO) <= 0) {
+                return false;
+            }
+
+            BigDecimal nouveauSolde = compte.getSolde().add(montant);
+            compte.setSolde(nouveauSolde);
+            em.merge(compte);
+
+            Transaction transaction = new Transaction();
+            transaction.setMontant(montant);
+            transaction.setDateTransaction(date != null ? date : new Date());
+            transaction.setCompteCourant(compte);
+
+            Type type = getTypeByLibelle("DEPOT");
+            transaction.setType(type);
+
+            em.persist(transaction);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean retraitAvecDate(Integer compteId, BigDecimal montant, String modeRetrait, Date date) {
+        try {
+            CompteCourant compte = em.find(CompteCourant.class, compteId);
+            if (compte == null || montant.compareTo(BigDecimal.ZERO) <= 0) {
+                return false;
+            }
+
+            if (compte.getSolde().compareTo(montant) < 0) {
+                return false; // Solde insuffisant
+            }
+
+            BigDecimal nouveauSolde = compte.getSolde().subtract(montant);
+            compte.setSolde(nouveauSolde);
+            em.merge(compte);
+
+            Transaction transaction = new Transaction();
+            transaction.setMontant(montant.negate());
+            transaction.setDateTransaction(date != null ? date : new Date());
+            transaction.setCompteCourant(compte);
+
+            Type type = getTypeByLibelle("RETRAIT");
+            transaction.setType(type);
+
+            em.persist(transaction);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
     public List<CompteCourant> getAllComptes() {
         TypedQuery<CompteCourant> query = em.createQuery(
             "SELECT c FROM CompteCourant c", CompteCourant.class);

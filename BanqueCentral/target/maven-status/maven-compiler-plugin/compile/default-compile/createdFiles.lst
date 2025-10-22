@@ -1,0 +1,12 @@
+com\banque\central\util\EJBLocator.class
+com\banque\central\servlet\AuthFilter.class
+com\banque\central\servlet\RootServlet.class
+com\banque\central\servlet\DashboardServlet.class
+com\banque\central\servlet\LogoutServlet.class
+com\banque\central\model\UserSession.class
+com\banque\central\servlet\UtilisateurServlet.class
+com\banque\central\servlet\LoginServlet.class
+com\banque\central\ejb\BanqueBean.class
+com\banque\central\servlet\ProfileServlet.class
+com\banque\central\model\DashboardData.class
+com\banque\central\servlet\CompteServlet.class

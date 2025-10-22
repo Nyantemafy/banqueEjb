@@ -18,21 +18,11 @@
                     <button class="menu-toggle" id="menuToggle">☰</button>
                     
                     <div class="nav-links" id="navLinks">
-                        <a href="dashboard.html" class="nav-link">
-                            📊 Tableau de bord
-                        </a>
-                        <a href="compte-courant.html" class="nav-link active">
-                            💳 Compte Courant
-                        </a>
-                        <a href="compte-depot.html" class="nav-link">
-                            💰 Épargne
-                        </a>
-                        <a href="credit.html" class="nav-link">
-                            🏠 Crédits
-                        </a>
-                        <a href="admin.html" class="nav-link">
-                            ⚙️ Administration
-                        </a>
+                        <a href="dashboard.html" class="nav-link">Tableau de bord</a>
+                        <a href="compte-courant.html" class="nav-link active">Compte Courant</a>
+                        <a href="compte-depot.html" class="nav-link">Épargne</a>
+                        <a href="credit.html" class="nav-link">Crédits</a>
+                        <a href="admin.html" class="nav-link">Administration</a>
                     </div>
                     
                     <div class="user-menu">
@@ -45,19 +35,9 @@
                                 </div>
                             </div>
                             <div class="dropdown-menu">
-                                <a href="profil.html" class="dropdown-item">
-                                    👤 Mon profil
-                                </a>
-                                <a href="parametres.html" class="dropdown-item">
-                                    ⚙️ Paramètres
-                                </a>
-                                <a href="aide.html" class="dropdown-item">
-                                    ❓ Aide & Support
-                                </a>
+                                <a href="profil.html" class="dropdown-item">Mon profil</a>
                                 <div class="dropdown-divider"></div>
-                                <a href="index.html" class="dropdown-item">
-                                    🚪 Déconnexion
-                                </a>
+                                <a href="index.html" class="dropdown-item">Déconnexion</a>
                             </div>
                         </div>
                     </div>
@@ -87,91 +67,65 @@
                 </div>
 
                 <div class="nav-tabs">
-                    <div class="nav-tab active">Opérations</div>
-                    <div class="nav-tab">Dépôt</div>
-                    <div class="nav-tab">Retrait</div>
-                    <div class="nav-tab">Virements</div>
+                    <div class="nav-tab active" data-tab="depot">Dépôt</div>
+                    <div class="nav-tab" data-tab="retrait">Retrait</div>
+                    <div class="nav-tab" data-tab="historique">Historique</div>
                 </div>
 
                 <!-- Formulaire de dépôt -->
-                <div class="card">
+                <div class="card" id="depot-card">
                     <h2>Effectuer un dépôt</h2>
                     <form id="form-depot">
                         <div class="form-group">
                             <label for="montant-depot">Montant</label>
-                            <input type="number" id="montant-depot" name="montant-depot" min="1" step="0.01" required>
+                            <input type="text" id="montant-depot" name="montant-depot" placeholder="Ex: 100,00" required>
                         </div>
                         <div class="form-group">
-                            <label for="mode-depot">Mode de dépôt</label>
-                            <select id="mode-depot" name="mode-depot" required>
-                                <option value="">Sélectionnez un mode</option>
-                                <option value="especes">Espèces</option>
-                                <option value="cheque">Chèque</option>
-                                <option value="virement">Virement</option>
-                            </select>
+                            <label for="date-depot">Date de l'opération</label>
+                            <input type="date" id="date-depot">
                         </div>
                         <button type="submit" class="btn-primary">Confirmer le dépôt</button>
                     </form>
                 </div>
 
                 <!-- Formulaire de retrait -->
-                <div class="card">
+                <div class="card" id="retrait-card" style="display:none">
                     <h2>Effectuer un retrait</h2>
                     <form id="form-retrait">
                         <div class="form-group">
                             <label for="montant-retrait">Montant</label>
-                            <input type="number" id="montant-retrait" name="montant-retrait" min="1" step="0.01" required>
+                            <input type="text" id="montant-retrait" name="montant-retrait" placeholder="Ex: 50,00" required>
                         </div>
                         <div class="form-group">
-                            <label for="mode-retrait">Mode de retrait</label>
-                            <select id="mode-retrait" name="mode-retrait" required>
-                                <option value="">Sélectionnez un mode</option>
-                                <option value="dab">Distributeur</option>
-                                <option value="guichet">Guichet</option>
-                            </select>
+                            <label for="date-retrait">Date de l'opération</label>
+                            <input type="date" id="date-retrait">
                         </div>
                         <button type="submit" class="btn-primary">Confirmer le retrait</button>
                     </form>
                 </div>
 
                 <!-- Historique des transactions -->
-                <div class="card">
+                <div class="card" id="historique-card" style="display:none">
                     <h2>Historique des transactions</h2>
+                    <form id="form-filtre-histo" style="display:flex; gap: 0.5rem; align-items: end; flex-wrap: wrap; margin-bottom: 0.75rem;">
+                        <div class="form-group">
+                            <label for="from-date">Du</label>
+                            <input type="date" id="from-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="to-date">Au</label>
+                            <input type="date" id="to-date">
+                        </div>
+                        <button type="submit" class="btn-secondary">Filtrer</button>
+                    </form>
                     <table class="table" id="historique-transactions">
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                <th>Description</th>
                                 <th>Montant</th>
-                                <th>Solde après</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>10/11/2023</td>
-                                <td>Retrait DAB</td>
-                                <td class="montant-negatif">-50,00 €</td>
-                                <td>5 420,50 €</td>
-                            </tr>
-                            <tr>
-                                <td>08/11/2023</td>
-                                <td>Virement reçu - Marie Martin</td>
-                                <td class="montant-positif">+1 200,00 €</td>
-                                <td>5 470,50 €</td>
-                            </tr>
-                            <tr>
-                                <td>05/11/2023</td>
-                                <td>Prélèvement EDF</td>
-                                <td class="montant-negatif">-85,30 €</td>
-                                <td>4 270,50 €</td>
-                            </tr>
-                            <tr>
-                                <td>01/11/2023</td>
-                                <td>Dépôt espèce</td>
-                                <td class="montant-positif">+500,00 €</td>
-                                <td>4 355,80 €</td>
-                            </tr>
-                        </tbody>
+                        <tbody id="tbody-transactions"></tbody>
                     </table>
                 </div>
             </div>
@@ -184,19 +138,124 @@
     
     <script src="js/app.js"></script>
     <script>
-        document.getElementById('form-depot').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const montant = document.getElementById('montant-depot').value;
-            alert(`Dépôt de ${montant} € effectué avec succès`);
+      const COMPTE_API = 'api/compte'; // servlet CompteServlet -> EJB
+      let gUserId = null;
+
+      async function fetchJSON(url, options){
+        const res = await fetch(url, options);
+        const data = await res.json().catch(() => ({}));
+        if(!res.ok){ throw new Error(data.error || res.statusText || 'Erreur'); }
+        return data;
+      }
+
+      async function loadUser(){
+        const profile = await fetchJSON('api/profile');
+        gUserId = profile.userId;
+      }
+
+      async function loadCompte(){
+        const data = await fetchJSON(`${COMPTE_API}/solde`);
+        const solde = (data && data.solde!=null) ? Number(data.solde) : null;
+        if(solde!=null){
+          document.getElementById('solde-compte-courant').textContent = solde.toLocaleString('fr-FR', {style:'currency', currency:'EUR'});
+        }
+      }
+
+      function renderTransactions(list){
+        const tbody = document.getElementById('tbody-transactions');
+        tbody.innerHTML = '';
+        (list||[]).forEach(t => {
+          const tr = document.createElement('tr');
+          const dateStr = t.dateTransaction ? new Date(t.dateTransaction).toLocaleDateString('fr-FR') : '';
+          const montant = Number(t.montant||0);
+          tr.innerHTML = `
+            <td>${dateStr}</td>
+            <td class="${montant<0?'montant-negatif':'montant-positif'}">${montant.toLocaleString('fr-FR',{style:'currency',currency:'EUR'})}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      async function loadHistorique(){
+        const from = (document.getElementById('from-date')?.value||'');
+        const to = (document.getElementById('to-date')?.value||'');
+        const q = new URLSearchParams();
+        if(from) q.set('from', from);
+        if(to) q.set('to', to);
+        const url = `${COMPTE_API}/transactions${q.toString()?('?' + q.toString()):''}`;
+        const data = await fetchJSON(url);
+        renderTransactions(data||[]);
+      }
+
+      function showTab(name){
+        const depot = document.getElementById('depot-card');
+        const retrait = document.getElementById('retrait-card');
+        const hist = document.getElementById('historique-card');
+        depot.style.display = (name==='depot') ? '' : 'none';
+        retrait.style.display = (name==='retrait') ? '' : 'none';
+        hist.style.display = (name==='historique') ? '' : 'none';
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.tab===name));
+      }
+
+      function bindTabs(){
+        document.querySelectorAll('.nav-tab').forEach(tab => tab.addEventListener('click', async () => {
+          const name = tab.dataset.tab;
+          showTab(name);
+          if(name==='historique') await loadHistorique();
+        }));
+      }
+
+      function parseAmount(val){
+        if(typeof val !== 'string') return Number(val||0);
+        // normalize comma to dot
+        const n = val.replace(',', '.');
+        return Number(n);
+      }
+
+      function bindForms(){
+        document.getElementById('form-depot').addEventListener('submit', async function(e){
+          e.preventDefault();
+          try{
+            const montant = parseAmount(document.getElementById('montant-depot').value||'0');
+            if(!montant || montant<=0) throw new Error('Montant invalide');
+            const dateDepot = (document.getElementById('date-depot')?.value||'');
+            const body = new URLSearchParams({ action: 'depot', montant: String(montant), mode: '' });
+            if(dateDepot) body.set('date', dateDepot);
+            await fetchJSON(`${COMPTE_API}/`, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body });
             this.reset();
+            await loadCompte();
+          }catch(err){ alert('Erreur dépôt: '+err.message); }
         });
 
-        document.getElementById('form-retrait').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const montant = document.getElementById('montant-retrait').value;
-            alert(`Retrait de ${montant} € effectué avec succès`);
+        document.getElementById('form-retrait').addEventListener('submit', async function(e){
+          e.preventDefault();
+          try{
+            const montant = parseAmount(document.getElementById('montant-retrait').value||'0');
+            if(!montant || montant<=0) throw new Error('Montant invalide');
+            const dateRetrait = (document.getElementById('date-retrait')?.value||'');
+            const body = new URLSearchParams({ action: 'retrait', montant: String(montant), mode: '' });
+            if(dateRetrait) body.set('date', dateRetrait);
+            await fetchJSON(`${COMPTE_API}/`, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body });
             this.reset();
+            await loadCompte();
+          }catch(err){ alert('Erreur retrait: '+err.message); }
         });
+
+        const filtre = document.getElementById('form-filtre-histo');
+        if(filtre){
+          filtre.addEventListener('submit', async (e) => { e.preventDefault(); await loadHistorique(); });
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        bindTabs();
+        bindForms();
+        showTab('depot');
+        try{
+          await loadUser();
+          await loadCompte();
+        }catch(err){ console.error(err); }
+      });
     </script>
 </body>
 </html>

@@ -31,7 +31,7 @@ public class EJBLocator {
     }
 
     public static Object lookupCompteBean() throws NamingException {
-        String jndiName = "java:global/CompteCourant/CompteBean!com.banque.comptecourant.remote.CompteRemote";
+        String jndiName = "java:global/CompteCourant/CompteCourantBean!com.banque.comptecourant.remote.CompteRemote";
         return context.lookup(jndiName);
     }
 
