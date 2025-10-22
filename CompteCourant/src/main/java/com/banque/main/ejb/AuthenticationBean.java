@@ -1,10 +1,8 @@
-// ==================== AuthenticationBean.java ====================
 package com.banque.comptecourant.ejb;
 
 import com.banque.comptecourant.entity.Utilisateur;
 import com.banque.comptecourant.entity.Direction;
 import com.banque.comptecourant.entity.Action;
-import com.banque.comptecourant.entity.ActionRole;
 import com.banque.comptecourant.remote.AuthenticationRemote;
 
 import javax.ejb.Stateful;
@@ -13,8 +11,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 @Stateful
 public class AuthenticationBean implements AuthenticationRemote, Serializable {
@@ -30,73 +26,85 @@ public class AuthenticationBean implements AuthenticationRemote, Serializable {
 
     @Override
     public Utilisateur authenticate(String username, String password) {
-        TypedQuery<Utilisateur> query = em.createQuery(
-                "SELECT u FROM Utilisateur u WHERE u.username = :username AND u.password = :password",
+        try {
+            TypedQuery<Utilisateur> query = em.createQuery(
+                "SELECT u FROM Utilisateur u WHERE u.username = :username AND u.password = :password", 
                 Utilisateur.class);
-        query.setParameter("username", username);
-        query.setParameter("password", password);
-        List<Utilisateur> result = query.getResultList();
-        if (result.isEmpty()) {
-            authenticated = false;
-            currentUser = null;
-            userDirections = null;
-            userActions = null;
-            return null;
-        }
-        currentUser = result.get(0);
-        authenticated = true;
-        // Directions: based on schema, user has a single Direction; we expose as array
-        List<Direction> dirs = new ArrayList<>();
-        if (currentUser.getDirection() != null) {
-            dirs.add(currentUser.getDirection());
-        }
-        userDirections = dirs.toArray(new Direction[0]);
-        // Actions: from user's ActionRole mapping
-        List<Action> acts = new ArrayList<>();
-        if (currentUser.getActionRole() != null && currentUser.getActionRole().getAction() != null) {
-            acts.add(currentUser.getActionRole().getAction());
-        } else {
-            // Optionally, load additional actions by role if needed
-            if (currentUser.getActionRole() != null && currentUser.getActionRole().getRole() != null) {
-                TypedQuery<ActionRole> arq = em.createQuery(
-                        "SELECT ar FROM ActionRole ar WHERE ar.role.idRole = :rid", ActionRole.class);
-                arq.setParameter("rid", currentUser.getActionRole().getRole().getIdRole());
-                for (ActionRole ar : arq.getResultList()) {
-                    if (ar.getAction() != null) acts.add(ar.getAction());
-                }
+            query.setParameter("username", username);
+            query.setParameter("password", password);
+            
+            currentUser = query.getSingleResult();
+            
+            if (currentUser != null && currentUser.getStatus().getLibelle().equals("Actif")) {
+                authenticated = true;
+                
+                // Charger les directions
+                userDirections = getUserDirections(currentUser.getIdUser());
+                
+                // Charger les actions
+                userActions = getUserActions(currentUser.getIdUser());
+                
+                return currentUser;
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        userActions = acts.toArray(new Action[0]);
-        return currentUser;
+        authenticated = false;
+        return null;
     }
 
     @Override
     public Direction[] getUserDirections(Integer userId) {
-        if (!authenticated || currentUser == null || !currentUser.getIdUser().equals(userId)) {
+        try {
+            TypedQuery<Direction> query = em.createQuery(
+                "SELECT d FROM Direction d JOIN Utilisateur u ON u.direction.idDirection = d.idDirection WHERE u.idUser = :userId",
+                Direction.class);
+            query.setParameter("userId", userId);
+            return query.getResultList().toArray(new Direction[0]);
+        } catch (Exception e) {
+            e.printStackTrace();
             return new Direction[0];
         }
-        return userDirections != null ? userDirections : new Direction[0];
     }
 
     @Override
     public Action[] getUserActions(Integer userId) {
-        if (!authenticated || currentUser == null || !currentUser.getIdUser().equals(userId)) {
+        try {
+            TypedQuery<Action> query = em.createQuery(
+                "SELECT a FROM Action a JOIN ActionRole ar ON ar.action.idAction = a.idAction " +
+                "JOIN Utilisateur u ON u.actionRole.idActionRole = ar.idActionRole WHERE u.idUser = :userId",
+                Action.class);
+            query.setParameter("userId", userId);
+            return query.getResultList().toArray(new Action[0]);
+        } catch (Exception e) {
+            e.printStackTrace();
             return new Action[0];
         }
-        return userActions != null ? userActions : new Action[0];
-    }
-
-    @Override
-    public boolean isAuthenticated() {
-        return authenticated;
     }
 
     @Override
     @Remove
     public void logout() {
-        authenticated = false;
         currentUser = null;
         userDirections = null;
         userActions = null;
+        authenticated = false;
+    }
+
+    @Override
+    public boolean isAuthenticated() {
+        return authenticated && currentUser != null;
+    }
+
+    public Utilisateur getCurrentUser() {
+        return currentUser;
+    }
+
+    public Direction[] getCurrentUserDirections() {
+        return userDirections;
+    }
+
+    public Action[] getCurrentUserActions() {
+        return userActions;
     }
 }
