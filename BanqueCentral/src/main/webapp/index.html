@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banque Centrale - Connexion</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>Banque Centrale</h1>
+                </div>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="login-card">
+                <h2>Connexion</h2>
+                
+                <div id="error-message" style="display: none; margin-bottom: 15px; padding: 10px; background-color: #f8d7da; color: #721c24; border-radius: 4px;">
+                </div>
+                
+                <form id="login-form" method="post" action="login">
+                    <div class="form-group">
+                        <label for="username">Nom d'utilisateur</label>
+                        <input type="text" id="username" name="username" required autofocus>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Mot de passe</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Se connecter</button>
+                </form>
+                
+                <div style="margin-top: 20px; text-align: center; font-size: 0.9rem; color: #666;">
+                    <p><strong>Comptes de test :</strong></p>
+                    <p>Admin : admin / admin123</p>
+                    <p>Client : client1 / client123</p>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="footer">
+            <p>&copy; 2023 Banque Centrale. Tous droits réservés.</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Vérifier s'il y a une erreur dans l'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        
+        if (error) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.style.display = 'block';
+            
+            switch(error) {
+                case 'invalid':
+                    errorDiv.textContent = 'Identifiants incorrects. Veuillez réessayer.';
+                    break;
+                case 'system':
+                    errorDiv.textContent = 'Erreur système. Veuillez contacter l\'administrateur.';
+                    break;
+                case 'auth':
+                    errorDiv.textContent = 'Vous devez être connecté pour accéder à cette page.';
+                    break;
+                default:
+                    errorDiv.textContent = 'Une erreur est survenue.';
+            }
+        }
+        
+        // Animation du formulaire
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            const button = this.querySelector('button[type="submit"]');
+            button.textContent = 'Connexion...';
+            button.disabled = true;
+        });
+    </script>
+</body>
+</html>

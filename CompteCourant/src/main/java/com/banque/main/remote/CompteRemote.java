@@ -11,8 +11,15 @@ public interface CompteRemote {
     CompteCourant getCompteByUserId(Integer userId);
     List<CompteCourant> getAllComptes();
     BigDecimal getSolde(Integer compteId);
+    String getEtat(Integer compteId);
     boolean depot(Integer compteId, BigDecimal montant, String modeDepot);
     boolean retrait(Integer compteId, BigDecimal montant, String modeRetrait);
     List<Transaction> getTransactions(Integer compteId);
     List<Transaction> getRecentTransactions(Integer compteId, int limit);
+    Integer createUtilisateurEtCompte(String username,
+                                      String password,
+                                      Integer idRole,
+                                      Integer idDirection,
+                                      Integer idStatus,
+                                      BigDecimal soldeInitial);
 }

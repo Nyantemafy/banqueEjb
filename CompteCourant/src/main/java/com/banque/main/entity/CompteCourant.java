@@ -12,6 +12,7 @@ public class CompteCourant implements Serializable {
 
     @Id
     @Column(name = "id_compteCourant")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idCompteCourant;
 
     @Column(name = "solde", precision = 15, scale = 2)

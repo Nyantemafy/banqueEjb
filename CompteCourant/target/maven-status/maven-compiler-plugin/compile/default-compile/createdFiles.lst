@@ -9,10 +9,8 @@ com\banque\comptecourant\entity\Status.class
 com\banque\comptecourant\entity\Direction.class
 com\banque\comptecourant\remote\AuthenticationRemote.class
 com\banque\comptecourant\entity\ActionRole.class
-com\banque\comptecourant\servlet\LoginServlet.class
 com\banque\comptecourant\entity\Type.class
 com\banque\comptecourant\ejb\DirectionBean.class
-com\banque\comptecourant\servlet\LogoutServlet.class
 com\banque\comptecourant\ejb\TransactionBean.class
 com\banque\comptecourant\entity\Action.class
 com\banque\comptecourant\ejb\ActionControleBean.class

@@ -129,3 +129,57 @@ CREATE TABLE credit_echeance(
    FOREIGN KEY(id_status) REFERENCES status(id_status),
    FOREIGN KEY(id_credit) REFERENCES credit(id_credit)
 );
+
+ALTER TABLE role
+    ALTER COLUMN id_role ADD GENERATED ALWAYS AS IDENTITY;
+
+ALTER TABLE action
+    ALTER COLUMN id_action ADD GENERATED ALWAYS AS IDENTITY;
+
+ALTER TABLE direction
+    ALTER COLUMN id_direction ADD GENERATED ALWAYS AS IDENTITY;
+
+ALTER TABLE actionRole
+    ALTER COLUMN id_actionRole ADD GENERATED ALWAYS AS IDENTITY;
+
+ALTER TABLE status
+    ALTER COLUMN id_status ADD GENERATED ALWAYS AS IDENTITY;
+
+ALTER TABLE type
+    ALTER COLUMN id_type ADD GENERATED ALWAYS AS IDENTITY;
+
+ALTER TABLE utilisateur
+    ALTER COLUMN id_user ADD GENERATED ALWAYS AS IDENTITY;
+
+ALTER TABLE compteCourant
+    ALTER COLUMN id_compteCourant ADD GENERATED ALWAYS AS IDENTITY;
+
+ALTER TABLE transaction
+    ALTER COLUMN id_transaction ADD GENERATED ALWAYS AS IDENTITY;
+
+ALTER TABLE compteDepot
+    ALTER COLUMN id_compteDepot ADD GENERATED ALWAYS AS IDENTITY;
+
+ALTER TABLE depot_operation
+    ALTER COLUMN id_op ADD GENERATED ALWAYS AS IDENTITY;
+
+ALTER TABLE credit
+    ALTER COLUMN id_credit ADD GENERATED ALWAYS AS IDENTITY;
+
+ALTER TABLE credit_echeance
+    ALTER COLUMN id_echeance ADD GENERATED ALWAYS AS IDENTITY;
+
+-- Utilisateur
+SELECT setval(pg_get_serial_sequence('utilisateur','id_user'),
+              COALESCE((SELECT MAX(id_user) FROM utilisateur),0)+1,
+              false);
+
+-- Compte Courant
+SELECT setval(pg_get_serial_sequence('comptecourant','id_comptecourant'),
+              COALESCE((SELECT MAX(id_comptecourant) FROM "comptecourant"),0)+1,
+              false);
+
+-- Transaction
+SELECT setval(pg_get_serial_sequence('transaction','id_transaction'),
+              COALESCE((SELECT MAX(id_transaction) FROM transaction),0)+1,
+              false);

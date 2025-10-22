@@ -4,6 +4,10 @@ import com.banque.comptecourant.entity.CompteCourant;
 import com.banque.comptecourant.entity.Transaction;
 import com.banque.comptecourant.entity.Type;
 import com.banque.comptecourant.remote.CompteRemote;
+import com.banque.comptecourant.entity.Utilisateur;
+import com.banque.comptecourant.entity.Direction;
+import com.banque.comptecourant.entity.Status;
+import com.banque.comptecourant.entity.Role;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -46,6 +50,15 @@ public class CompteBean implements CompteRemote {
     }
 
     @Override
+    public String getEtat(Integer compteId) {
+        CompteCourant compte = em.find(CompteCourant.class, compteId);
+        if (compte == null || compte.getStatus() == null) {
+            return null;
+        }
+        return compte.getStatus().getLibelle();
+    }
+
+    @Override
     public boolean depot(Integer compteId, BigDecimal montant, String modeDepot) {
         try {
             CompteCourant compte = em.find(CompteCourant.class, compteId);
@@ -60,7 +73,6 @@ public class CompteBean implements CompteRemote {
 
             // Créer la transaction
             Transaction transaction = new Transaction();
-            transaction.setIdTransaction(generateTransactionId());
             transaction.setMontant(montant);
             transaction.setDateTransaction(new Date());
             transaction.setCompteCourant(compte);
@@ -97,7 +109,6 @@ public class CompteBean implements CompteRemote {
 
             // Créer la transaction
             Transaction transaction = new Transaction();
-            transaction.setIdTransaction(generateTransactionId());
             transaction.setMontant(montant.negate());
             transaction.setDateTransaction(new Date());
             transaction.setCompteCourant(compte);
@@ -133,6 +144,44 @@ public class CompteBean implements CompteRemote {
         return query.getResultList();
     }
 
+    @Override
+    public Integer createUtilisateurEtCompte(String username,
+                                             String password,
+                                             Integer idRole,
+                                             Integer idDirection,
+                                             Integer idStatus,
+                                             BigDecimal soldeInitial) {
+        try {
+            // Load linked entities
+            Role role = em.find(Role.class, idRole);
+            Direction direction = em.find(Direction.class, idDirection);
+            Status status = em.find(Status.class, idStatus);
+
+            // Persist Utilisateur
+            Utilisateur utilisateur = new Utilisateur();
+            utilisateur.setUsername(username);
+            utilisateur.setPassword(password);
+            utilisateur.setRole(role);
+            utilisateur.setDirection(direction);
+            utilisateur.setStatus(status);
+            em.persist(utilisateur);
+
+            // Create CompteCourant (ID auto par DB)
+            CompteCourant compte = new CompteCourant();
+            compte.setUtilisateur(utilisateur);
+            compte.setDateOuverture(new Date());
+            compte.setStatus(status);
+            compte.setSolde(soldeInitial != null ? soldeInitial : BigDecimal.ZERO);
+            em.persist(compte);
+
+            // Retourner l'ID généré
+            return utilisateur.getIdUser();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private Type getTypeByLibelle(String libelle) {
         try {
             TypedQuery<Type> query = em.createQuery(
@@ -144,10 +193,4 @@ public class CompteBean implements CompteRemote {
         }
     }
 
-    private Integer generateTransactionId() {
-        TypedQuery<Integer> query = em.createQuery(
-            "SELECT MAX(t.idTransaction) FROM Transaction t", Integer.class);
-        Integer maxId = query.getSingleResult();
-        return (maxId != null ? maxId : 0) + 1;
-    }
 }

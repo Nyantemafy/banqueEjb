@@ -23,12 +23,15 @@ INSERT INTO action (id_action, libelle) VALUES (4, 'DELETE');
 INSERT INTO direction (id_direction, niveau, libelle) VALUES (1, 1, 'Direction Générale');
 INSERT INTO direction (id_direction, niveau, libelle) VALUES (2, 2, 'Direction Commerciale');
 INSERT INTO direction (id_direction, niveau, libelle) VALUES (3, 3, 'Direction IT');
+INSERT INTO direction (id_direction, niveau, libelle) VALUES (4, 0, 'simple user');
 
 -- Insérer des actionRole
 INSERT INTO actionRole (id_actionRole, nomTable, id_action, id_role) 
 VALUES (1, 'compteCourant', 1, 1);
 INSERT INTO actionRole (id_actionRole, nomTable, id_action, id_role) 
-VALUES (2, 'compteCourant', 2, 2);
+VALUES (3, 'utilisateur', 2, 2);
+INSERT INTO actionRole (id_actionRole, nomTable, id_action, id_role) 
+VALUES (4, 'utilisateur', 2, 2);
 
 -- Insérer un utilisateur test
 INSERT INTO utilisateur (id_user, username, password, id_actionRole, id_direction, id_status) 
