@@ -1,3 +1,5 @@
+\c banque_db
+
 CREATE TABLE role(
    id_role INTEGER,
    libelle VARCHAR(50)  NOT NULL,
