@@ -221,8 +221,16 @@
       }
 
       function formatCurrency(value, code){
-        try{ return Number(value).toLocaleString('fr-FR',{style:'currency', currency: code||'MGA'}); }
-        catch(e){ return `${Number(value).toLocaleString('fr-FR')} ${code||''}`; }
+        const num = Number(value);
+        if(!Number.isFinite(num)) return `${value}`;
+        try{
+          // Force 4 decimals regardless of currency defaults
+          const opts = { minimumFractionDigits: 4, maximumFractionDigits: 4 };
+          // Using number format + code to keep consistency
+          return `${num.toLocaleString('fr-FR', opts)} ${code||'MGA'}`;
+        }catch(e){
+          return `${num.toFixed(4)} ${code||'MGA'}`;
+        }
       }
 
       async function loadCurrencies(){
