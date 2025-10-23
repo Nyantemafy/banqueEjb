@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Banque Principale - Profil</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="header-content">
+        <div class="logo"><h1>Banque Principale</h1></div>
+        <nav class="nav">
+          <button class="menu-toggle" id="menuToggle">☰</button>
+          <div class="nav-links" id="navLinks">
+            <a href="dashboard.html" class="nav-link">Tableau de bord</a>
+            <a href="compte-courant.html" class="nav-link">Compte Courant</a>
+            <a href="compte-depot.html" class="nav-link">Épargne</a>
+            <a href="credit.html" class="nav-link">Crédits</a>
+            <a href="admin.html" class="nav-link">Administration</a>
+            <a href="profil.html" class="nav-link active">Profil</a>
+          </div>
+          <div class="user-menu">
+            <div class="dropdown">
+              <div class="user-info">
+                <div class="user-avatar" id="nav-user-avatar">JD</div>
+                <div class="user-details">
+                  <div class="user-name" id="nav-user-name">Jean D.</div>
+                  <div class="user-role" id="nav-user-role">Client</div>
+                </div>
+              </div>
+              <div class="dropdown-menu">
+                <a href="profil.html" class="dropdown-item">Mon profil</a>
+                <div class="dropdown-divider"></div>
+                <a href="index.html" class="dropdown-item">Déconnexion</a>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="dashboard">
+        <div class="dashboard-header">
+          <h1>Mon profil</h1>
+          <p>Informations de session (stateful)</p>
+        </div>
+
+        <div class="card">
+          <h2>Informations utilisateur</h2>
+          <div class="grid two-cols">
+            <div>
+              <div class="label">ID utilisateur</div>
+              <div id="p-userid" class="value">—</div>
+            </div>
+            <div>
+              <div class="label">Nom d'utilisateur</div>
+              <div id="p-username" class="value">—</div>
+            </div>
+            <div>
+              <div class="label">ID rôle</div>
+              <div id="p-roleid" class="value">—</div>
+            </div>
+            <div>
+              <div class="label">Rôle</div>
+              <div id="p-rolename" class="value">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Directions</h2>
+          <table class="table">
+            <thead>
+              <tr><th>ID</th><th>Niveau</th><th>Libellé</th></tr>
+            </thead>
+            <tbody id="p-directions">
+              <tr><td colspan="3">Aucune direction</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <h2>Actions</h2>
+          <table class="table">
+            <thead>
+              <tr><th>ID</th><th>Libellé</th></tr>
+            </thead>
+            <tbody id="p-actions">
+              <tr><td colspan="2">Aucune action</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <h2>Tables autorisées</h2>
+          <ul id="p-tables">
+            <li>Aucune table</li>
+          </ul>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <p>&copy; 2023 Banque Principale. Tous droits réservés.</p>
+    </footer>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    (async function(){
+      try{
+        const res = await fetch('api/profile');
+        if(!res.ok) return;
+        const p = await res.json();
+        const uname = (p && p.username) ? String(p.username) : '';
+        const role = (p && p.roleName) ? String(p.roleName) : '';
+        const initials = uname ? uname.trim().split(/\s+/).map(s=>s[0]).join('').toUpperCase().slice(0,2) : 'U';
+        const av = document.getElementById('nav-user-avatar'); if(av) av.textContent = initials;
+        const nm = document.getElementById('nav-user-name'); if(nm) nm.textContent = uname || 'Utilisateur';
+        const rl = document.getElementById('nav-user-role'); if(rl) rl.textContent = role || 'Client';
+      }catch(e){}
+    })();
+
+    async function loadProfile(){
+      try{
+        const res = await fetch('api/profile');
+        const data = await res.json();
+        if(!res.ok){
+          alert(data.error || 'Erreur chargement profil');
+          return;
+        }
+
+        const tList = document.getElementById('p-tables');
+        tList.innerHTML = '';
+        if(data.tables && data.tables.length){
+          data.tables.forEach(t => {
+            const li = document.createElement('li');
+            li.textContent = t;
+            tList.appendChild(li);
+          });
+        } else {
+          tList.innerHTML = '<li>Aucune table</li>';
+        }
+        document.getElementById('p-userid').textContent = data.userId ?? '—';
+        document.getElementById('p-username').textContent = data.username ?? '—';
+        document.getElementById('p-roleid').textContent = (data.roleId ?? '—');
+        document.getElementById('p-rolename').textContent = (data.roleName ?? '—');
+
+        const dBody = document.getElementById('p-directions');
+        dBody.innerHTML = '';
+        if(data.directions && data.directions.length){
+          data.directions.forEach(d => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${d.id}</td><td>${d.niveau}</td><td>${d.libelle}</td>`;
+            dBody.appendChild(tr);
+          });
+        } else {
+          dBody.innerHTML = '<tr><td colspan="3">Aucune direction</td></tr>';
+        }
+
+        const aBody = document.getElementById('p-actions');
+        aBody.innerHTML = '';
+        if(data.actions && data.actions.length){
+          data.actions.forEach(a => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${a.id}</td><td>${a.libelle}</td>`;
+            aBody.appendChild(tr);
+          });
+        } else {
+          aBody.innerHTML = '<tr><td colspan="2">Aucune action</td></tr>';
+        }
+      }catch(e){
+        alert('Erreur réseau');
+      }
+    }
+    document.addEventListener('DOMContentLoaded', loadProfile);
+  </script>
+</body>
+</html>

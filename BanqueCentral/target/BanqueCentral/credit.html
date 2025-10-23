@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banque Principale - Crédits</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>Banque Principale</h1>
+                </div>
+                
+                <nav class="nav">
+                    <button class="menu-toggle" id="menuToggle">☰</button>
+                    
+                    <div class="nav-links" id="navLinks">
+                        <a href="dashboard.html" class="nav-link">Tableau de bord</a>
+                        <a href="compte-courant.html" class="nav-link">Compte Courant</a>
+                        <a href="compte-depot.html" class="nav-link">Épargne</a>
+                        <a href="credit.html" class="nav-link active">Crédits</a>
+                        <a href="admin.html" class="nav-link">Administration</a>
+                    </div>
+                    
+                    <div class="user-menu">
+                        <div class="dropdown">
+                            <div class="user-info">
+                                <div class="user-avatar" id="nav-user-avatar">JD</div>
+                                <div class="user-details">
+                                    <div class="user-name" id="nav-user-name">Jean D.</div>
+                                    <div class="user-role" id="nav-user-role">Client</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-menu">
+                                <a href="profil.html" class="dropdown-item">Mon profil</a>
+                                <div class="dropdown-divider"></div>
+                                <a href="index.html" class="dropdown-item">Déconnexion</a>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="dashboard">
+                <div class="dashboard-header">
+                    <h1>Gestion des Crédits</h1>
+                    <p>Suivi de vos emprunts et demandes de crédit</p>
+                </div>
+
+                <!-- Sélection du crédit -->
+                <div class="card" id="select-credit-card">
+                    <h2>Mes crédits</h2>
+                    <div class="form-group">
+                        <label for="credit-select">Sélectionner un crédit</label>
+                        <select id="credit-select">
+                            <option value="">-- Choisir --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Résumé crédit -->
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>Montant restant dû</h3>
+                        <div class="card-value" id="montant-restant-du">8 500,00 €</div>
+                        <div class="card-label">Sur 15 000,00 € initial</div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Prochaine échéance</h3>
+                        <div class="card-value">450,00 €</div>
+                        <div class="card-label">Le 15/12/2023</div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Taux d'intérêt</h3>
+                        <div class="card-value">2,10%</div>
+                        <div class="card-label">Taux fixe</div>
+                    </div>
+                </div>
+
+                <div class="nav-tabs">
+                    <div class="nav-tab active" data-tab="echeances">Échéances</div>
+                    <div class="nav-tab" data-tab="remboursement">Remboursement</div>
+                    <div class="nav-tab" data-tab="demande">Demande de crédit</div>
+                </div>
+
+                <!-- Tableau des échéances -->
+                <div class="card" id="echeances-card">
+                    <h2>Calendrier des échéances</h2>
+                    <form id="form-insert-echeance" style="margin-bottom: 1rem; display:flex; gap: 0.5rem; flex-wrap: wrap; align-items: end;">
+                        <div class="form-group">
+                            <label for="num-ech">N°</label>
+                            <input type="number" id="num-ech" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="date-ech">Date</label>
+                            <input type="date" id="date-ech">
+                        </div>
+                        <div class="form-group">
+                            <label for="montant-ech">Montant</label>
+                            <input type="number" id="montant-ech" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="capital-ech">Capital</label>
+                            <input type="number" id="capital-ech" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="interet-ech">Intérêt</label>
+                            <input type="number" id="interet-ech" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="status-ech">Statut</label>
+                            <select id="status-ech">
+                                <option value="1">À venir</option>
+                                <option value="2">Payé</option>
+                                <option value="3">En retard</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary">Ajouter échéance</button>
+                    </form>
+                    <table class="table" id="tableau-echeances">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Montant</th>
+                                <th>Capital</th>
+                                <th>Intérêts</th>
+                                <th>Statut</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-echeances"></tbody>
+                    </table>
+                </div>
+
+                <!-- Formulaire de remboursement anticipé -->
+                <div class="card" id="remboursement-card" style="display:none">
+                    <h2>Remboursement anticipé</h2>
+                    <form id="form-remboursement">
+                        <div class="form-group">
+                            <label for="montant-remboursement">Montant du remboursement</label>
+                            <input type="number" id="montant-remboursement" name="montant-remboursement" min="1" step="0.01" max="8500" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="compte-debit">Compte à débiter</label>
+                            <select id="compte-debit" name="compte-debit" required>
+                                <option value="">Sélectionnez un compte</option>
+                                <option value="courant">Compte Courant (5 420,50 €)</option>
+                                <option value="depot">Compte Dépôt (12 500,75 €)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary">Effectuer le remboursement</button>
+                    </form>
+                </div>
+
+                <!-- Formulaire de demande de crédit -->
+                <div class="card" id="demande-card" style="display:none">
+                    <h2>Nouvelle demande de crédit</h2>
+                    <form id="form-demande-credit">
+                        <div class="form-group">
+                            <label for="montant-demande">Montant souhaité</label>
+                            <input type="number" id="montant-demande" name="montant-demande" min="1000" step="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="duree-demande">Durée (mois)</label>
+                            <select id="duree-demande" name="duree-demande" required>
+                                <option value="">Sélectionnez une durée</option>
+                                <option value="12">12 mois</option>
+                                <option value="24">24 mois</option>
+                                <option value="36">36 mois</option>
+                                <option value="48">48 mois</option>
+                                <option value="60">60 mois</option>
+                                <option value="84">84 mois</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="type-credit">Type de crédit</label>
+                            <select id="type-credit" name="type-credit" required>
+                                <option value="">Sélectionnez un type</option>
+                                <option value="personnel">Crédit personnel</option>
+                                <option value="auto">Crédit auto</option>
+                                <option value="immobilier">Crédit immobilier</option>
+                                <option value="travaux">Crédit travaux</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary">Soumettre la demande</button>
+                    </form>
+                </div>
+
+                <!-- Simulation de crédit -->
+                <div class="card" id="simulateur-card" style="display:none">
+                    <h2>Simulateur de crédit</h2>
+                    <form id="form-simulation">
+                        <div class="form-group">
+                            <label for="montant-simulation">Montant</label>
+                            <input type="number" id="montant-simulation" name="montant-simulation" min="1000" step="100" value="10000" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="duree-simulation">Durée (mois)</label>
+                            <select id="duree-simulation" name="duree-simulation" required>
+                                <option value="12">12 mois</option>
+                                <option value="24">24 mois</option>
+                                <option value="36" selected>36 mois</option>
+                                <option value="48">48 mois</option>
+                                <option value="60">60 mois</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="taux-simulation">Taux d'intérêt (%)</label>
+                            <input type="number" id="taux-simulation" name="taux-simulation" min="0.1" max="10" step="0.1" value="2.1" required>
+                        </div>
+                        <button type="button" class="btn-secondary" onclick="calculerMensualite()">Calculer la mensualité</button>
+                    </form>
+                    <div id="resultat-simulation" style="margin-top: 1rem; padding: 1rem; background-color: var(--secondary-color); border-radius: 4px; display: none;">
+                        <h4>Résultat de la simulation</h4>
+                        <p id="mensualite-resultat"></p>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="footer">
+            <p>&copy; 2023 Banque Principale. Tous droits réservés.</p>
+        </footer>
+    </div>
+    
+    <script src="js/app.js"></script>
+    <script>
+    (async function(){
+      try{
+        const res = await fetch('api/profile');
+        if(!res.ok) return;
+        const p = await res.json();
+        const uname = (p && p.username) ? String(p.username) : '';
+        const role = (p && p.roleName) ? String(p.roleName) : '';
+        const initials = uname ? uname.trim().split(/\s+/).map(s=>s[0]).join('').toUpperCase().slice(0,2) : 'U';
+        const av = document.getElementById('nav-user-avatar'); if(av) av.textContent = initials;
+        const nm = document.getElementById('nav-user-name'); if(nm) nm.textContent = uname || 'Utilisateur';
+        const rl = document.getElementById('nav-user-role'); if(rl) rl.textContent = role || 'Client';
+      }catch(e){}
+    })();
+    </script>
+    <script>
+        const PRET_API = 'http://localhost:5002/api/pret';
+        let gUserId = null;
+        let gCreditId = null;
+
+        async function fetchJSON(url, options){
+            const res = await fetch(url, options);
+            const data = await res.json().catch(() => ({}));
+            if(!res.ok){
+                const msg = data.error || res.statusText || 'Erreur';
+                throw new Error(msg);
+            }
+            return data;
+        }
+
+        async function loadUser(){
+            const profile = await fetchJSON('api/profile');
+            gUserId = profile.userId;
+        }
+
+        function renderCredits(credits){
+            const sel = document.getElementById('credit-select');
+            sel.innerHTML = '<option value="">-- Choisir --</option>';
+            (credits || []).forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.idCredit;
+                opt.textContent = `Crédit #${c.idCredit} - ${Number(c.montantInitial||0).toLocaleString('fr-FR',{style:'currency',currency:'EUR'})} - ${c.dureeMois||0} mois @ ${c.taux||0}%`;
+                sel.appendChild(opt);
+            });
+        }
+
+        function statutLibelle(id){
+            if(id === 2) return 'Payé';
+            if(id === 3) return 'En retard';
+            return 'À venir';
+        }
+
+        function renderEcheances(list){
+            const tbody = document.getElementById('tbody-echeances');
+            tbody.innerHTML = '';
+            (list || []).forEach(e => {
+                const tr = document.createElement('tr');
+                const dateStr = e.dateEcheance ? new Date(e.dateEcheance).toLocaleDateString('fr-FR') : '';
+                tr.innerHTML = `
+                    <td>${dateStr}</td>
+                    <td>${Number(e.montantTotal||0).toLocaleString('fr-FR',{style:'currency',currency:'EUR'})}</td>
+                    <td>${Number(e.capital||0).toLocaleString('fr-FR',{style:'currency',currency:'EUR'})}</td>
+                    <td>${Number(e.interet||0).toLocaleString('fr-FR',{style:'currency',currency:'EUR'})}</td>
+                    <td>
+                        <select class="ech-status" data-id="${e.idEcheance}">
+                            <option value="1" ${e.idStatus===1?'selected':''}>À venir</option>
+                            <option value="2" ${e.idStatus===2?'selected':''}>Payé</option>
+                            <option value="3" ${e.idStatus===3?'selected':''}>En retard</option>
+                        </select>
+                    </td>
+                    <td><button type="button" class="btn-secondary btn-update" data-id="${e.idEcheance}">Mettre à jour</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function loadCredits(){
+            const data = await fetchJSON(`${PRET_API}/credits?userId=${gUserId}`);
+            renderCredits(data.data||[]);
+        }
+
+        async function loadEcheances(){
+            if(!gCreditId) { renderEcheances([]); return; }
+            const data = await fetchJSON(`${PRET_API}/echeances?creditId=${gCreditId}`);
+            renderEcheances(data.data||[]);
+        }
+
+        function bindEvents(){
+            document.getElementById('credit-select').addEventListener('change', async (e) => {
+                gCreditId = parseInt(e.target.value||'');
+                await loadEcheances();
+            });
+
+            document.getElementById('form-insert-echeance').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                try{
+                    if(!gCreditId) throw new Error('Sélectionnez un crédit');
+                    const body = {
+                        idCredit: gCreditId,
+                        numeroEcheance: parseInt(document.getElementById('num-ech').value||'0')||null,
+                        dateEcheance: document.getElementById('date-ech').value||null,
+                        montantTotal: parseFloat(document.getElementById('montant-ech').value||'0')||null,
+                        capital: parseFloat(document.getElementById('capital-ech').value||'0')||null,
+                        interet: parseFloat(document.getElementById('interet-ech').value||'0')||null,
+                        idStatus: parseInt(document.getElementById('status-ech').value||'1')
+                    };
+                    const res = await fetchJSON(`${PRET_API}/echeances`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+                    });
+                    alert('Échéance insérée');
+                    e.target.reset();
+                    await loadEcheances();
+                }catch(err){ alert('Erreur insertion: ' + err.message); }
+            });
+
+            document.getElementById('tableau-echeances').addEventListener('click', async (e) => {
+                const btn = e.target.closest('.btn-update');
+                if(!btn) return;
+                try{
+                    const id = parseInt(btn.dataset.id);
+                    const select = btn.closest('tr').querySelector('.ech-status');
+                    const statusId = parseInt(select.value);
+                    await fetchJSON(`${PRET_API}/echeances/${id}/status`, {
+                        method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idStatus: statusId })
+                    });
+                    alert('Statut mis à jour');
+                    await loadEcheances();
+                }catch(err){ alert('Erreur mise à jour: ' + err.message); }
+            });
+        }
+
+        async function init(){
+            try{
+                await loadUser();
+                if(!gUserId) throw new Error('Utilisateur non authentifié');
+                await loadCredits();
+            }catch(err){ alert('Erreur initialisation: ' + err.message); }
+        }
+
+        function calculerMensualite() {
+            const montant = parseFloat(document.getElementById('montant-simulation').value);
+            const duree = parseInt(document.getElementById('duree-simulation').value);
+            const taux = parseFloat(document.getElementById('taux-simulation').value) / 100;
+            
+            const tauxMensuel = taux / 12;
+            const mensualite = montant * tauxMensuel * Math.pow(1 + tauxMensuel, duree) / (Math.pow(1 + tauxMensuel, duree) - 1);
+            
+            document.getElementById('mensualite-resultat').textContent = 
+                `Mensualité estimée: ${mensualite.toFixed(2)} € sur ${duree} mois`;
+            document.getElementById('resultat-simulation').style.display = 'block';
+        }
+
+        document.getElementById('form-remboursement').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const montant = document.getElementById('montant-remboursement').value;
+            alert(`Remboursement anticipé de ${montant} € effectué avec succès`);
+            this.reset();
+        });
+
+        document.getElementById('form-demande-credit').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Demande de crédit soumise avec succès. Notre équipe vous contactera sous 48h.');
+            this.reset();
+        });
+
+        // Calcul initial au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            calculerMensualite();
+            bindEvents();
+            init();
+
+            function showTab(name){
+                const e = document.getElementById('echeances-card');
+                const r = document.getElementById('remboursement-card');
+                const d = document.getElementById('demande-card');
+                const s = document.getElementById('simulateur-card');
+                e.style.display = (name==='echeances') ? '' : 'none';
+                r.style.display = (name==='remboursement') ? '' : 'none';
+                const isDemande = (name==='demande');
+                d.style.display = isDemande ? '' : 'none';
+                s.style.display = isDemande ? '' : 'none';
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.tab===name));
+            }
+
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', () => showTab(tab.dataset.tab));
+            });
+            showTab('echeances');
+        });
+    </script>
+</body>
+</html>

@@ -1,3 +1,15 @@
+INSERT INTO compteDepot (montant_initial, taux_interet, date_debut, date_fin, id_user, id_status) VALUES
+(1000000, 5.5, '2025-01-01', '2025-12-31', 1, 1),
+(5000000, 6.2, '2025-02-01', '2026-02-01', 2, 1);
+
+INSERT INTO compteCourant (solde, date_ouverture, id_user, id_status)
+VALUES (0.00, CURRENT_DATE, 1, 1);
+
+INSERT INTO depot_operation (montant, date_op, id_compteDepot, id_type) VALUES
+(1000000, '2025-01-01', 1, 1),   
+(50000, '2025-03-01', 1, 2),     
+(5000000, '2025-02-01', 2, 1);   
+
 -- Insérer des status
 INSERT INTO status (id_status, libelle) VALUES (1, 'Actif');
 INSERT INTO status (id_status, libelle) VALUES (2, 'Inactif');
@@ -23,12 +35,15 @@ INSERT INTO action (id_action, libelle) VALUES (4, 'DELETE');
 INSERT INTO direction (id_direction, niveau, libelle) VALUES (1, 1, 'Direction Générale');
 INSERT INTO direction (id_direction, niveau, libelle) VALUES (2, 2, 'Direction Commerciale');
 INSERT INTO direction (id_direction, niveau, libelle) VALUES (3, 3, 'Direction IT');
+INSERT INTO direction (id_direction, niveau, libelle) VALUES (4, 0, 'simple user');
 
 -- Insérer des actionRole
 INSERT INTO actionRole (id_actionRole, nomTable, id_action, id_role) 
 VALUES (1, 'compteCourant', 1, 1);
 INSERT INTO actionRole (id_actionRole, nomTable, id_action, id_role) 
-VALUES (2, 'compteCourant', 2, 2);
+VALUES (3, 'utilisateur', 2, 2);
+INSERT INTO actionRole (id_actionRole, nomTable, id_action, id_role) 
+VALUES (4, 'utilisateur', 2, 2);
 
 -- Insérer un utilisateur test
 INSERT INTO utilisateur (id_user, username, password, id_actionRole, id_direction, id_status) 

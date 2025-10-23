@@ -10,6 +10,7 @@ public interface AuthenticationRemote {
     Utilisateur authenticate(String username, String password);
     Direction[] getUserDirections(Integer userId);
     Action[] getUserActions(Integer userId);
+    String[] getUserAuthorizedTables(Integer userId);
     void logout();
     boolean isAuthenticated();
 }

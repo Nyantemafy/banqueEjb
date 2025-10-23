@@ -157,33 +157,7 @@ function initializeCompteCourant() {
         tbody.appendChild(tr);
     });
     
-    // Gestion des formulaires de dépôt et retrait
-    const formDepot = document.getElementById('form-depot');
-    const formRetrait = document.getElementById('form-retrait');
-    
-    if (formDepot) {
-        formDepot.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const montant = parseFloat(document.getElementById('montant-depot').value);
-            if (montant > 0) {
-                alert(`Dépôt de ${montant.toFixed(2)} € effectué avec succès`);
-                formDepot.reset();
-            }
-        });
-    }
-    
-    if (formRetrait) {
-        formRetrait.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const montant = parseFloat(document.getElementById('montant-retrait').value);
-            if (montant > 0 && montant <= mockData.accounts.courant.solde) {
-                alert(`Retrait de ${montant.toFixed(2)} € effectué avec succès`);
-                formRetrait.reset();
-            } else {
-                alert('Montant invalide ou solde insuffisant');
-            }
-        });
-    }
+    // (handlers mock supprimés)
 }
 
 function initializeCompteDepot() {

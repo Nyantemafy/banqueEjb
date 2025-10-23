@@ -2,14 +2,12 @@ C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\CompteCourant\src\main
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\CompteCourant\src\main\java\com\banque\main\remote\TransactionRemote.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\CompteCourant\src\main\java\com\banque\main\entity\CompteCourant.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\CompteCourant\src\main\java\com\banque\main\entity\Transaction.java
-C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\CompteCourant\src\main\java\com\banque\main\servlet\LogoutServlet.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\CompteCourant\src\main\java\com\banque\main\ejb\ActionControleBean.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\CompteCourant\src\main\java\com\banque\main\ejb\AuthenticationBean.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\CompteCourant\src\main\java\com\banque\main\ejb\DirectionBean.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\CompteCourant\src\main\java\com\banque\main\entity\ActionRole.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\CompteCourant\src\main\java\com\banque\main\entity\Direction.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\CompteCourant\src\main\java\com\banque\main\entity\Role.java
-C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\CompteCourant\src\main\java\com\banque\main\servlet\LoginServlet.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\CompteCourant\src\main\java\com\banque\main\ejb\TransactionBean.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\CompteCourant\src\main\java\com\banque\main\entity\Status.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\CompteCourant\src\main\java\com\banque\main\ejb\CompteBean.java

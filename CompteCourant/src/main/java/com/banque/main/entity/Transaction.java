@@ -12,6 +12,7 @@ public class Transaction implements Serializable {
 
     @Id
     @Column(name = "id_transaction")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idTransaction;
 
     @Column(name = "montant", nullable = false, precision = 15, scale = 2)

@@ -54,6 +54,22 @@ public class AuthenticationBean implements AuthenticationRemote, Serializable {
     }
 
     @Override
+    public String[] getUserAuthorizedTables(Integer userId) {
+        try {
+            TypedQuery<String> query = em.createQuery(
+                "SELECT DISTINCT ar.nomTable FROM ActionRole ar " +
+                "JOIN Utilisateur u ON u.role.idRole = ar.role.idRole " +
+                "WHERE u.idUser = :userId",
+                String.class);
+            query.setParameter("userId", userId);
+            return query.getResultList().toArray(new String[0]);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new String[0];
+        }
+    }
+
+    @Override
     public Direction[] getUserDirections(Integer userId) {
         try {
             TypedQuery<Direction> query = em.createQuery(
@@ -71,8 +87,10 @@ public class AuthenticationBean implements AuthenticationRemote, Serializable {
     public Action[] getUserActions(Integer userId) {
         try {
             TypedQuery<Action> query = em.createQuery(
-                "SELECT a FROM Action a JOIN ActionRole ar ON ar.action.idAction = a.idAction " +
-                "JOIN Utilisateur u ON u.actionRole.idActionRole = ar.idActionRole WHERE u.idUser = :userId",
+                "SELECT a FROM Action a " +
+                "JOIN ActionRole ar ON ar.action.idAction = a.idAction " +
+                "JOIN Utilisateur u ON u.role.idRole = ar.role.idRole " +
+                "WHERE u.idUser = :userId",
                 Action.class);
             query.setParameter("userId", userId);
             return query.getResultList().toArray(new Action[0]);

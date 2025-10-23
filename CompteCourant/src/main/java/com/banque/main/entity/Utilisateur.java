@@ -10,6 +10,7 @@ public class Utilisateur implements Serializable {
 
     @Id
     @Column(name = "id_user")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idUser;
 
     @Column(name = "username", nullable = false, length = 50)
@@ -19,8 +20,8 @@ public class Utilisateur implements Serializable {
     private String password;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_actionRole")
-    private ActionRole actionRole;
+    @JoinColumn(name = "id_role")
+    private Role role;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_direction")
@@ -65,13 +66,8 @@ public class Utilisateur implements Serializable {
         this.password = password;
     }
 
-    public ActionRole getActionRole() {
-        return actionRole;
-    }
-
-    public void setActionRole(ActionRole actionRole) {
-        this.actionRole = actionRole;
-    }
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
 
     public Direction getDirection() {
         return direction;
