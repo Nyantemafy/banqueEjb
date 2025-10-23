@@ -27,10 +27,12 @@ public class CompteBean implements CompteRemote {
     public CompteCourant getCompteByUserId(Integer userId) {
         try {
             TypedQuery<CompteCourant> query = em.createQuery(
-                "SELECT c FROM CompteCourant c WHERE c.utilisateur.idUser = :userId", 
+                "SELECT c FROM CompteCourant c WHERE c.utilisateur.idUser = :userId",
                 CompteCourant.class);
             query.setParameter("userId", userId);
-            return query.getSingleResult();
+            query.setMaxResults(1);
+            List<CompteCourant> list = query.getResultList();
+            return list.isEmpty() ? null : list.get(0);
         } catch (Exception e) {
             return null;
         }
@@ -47,6 +49,7 @@ public class CompteBean implements CompteRemote {
             BigDecimal nouveauSolde = compte.getSolde().add(montant);
             compte.setSolde(nouveauSolde);
             em.merge(compte);
+            em.flush();
 
             Transaction transaction = new Transaction();
             transaction.setMontant(montant);
@@ -57,6 +60,7 @@ public class CompteBean implements CompteRemote {
             transaction.setType(type);
 
             em.persist(transaction);
+            em.flush();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -79,6 +83,7 @@ public class CompteBean implements CompteRemote {
             BigDecimal nouveauSolde = compte.getSolde().subtract(montant);
             compte.setSolde(nouveauSolde);
             em.merge(compte);
+            em.flush();
 
             Transaction transaction = new Transaction();
             transaction.setMontant(montant.negate());
@@ -89,6 +94,7 @@ public class CompteBean implements CompteRemote {
             transaction.setType(type);
 
             em.persist(transaction);
+            em.flush();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -130,6 +136,7 @@ public class CompteBean implements CompteRemote {
             BigDecimal nouveauSolde = compte.getSolde().add(montant);
             compte.setSolde(nouveauSolde);
             em.merge(compte);
+            em.flush();
 
             // Créer la transaction
             Transaction transaction = new Transaction();
@@ -142,6 +149,7 @@ public class CompteBean implements CompteRemote {
             transaction.setType(type);
             
             em.persist(transaction);
+            em.flush();
             return true;
         } catch (Exception e) {
             e.printStackTrace();

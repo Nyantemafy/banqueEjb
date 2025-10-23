@@ -170,6 +170,11 @@ public class CompteServlet extends HttpServlet {
                     Map<String, Object> result = new HashMap<>();
                     result.put("success", success);
                     result.put("message", success ? "Dépôt effectué avec succès" : "Échec du dépôt");
+                    if (success) {
+                        Method getSoldeRemote = compteBean.getClass().getMethod("getSolde", Integer.class);
+                        BigDecimal solde = (BigDecimal) getSoldeRemote.invoke(compteBean, compteId);
+                        result.put("solde", solde);
+                    }
                     out.print(gson.toJson(result));
                     
                 } else if ("retrait".equals(action)) {
@@ -197,8 +202,16 @@ public class CompteServlet extends HttpServlet {
                     Map<String, Object> result = new HashMap<>();
                     result.put("success", success);
                     result.put("message", success ? "Retrait effectué avec succès" : "Échec du retrait");
+                    if (success) {
+                        Method getSoldeRemote = compteBean.getClass().getMethod("getSolde", Integer.class);
+                        BigDecimal solde = (BigDecimal) getSoldeRemote.invoke(compteBean, compteId);
+                        result.put("solde", solde);
+                    }
                     out.print(gson.toJson(result));
                 }
+            } else {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                out.print("{\"error\":\"Compte introuvable pour l'utilisateur\"}");
             }
         } catch (Exception e) {
             e.printStackTrace();

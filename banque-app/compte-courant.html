@@ -184,19 +184,8 @@
     
     <script src="js/app.js"></script>
     <script>
-        document.getElementById('form-depot').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const montant = document.getElementById('montant-depot').value;
-            alert(`Dépôt de ${montant} € effectué avec succès`);
-            this.reset();
-        });
-
-        document.getElementById('form-retrait').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const montant = document.getElementById('montant-retrait').value;
-            alert(`Retrait de ${montant} € effectué avec succès`);
-            this.reset();
-        });
+      window.REAL_COMPTE_COURANT = true;
+      // Handlers mock supprimés pour éviter les alertes multiples
     </script>
 </body>
 </html>

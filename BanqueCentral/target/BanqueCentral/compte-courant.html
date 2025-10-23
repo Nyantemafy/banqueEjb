@@ -78,7 +78,7 @@
                     <form id="form-depot">
                         <div class="form-group">
                             <label for="montant-depot">Montant</label>
-                            <input type="text" id="montant-depot" name="montant-depot" placeholder="Ex: 100,00" required>
+                            <input type="number" id="montant-depot" name="montant-depot" placeholder="Ex: 100,00" min="0.01" step="0.01" required>
                         </div>
                         <div class="form-group">
                             <label for="date-depot">Date de l'opération</label>
@@ -94,7 +94,7 @@
                     <form id="form-retrait">
                         <div class="form-group">
                             <label for="montant-retrait">Montant</label>
-                            <input type="text" id="montant-retrait" name="montant-retrait" placeholder="Ex: 50,00" required>
+                            <input type="number" id="montant-retrait" name="montant-retrait" placeholder="Ex: 50,00" min="0.01" step="0.01" required>
                         </div>
                         <div class="form-group">
                             <label for="date-retrait">Date de l'opération</label>
@@ -138,6 +138,7 @@
     
     <script src="js/app.js"></script>
     <script>
+      window.REAL_COMPTE_COURANT = true;
       const COMPTE_API = 'api/compte'; // servlet CompteServlet -> EJB
       let gUserId = null;
 
@@ -206,39 +207,39 @@
       }
 
       function parseAmount(val){
-        if(typeof val !== 'string') return Number(val||0);
-        // normalize comma to dot
-        const n = val.replace(',', '.');
-        return Number(n);
+        if(val==null) return NaN;
+        if(typeof val !== 'string') return Number(val);
+        // remove spaces incl. non-breaking spaces, normalize comma to dot
+        const n = val.replace(/[\s\u00A0\u202F]/g, '').replace(',', '.');
+        const num = Number(n);
+        return Number.isFinite(num) ? num : NaN;
       }
 
       function bindForms(){
         document.getElementById('form-depot').addEventListener('submit', async function(e){
           e.preventDefault();
           try{
-            const montant = parseAmount(document.getElementById('montant-depot').value||'0');
-            if(!montant || montant<=0) throw new Error('Montant invalide');
+            const montant = document.getElementById('montant-depot').value;
             const dateDepot = (document.getElementById('date-depot')?.value||'');
             const body = new URLSearchParams({ action: 'depot', montant: String(montant), mode: '' });
             if(dateDepot) body.set('date', dateDepot);
             await fetchJSON(`${COMPTE_API}/`, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body });
             this.reset();
             await loadCompte();
-          }catch(err){ alert('Erreur dépôt: '+err.message); }
+          }catch(err){ console.error(err); }
         });
 
         document.getElementById('form-retrait').addEventListener('submit', async function(e){
           e.preventDefault();
           try{
-            const montant = parseAmount(document.getElementById('montant-retrait').value||'0');
-            if(!montant || montant<=0) throw new Error('Montant invalide');
+            const montant = document.getElementById('montant-retrait').value;
             const dateRetrait = (document.getElementById('date-retrait')?.value||'');
             const body = new URLSearchParams({ action: 'retrait', montant: String(montant), mode: '' });
             if(dateRetrait) body.set('date', dateRetrait);
             await fetchJSON(`${COMPTE_API}/`, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body });
             this.reset();
             await loadCompte();
-          }catch(err){ alert('Erreur retrait: '+err.message); }
+          }catch(err){ console.error(err); }
         });
 
         const filtre = document.getElementById('form-filtre-histo');
