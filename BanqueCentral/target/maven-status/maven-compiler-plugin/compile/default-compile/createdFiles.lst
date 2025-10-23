@@ -1,6 +1,7 @@
 com\banque\central\util\EJBLocator.class
 com\banque\central\servlet\AuthFilter.class
 com\banque\central\servlet\RootServlet.class
+jboss-ejb-client.properties
 com\banque\central\servlet\DashboardServlet.class
 com\banque\central\servlet\LogoutServlet.class
 com\banque\central\model\UserSession.class

@@ -10,12 +10,49 @@ public class EJBLocator {
     private static Context context;
 
     static {
-        try {
-            // In-container lookup (no remote client properties)
-            context = new InitialContext();
-        } catch (NamingException e) {
-            throw new RuntimeException("Erreur lors de l'initialisation du contexte JNDI", e);
+        initContext();
+    }
+
+    private static void initContext() {
+        // Decide between remote and in-container context
+        String remoteFlag = getFirstNonEmpty(
+                System.getProperty("ejb.remote"),
+                System.getenv("EJB_REMOTE")
+        );
+        boolean useRemote = "true".equalsIgnoreCase(remoteFlag);
+        if (useRemote) {
+            try {
+                Properties props = new Properties();
+                props.put("java.naming.factory.initial", "org.wildfly.naming.client.WildFlyInitialContextFactory");
+                String url = getFirstNonEmpty(System.getProperty("ejb.remote.url"), System.getenv("EJB_REMOTE_URL"));
+                if (url == null || url.trim().isEmpty()) {
+                    url = "http-remoting://localhost:8080"; // default
+                }
+                props.put("java.naming.provider.url", url);
+                String user = getFirstNonEmpty(System.getProperty("ejb.remote.user"), System.getenv("EJB_REMOTE_USER"));
+                String pass = getFirstNonEmpty(System.getProperty("ejb.remote.pass"), System.getenv("EJB_REMOTE_PASS"));
+                if (user != null && pass != null) {
+                    props.put("java.naming.security.principal", user);
+                    props.put("java.naming.security.credentials", pass);
+                }
+                context = new InitialContext(props);
+            } catch (NamingException e) {
+                throw new RuntimeException("Erreur InitialContext distant: " + e.getMessage(), e);
+            }
+        } else {
+            try {
+                // In-container lookup (no remote client properties)
+                context = new InitialContext();
+            } catch (NamingException e) {
+                throw new RuntimeException("Erreur lors de l'initialisation du contexte JNDI", e);
+            }
         }
+    }
+
+    private static String getFirstNonEmpty(String a, String b){
+        if (a != null && !a.trim().isEmpty()) return a;
+        if (b != null && !b.trim().isEmpty()) return b;
+        return null;
     }
 
     public static <T> T lookup(String jndiName, Class<T> clazz) throws NamingException {
