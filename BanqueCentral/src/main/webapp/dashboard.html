@@ -9,68 +9,40 @@
 <body>
     <div class="container">
         <header class="header">
-            <div class="logo">
-                <h1>Banque Principale</h1>
-            </div>
-            
-            <nav class="nav">
-                <button class="menu-toggle" id="menuToggle">☰</button>
-                
-                <div class="nav-links" id="navLinks">
-                    <a href="dashboard.html" class="nav-link active">
-                        <span class="icon">📊</span>
-                        Tableau de bord
-                    </a>
-                    <a href="compte-courant.html" class="nav-link">
-                        <span class="icon">💳</span>
-                        Compte Courant
-                    </a>
-                    <a href="compte-depot.html" class="nav-link">
-                        <span class="icon">💰</span>
-                        Épargne
-                    </a>
-                    <a href="credit.html" class="nav-link">
-                        <span class="icon">🏠</span>
-                        Crédits
-                    </a>
-                    <a href="admin.html" class="nav-link">
-                        <span class="icon">⚙️</span>
-                        Administration
-                        <span class="badge" id="admin-badge">2</span>
-                    </a>
+            <div class="header-content">
+                <div class="logo">
+                    <h1>Banque Principale</h1>
                 </div>
                 
-                <div class="user-menu">
-                    <div class="user-info">
-                        <div class="user-avatar">JD</div>
-                        <span class="user-name">Jean D.</span>
+                <nav class="nav">
+                    <button class="menu-toggle" id="menuToggle">☰</button>
+                    
+                    <div class="nav-links" id="navLinks">
+                        <a href="dashboard.html" class="nav-link active">Tableau de bord</a>
+                        <a href="compte-courant.html" class="nav-link">Compte Courant</a>
+                        <a href="compte-depot.html" class="nav-link">Épargne</a>
+                        <a href="credit.html" class="nav-link">Crédits</a>
+                        <a href="admin.html" class="nav-link">Administration <span class="badge" id="admin-badge">2</span></a>
                     </div>
-                    <div class="dropdown">
-                        <button class="logout-btn dropdown-toggle">
-                            🞃
-                        </button>
-                        <div class="dropdown-menu">
-                            <a href="profil.html" class="dropdown-item">
-                                <span class="icon">👤</span>
-                                Mon profil
-                            </a>
-                            <a href="parametres.html" class="dropdown-item">
-                                <span class="icon">⚙️</span>
-                                Paramètres
-                            </a>
-                            <a href="aide.html" class="dropdown-item">
-                                <span class="icon">❓</span>
-                                Aide & Support
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a href="index.html" class="dropdown-item">
-                                <span class="icon">🚪</span>
-                                Déconnexion
-                            </a>
+                    
+                    <div class="user-menu">
+                        <div class="dropdown">
+                            <div class="user-info">
+                                <div class="user-avatar" id="nav-user-avatar">JD</div>
+                                <div class="user-details">
+                                    <div class="user-name" id="nav-user-name">Jean D.</div>
+                                    <div class="user-role" id="nav-user-role">Client</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-menu">
+                                <a href="profil.html" class="dropdown-item">Mon profil</a>
+                                <div class="dropdown-divider"></div>
+                                <a href="index.html" class="dropdown-item">Déconnexion</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </nav>
+                </nav>
+            </div>
         </header>
         
         <main class="main-content">
@@ -156,5 +128,22 @@
     </div>
     
     <script src="js/app.js"></script>
+    <script>
+    (async function(){
+      try{
+        const res = await fetch('api/profile');
+        if(!res.ok) return;
+        const p = await res.json();
+        const uname = (p && p.username) ? String(p.username) : '';
+        const role = (p && p.roleName) ? String(p.roleName) : '';
+        const initials = uname ? uname.trim().split(/\s+/).map(s=>s[0]).join('').toUpperCase().slice(0,2) : 'U';
+        const display = uname || 'Utilisateur';
+        const roleDisp = role || 'Client';
+        const av = document.getElementById('nav-user-avatar'); if(av) av.textContent = initials;
+        const nm = document.getElementById('nav-user-name'); if(nm) nm.textContent = display;
+        const rl = document.getElementById('nav-user-role'); if(rl) rl.textContent = roleDisp;
+      }catch(e){}
+    })();
+    </script>
 </body>
 </html>

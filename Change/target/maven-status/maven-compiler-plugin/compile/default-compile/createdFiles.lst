@@ -1,0 +1,3 @@
+com\banque\change\remote\ChangeRemote.class
+com\banque\change\ejb\ChangeBean.class
+com\banque\change\ejb\ChangeBean$Rate.class

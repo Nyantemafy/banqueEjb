@@ -107,7 +107,40 @@ public class CompteServlet extends HttpServlet {
                         transactions = filtered;
                     }
 
-                    out.print(gson.toJson(transactions));
+                    // Optional currency conversion via Change EJB
+                    String currency = request.getParameter("currency");
+                    if (currency != null && !currency.trim().isEmpty()) {
+                        try {
+                            Object changeBean = EJBLocator.lookupChangeBean();
+                            Method convert = changeBean.getClass().getMethod("convert", java.math.BigDecimal.class, String.class, String.class, java.util.Date.class);
+
+                            java.util.List<?> list;
+                            if (transactions instanceof java.util.List<?>) {
+                                list = (java.util.List<?>) transactions;
+                            } else {
+                                list = java.util.Arrays.asList(transactions);
+                            }
+
+                            java.util.List<java.util.Map<String, Object>> conv = new java.util.ArrayList<>();
+                            for (Object t : list) {
+                                try {
+                                    java.util.Date d = (java.util.Date) t.getClass().getMethod("getDateTransaction").invoke(t);
+                                    java.math.BigDecimal amt = (java.math.BigDecimal) t.getClass().getMethod("getMontant").invoke(t);
+                                    java.math.BigDecimal val = (java.math.BigDecimal) convert.invoke(changeBean, amt, "MGA", currency, d);
+                                    java.util.Map<String, Object> row = new java.util.HashMap<>();
+                                    row.put("dateTransaction", d);
+                                    row.put("montant", val);
+                                    conv.add(row);
+                                } catch (Exception ignore) {}
+                            }
+                            out.print(gson.toJson(conv));
+                        } catch (Exception ex) {
+                            // Fallback to original list if conversion fails
+                            out.print(gson.toJson(transactions));
+                        }
+                    } else {
+                        out.print(gson.toJson(transactions));
+                    }
                 }
             }
         } catch (Exception e) {

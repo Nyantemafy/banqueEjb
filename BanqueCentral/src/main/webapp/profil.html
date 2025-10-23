@@ -14,12 +14,28 @@
         <nav class="nav">
           <button class="menu-toggle" id="menuToggle">☰</button>
           <div class="nav-links" id="navLinks">
-            <a href="dashboard.html" class="nav-link">📊 Tableau de bord</a>
-            <a href="compte-courant.html" class="nav-link">💳 Compte Courant</a>
-            <a href="compte-depot.html" class="nav-link">💰 Épargne</a>
-            <a href="credit.html" class="nav-link">🏠 Crédits</a>
-            <a href="admin.html" class="nav-link">⚙️ Administration</a>
-            <a href="profil.html" class="nav-link active">👤 Profil</a>
+            <a href="dashboard.html" class="nav-link">Tableau de bord</a>
+            <a href="compte-courant.html" class="nav-link">Compte Courant</a>
+            <a href="compte-depot.html" class="nav-link">Épargne</a>
+            <a href="credit.html" class="nav-link">Crédits</a>
+            <a href="admin.html" class="nav-link">Administration</a>
+            <a href="profil.html" class="nav-link active">Profil</a>
+          </div>
+          <div class="user-menu">
+            <div class="dropdown">
+              <div class="user-info">
+                <div class="user-avatar" id="nav-user-avatar">JD</div>
+                <div class="user-details">
+                  <div class="user-name" id="nav-user-name">Jean D.</div>
+                  <div class="user-role" id="nav-user-role">Client</div>
+                </div>
+              </div>
+              <div class="dropdown-menu">
+                <a href="profil.html" class="dropdown-item">Mon profil</a>
+                <div class="dropdown-divider"></div>
+                <a href="index.html" class="dropdown-item">Déconnexion</a>
+              </div>
+            </div>
           </div>
         </nav>
       </div>
@@ -94,6 +110,20 @@
 
   <script src="js/app.js"></script>
   <script>
+    (async function(){
+      try{
+        const res = await fetch('api/profile');
+        if(!res.ok) return;
+        const p = await res.json();
+        const uname = (p && p.username) ? String(p.username) : '';
+        const role = (p && p.roleName) ? String(p.roleName) : '';
+        const initials = uname ? uname.trim().split(/\s+/).map(s=>s[0]).join('').toUpperCase().slice(0,2) : 'U';
+        const av = document.getElementById('nav-user-avatar'); if(av) av.textContent = initials;
+        const nm = document.getElementById('nav-user-name'); if(nm) nm.textContent = uname || 'Utilisateur';
+        const rl = document.getElementById('nav-user-role'); if(rl) rl.textContent = role || 'Client';
+      }catch(e){}
+    })();
+
     async function loadProfile(){
       try{
         const res = await fetch('api/profile');

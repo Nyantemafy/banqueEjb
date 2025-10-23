@@ -5,6 +5,7 @@ C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\BanqueCentral\src\main
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\BanqueCentral\src\main\java\com\banque\central\model\UserSession.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\BanqueCentral\src\main\java\com\banque\central\servlet\AuthFilter.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\BanqueCentral\src\main\java\com\banque\central\servlet\CompteServlet.java
+C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\BanqueCentral\src\main\java\com\banque\central\servlet\CurrencyServlet.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\BanqueCentral\src\main\java\com\banque\central\servlet\DashboardServlet.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\BanqueCentral\src\main\java\com\banque\central\servlet\LoginServlet.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\BanqueCentral\src\main\java\com\banque\central\servlet\LogoutServlet.java

@@ -5,6 +5,7 @@ com\banque\central\servlet\DashboardServlet.class
 com\banque\central\servlet\LogoutServlet.class
 com\banque\central\model\UserSession.class
 com\banque\central\servlet\UtilisateurServlet.class
+com\banque\central\servlet\CurrencyServlet.class
 com\banque\central\servlet\LoginServlet.class
 com\banque\central\ejb\BanqueBean.class
 com\banque\central\servlet\ProfileServlet.class

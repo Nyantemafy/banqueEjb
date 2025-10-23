@@ -28,10 +28,10 @@
                     <div class="user-menu">
                         <div class="dropdown">
                             <div class="user-info">
-                                <div class="user-avatar">JD</div>
+                                <div class="user-avatar" id="nav-user-avatar">JD</div>
                                 <div class="user-details">
-                                    <div class="user-name">Jean D.</div>
-                                    <div class="user-role">Client</div>
+                                    <div class="user-name" id="nav-user-name">Jean D.</div>
+                                    <div class="user-role" id="nav-user-role">Client</div>
                                 </div>
                             </div>
                             <div class="dropdown-menu">
@@ -116,6 +116,10 @@
                             <label for="to-date">Au</label>
                             <input type="date" id="to-date">
                         </div>
+                        <div class="form-group">
+                            <label for="currency-select">Devise</label>
+                            <select id="currency-select"></select>
+                        </div>
                         <button type="submit" class="btn-secondary">Filtrer</button>
                     </form>
                     <table class="table" id="historique-transactions">
@@ -141,6 +145,7 @@
       window.REAL_COMPTE_COURANT = true;
       const COMPTE_API = 'api/compte'; // servlet CompteServlet -> EJB
       let gUserId = null;
+      let gCurrency = 'MGA';
 
       async function fetchJSON(url, options){
         const res = await fetch(url, options);
@@ -152,6 +157,14 @@
       async function loadUser(){
         const profile = await fetchJSON('api/profile');
         gUserId = profile.userId;
+        try{
+          const uname = (profile && profile.username) ? String(profile.username) : '';
+          const role = (profile && profile.roleName) ? String(profile.roleName) : '';
+          const initials = uname ? uname.trim().split(/\s+/).map(s=>s[0]).join('').toUpperCase().slice(0,2) : 'U';
+          const av = document.getElementById('nav-user-avatar'); if(av) av.textContent = initials;
+          const nm = document.getElementById('nav-user-name'); if(nm) nm.textContent = uname || 'Utilisateur';
+          const rl = document.getElementById('nav-user-role'); if(rl) rl.textContent = role || 'Client';
+        }catch(e){}
       }
 
       async function loadCompte(){
@@ -171,7 +184,7 @@
           const montant = Number(t.montant||0);
           tr.innerHTML = `
             <td>${dateStr}</td>
-            <td class="${montant<0?'montant-negatif':'montant-positif'}">${montant.toLocaleString('fr-FR',{style:'currency',currency:'EUR'})}</td>
+            <td class="${montant<0?'montant-negatif':'montant-positif'}">${formatCurrency(montant, gCurrency)}</td>
           `;
           tbody.appendChild(tr);
         });
@@ -183,6 +196,7 @@
         const q = new URLSearchParams();
         if(from) q.set('from', from);
         if(to) q.set('to', to);
+        if(gCurrency) q.set('currency', gCurrency);
         const url = `${COMPTE_API}/transactions${q.toString()?('?' + q.toString()):''}`;
         const data = await fetchJSON(url);
         renderTransactions(data||[]);
@@ -204,6 +218,37 @@
           showTab(name);
           if(name==='historique') await loadHistorique();
         }));
+      }
+
+      function formatCurrency(value, code){
+        try{ return Number(value).toLocaleString('fr-FR',{style:'currency', currency: code||'MGA'}); }
+        catch(e){ return `${Number(value).toLocaleString('fr-FR')} ${code||''}`; }
+      }
+
+      async function loadCurrencies(){
+        try{
+          const res = await fetchJSON('api/currencies');
+          const sel = document.getElementById('currency-select');
+          const list = Array.isArray(res.currencies) ? res.currencies : [];
+          gCurrency = res.default || 'MGA';
+          sel.innerHTML = '';
+          list.forEach(code => {
+            const opt = document.createElement('option');
+            opt.value = code;
+            opt.textContent = code;
+            if(code === gCurrency) opt.selected = true;
+            sel.appendChild(opt);
+          });
+          sel.addEventListener('change', async () => {
+            gCurrency = sel.value || 'MGA';
+            await loadHistorique();
+          });
+        }catch(e){
+          // fallback default
+          const sel = document.getElementById('currency-select');
+          if(sel){ sel.innerHTML = '<option value="MGA">MGA</option>'; }
+          gCurrency = 'MGA';
+        }
       }
 
       function parseAmount(val){
@@ -255,6 +300,7 @@
         try{
           await loadUser();
           await loadCompte();
+          await loadCurrencies();
         }catch(err){ console.error(err); }
       });
     </script>

@@ -54,4 +54,21 @@ public class EJBLocator {
         String jndiName = "java:global/CompteCourant/ActionControleBean!com.banque.comptecourant.ejb.ActionControleBean";
         return context.lookup(jndiName);
     }
+
+    public static Object lookupChangeBean() throws NamingException {
+        String[] candidates = new String[] {
+            "java:global/Change/ChangeBean!com.banque.change.remote.ChangeRemote",
+            "java:global/Change-1.0-SNAPSHOT/ChangeBean!com.banque.change.remote.ChangeRemote",
+            "java:global/change/ChangeBean!com.banque.change.remote.ChangeRemote"
+        };
+        NamingException last = null;
+        for (String jndi : candidates) {
+            try {
+                return context.lookup(jndi);
+            } catch (NamingException e) {
+                last = e;
+            }
+        }
+        throw (last != null) ? last : new NamingException("Unable to locate ChangeBean via known JNDI names");
+    }
 }
