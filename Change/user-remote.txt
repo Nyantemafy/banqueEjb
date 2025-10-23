@@ -1,0 +1,2 @@
+user = admin
+password = Admin#70365

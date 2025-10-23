@@ -144,7 +144,6 @@
     <script>
       window.REAL_COMPTE_COURANT = true;
       const COMPTE_API = 'api/compte'; // servlet CompteServlet -> EJB
-      const API_BASE = 'http://localhost:8080/BanqueCentral';
       let gUserId = null;
       let gCurrency = 'MGA';
 
@@ -236,7 +235,7 @@
 
       async function loadCurrencies(){
         try{
-          const res = await fetchJSON(`${API_BASE}/api/currencies`);
+          const res = await fetchJSON('api/currencies');
           const sel = document.getElementById('currency-select');
           const list = Array.isArray(res.currencies) ? res.currencies : [];
           gCurrency = res.default || 'MGA';
