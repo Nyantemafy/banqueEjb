@@ -47,9 +47,19 @@ public class EJBLocator {
                 Object.class);
     }
 
-    // Lookup distant via JNDI + jboss-ejb-client.xml
+    // Lookup distant via JNDI HTTP
     public static ChangeRemote lookupChangeBean() throws NamingException {
-        Context ctx = new InitialContext(); // Utilise wildfly-config.xml automatiquement
-        return (ChangeRemote) ctx.lookup("ejb:/Change/ChangeBean!com.banque.change.remote.ChangeRemote");
+        java.util.Properties props = new java.util.Properties();
+        props.put(Context.INITIAL_CONTEXT_FACTORY, "org.wildfly.naming.client.WildFlyInitialContextFactory");
+        props.put(Context.PROVIDER_URL, "http-remoting://localhost:8081");
+        props.put(Context.SECURITY_PRINCIPAL, "ejbuser");
+        props.put(Context.SECURITY_CREDENTIALS, "ejbpass");
+        props.put("jboss.naming.client.ejb.context", "true");
+
+        Context ctx = new InitialContext(props);
+        return (ChangeRemote) ctx.lookup(
+                "ejb:/Change/ChangeBean!com.banque.change.remote.ChangeRemote");
+
     }
+
 }

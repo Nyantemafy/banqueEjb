@@ -3,8 +3,9 @@ services:
     build: .
     container_name: change-ejb-server
     ports:
-      - "8081:8080"
-      - "9991:9990"
+    - "8081:8080"
+    - "9990:9990"
+    
     environment:
       - JAVA_OPTS=-Xms256m -Xmx512m -Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0
     networks:
@@ -13,4 +14,3 @@ services:
 networks:
   banque-network:
     driver: bridge
-
