@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.banque</groupId>
+    <groupId>com.banque.central</groupId>
     <artifactId>BanqueCentral</artifactId>
-    <version>1.0</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <wildfly.version>26.1.3.Final</wildfly.version>
     </properties>
 
     <dependencies>
@@ -21,7 +22,7 @@
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
-            <version>7.0</version>
+            <version>8.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -29,53 +30,52 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
+            <version>4.0.1</version>
             <scope>provided</scope>
         </dependency>
 
-        <!-- Gson for JSON serialization used by CompteServlet -->
+        <!-- Gson pour JSON -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.10.1</version>
         </dependency>
 
-        <!-- Remote EJB client (WildFly http-remoting) -->
+        <!-- WildFly EJB Client (pour appels EJB distants) -->
+        <dependency>
+            <groupId>org.jboss</groupId>
+            <artifactId>jboss-ejb-client</artifactId>
+            <version>4.0.44.Final</version>
+        </dependency>
+
+        <!-- WildFly Naming Client -->
         <dependency>
             <groupId>org.wildfly</groupId>
             <artifactId>wildfly-naming-client</artifactId>
-            <version>1.0.14.Final</version>
+            <version>1.0.13.Final</version>
         </dependency>
-        <dependency>
-            <groupId>org.wildfly.transaction</groupId>
-            <artifactId>wildfly-transaction-client</artifactId>
-            <version>1.1.16.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wildfly.common</groupId>
-            <artifactId>wildfly-common</artifactId>
-            <version>1.5.4.Final</version>
-        </dependency>
+
+        <!-- XNIO API pour remote EJB -->
         <dependency>
             <groupId>org.jboss.xnio</groupId>
             <artifactId>xnio-api</artifactId>
-            <version>3.8.7.Final</version>
+            <version>3.8.8.Final</version>
         </dependency>
+
         <dependency>
             <groupId>org.jboss.xnio</groupId>
             <artifactId>xnio-nio</artifactId>
-            <version>3.8.7.Final</version>
+            <version>3.8.8.Final</version>
         </dependency>
+        
+        <!-- Marshalling -->
         <dependency>
-            <groupId>org.wildfly.client</groupId>
-            <artifactId>wildfly-client-config</artifactId>
-            <version>1.0.0.Final</version>
+            <groupId>org.jboss.marshalling</groupId>
+            <artifactId>jboss-marshalling</artifactId>
+            <version>2.0.12.Final</version>
         </dependency>
-        <dependency>
-            <groupId>org.jboss</groupId>
-            <artifactId>jboss-remote-naming</artifactId>
-            <version>2.0.4.Final</version>
-        </dependency>
+
+        <!-- Interface du Change EJB (JAR local) -->
         <dependency>
             <groupId>com.banque.change</groupId>
             <artifactId>Change</artifactId>
@@ -91,10 +91,19 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.3.1</version>
+                <version>3.3.2</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
-                    <packagingExcludes>WEB-INF/jboss-ejb-client.xml</packagingExcludes>
+                    <!-- Inclure le JAR Change dans WEB-INF/lib -->
+                    <webResources>
+                        <resource>
+                            <directory>${project.basedir}/lib</directory>
+                            <targetPath>WEB-INF/lib</targetPath>
+                            <includes>
+                                <include>Change.jar</include>
+                            </includes>
+                        </resource>
+                    </webResources>
                 </configuration>
             </plugin>
         </plugins>
