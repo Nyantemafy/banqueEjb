@@ -83,6 +83,15 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/Change.jar</systemPath>
         </dependency>
+
+        <!-- WildFly EJB Client pour remote lookup -->
+        <dependency>
+            <groupId>org.wildfly</groupId>
+            <artifactId>wildfly-ejb-client-bom</artifactId>
+            <version>26.1.3.Final</version>
+            <type>pom</type>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
