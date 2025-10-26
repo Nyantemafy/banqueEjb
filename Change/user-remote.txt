@@ -1,4 +1,0 @@
-user = admin
-password = Admin#70365
-
-# mvn install:install-file -Dfile=lib/Change.jar -DgroupId=com.banque.change -DartifactId=Change -Dversion=1.0-SNAPSHOT -Dpackaging=jar
