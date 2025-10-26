@@ -3,7 +3,6 @@ package com.banque.central.util;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
 import com.banque.change.remote.ChangeRemote;
 
 public class EJBLocator {
@@ -52,4 +51,5 @@ public class EJBLocator {
         Context ctx = new InitialContext(); // Utilise wildfly-config.xml automatiquement
         return (ChangeRemote) ctx.lookup("ejb:/Change/ChangeBean!com.banque.change.remote.ChangeRemote");
     }
+
 }
