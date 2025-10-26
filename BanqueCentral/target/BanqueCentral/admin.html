@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banque Principale - Administration</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>Banque Principale</h1>
+                </div>
+                
+                <nav class="nav">
+                    <button class="menu-toggle" id="menuToggle">☰</button>
+                    
+                    <div class="nav-links" id="navLinks">
+                        <a href="dashboard.html" class="nav-link">Tableau de bord</a>
+                        <a href="compte-courant.html" class="nav-link">Compte Courant</a>
+                        <a href="compte-depot.html" class="nav-link">Épargne</a>
+                        <a href="credit.html" class="nav-link">Crédits</a>
+                        <a href="admin.html" class="nav-link active">Administration <span class="badge" id="admin-badge">2</span></a>
+                    </div>
+                    
+                    <div class="user-menu">
+                        <div class="dropdown">
+                            <div class="user-info">
+                                <div class="user-avatar" id="nav-user-avatar">JD</div>
+                                <div class="user-details">
+                                    <div class="user-name" id="nav-user-name">Jean D.</div>
+                                    <div class="user-role" id="nav-user-role">Client</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-menu">
+                                <a href="profil.html" class="dropdown-item">Mon profil</a>
+                                <div class="dropdown-divider"></div>
+                                <a href="index.html" class="dropdown-item">Déconnexion</a>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="dashboard">
+                <div class="dashboard-header">
+                    <h1>Administration</h1>
+                    <p>Gestion des comptes et demandes de prêt</p>
+                </div>
+
+                <div class="nav-tabs">
+                    <div class="nav-tab active">Création de compte</div>
+                    <div class="nav-tab">Demandes de prêt</div>
+                    <div class="nav-tab">Utilisateurs</div>
+                </div>
+
+                <!-- Formulaire de création de compte -->
+                <div class="card content-section" id="section-creation">
+                    <h2>Créer un nouveau compte</h2>
+                    <form id="form-create-user">
+                        <div class="form-group">
+                            <label for="username">Nom d'utilisateur</label>
+                            <input type="text" id="username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Mot de passe</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="solde_initial">Solde initial</label>
+                            <input type="number" step="0.01" id="solde_initial" name="solde_initial" value="0.00">
+                        </div>
+                        <button type="submit" class="btn-primary">Créer le compte</button>
+                    </form>
+                </div>
+
+                <!-- Liste des demandes de prêt -->
+                <div class="card content-section" id="section-demandes">
+                    <h2>Demandes de prêt en attente</h2>
+                    <table class="table" id="demandes-pret">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Client</th>
+                                <th>Montant</th>
+                                <th>Durée</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#001</td>
+                                <td>Marie Martin</td>
+                                <td>15 000,00 €</td>
+                                <td>60 mois</td>
+                                <td><span class="badge">En attente</span></td>
+                                <td>
+                                    <button class="btn-primary btn-small" onclick="approuverDemande(1)">Approuver</button>
+                                    <button class="btn-secondary btn-small" onclick="rejeterDemande(1)">Rejeter</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#002</td>
+                                <td>Pierre Durand</td>
+                                <td>25 000,00 €</td>
+                                <td>84 mois</td>
+                                <td><span class="badge">En attente</span></td>
+                                <td>
+                                    <button class="btn-primary btn-small" onclick="approuverDemande(2)">Approuver</button>
+                                    <button class="btn-secondary btn-small" onclick="rejeterDemande(2)">Rejeter</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Utilisateurs -->
+                <div class="card content-section" id="section-utilisateurs">
+                    <h2>Utilisateurs</h2>
+                    <div id="users-list">Aucune donnée pour l'instant.</div>
+                    <div class="dashboard-grid" style="margin-top: 16px;">
+                        <div class="dashboard-card">
+                            <h3>Utilisateurs total</h3>
+                            <div class="card-value" id="total-users">1,247</div>
+                            <div class="card-label">Clients actifs</div>
+                        </div>
+                        <div class="dashboard-card">
+                            <h3>Demandes en attente</h3>
+                            <div class="card-value" id="pending-requests">12</div>
+                            <div class="card-label">À traiter</div>
+                        </div>
+                        <div class="dashboard-card">
+                            <h3>Prêts actifs</h3>
+                            <div class="card-value" id="active-loans">89</div>
+                            <div class="card-label">En cours</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="footer">
+            <p>&copy; 2023 Banque Principale. Tous droits réservés.</p>
+        </footer>
+    </div>
+    
+    <script src="js/app.js"></script>
+    <script>
+        function approuverDemande(id) {
+            if(confirm('Approuver la demande #' + id + ' ?')) {
+                alert('Demande #' + id + ' approuvée avec succès');
+                // Ici, appel à l'API backend
+            }
+        }
+
+        function rejeterDemande(id) {
+            if(confirm('Rejeter la demande #' + id + ' ?')) {
+                alert('Demande #' + id + ' rejetée');
+                // Ici, appel à l'API backend
+            }
+        }
+
+        // Tabs: show only selected section
+        (function() {
+            const tabs = document.querySelectorAll('.nav-tabs .nav-tab');
+            const sections = {
+                'Création de compte': document.getElementById('section-creation'),
+                'Demandes de prêt': document.getElementById('section-demandes'),
+                'Utilisateurs': document.getElementById('section-utilisateurs')
+            };
+            function show(title) {
+                Object.values(sections).forEach(s => s && (s.style.display = 'none'));
+                if (sections[title]) sections[title].style.display = '';
+            }
+            tabs.forEach(t => t.addEventListener('click', function() {
+                tabs.forEach(x => x.classList.remove('active'));
+                this.classList.add('active');
+                show(this.textContent.trim());
+            }));
+            // init default
+            show('Création de compte');
+        })();
+
+        document.getElementById('form-create-user').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const fd = new FormData(form);
+            // id_actionrole et id_status par défaut côté serveur: 1
+            const data = new URLSearchParams(fd);
+            try {
+                const res = await fetch('api/utilisateur/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: data.toString()
+                });
+                const json = await res.json();
+                if (res.ok && json.success) {
+                    alert('Utilisateur créé. ID: ' + json.userId);
+                    form.reset();
+                } else {
+                    alert(json.error || 'Erreur lors de la création');
+                }
+            } catch (err) {
+                alert('Erreur réseau');
+            }
+        });
+    </script>
+</body>
+</html>

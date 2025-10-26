@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banque Principale - Compte Courant</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>Banque Principale</h1>
+                </div>
+                
+                <nav class="nav">
+                    <button class="menu-toggle" id="menuToggle">☰</button>
+                    
+                    <div class="nav-links" id="navLinks">
+                        <a href="dashboard.html" class="nav-link">Tableau de bord</a>
+                        <a href="compte-courant.html" class="nav-link active">Compte Courant</a>
+                        <a href="compte-depot.html" class="nav-link">Épargne</a>
+                        <a href="credit.html" class="nav-link">Crédits</a>
+                        <a href="admin.html" class="nav-link">Administration</a>
+                    </div>
+                    
+                    <div class="user-menu">
+                        <div class="dropdown">
+                            <div class="user-info">
+                                <div class="user-avatar" id="nav-user-avatar">JD</div>
+                                <div class="user-details">
+                                    <div class="user-name" id="nav-user-name">Jean D.</div>
+                                    <div class="user-role" id="nav-user-role">Client</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-menu">
+                                <a href="profil.html" class="dropdown-item">Mon profil</a>
+                                <div class="dropdown-divider"></div>
+                                <a href="index.html" class="dropdown-item">Déconnexion</a>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="dashboard">
+                <div class="dashboard-header">
+                    <h1>Compte Courant</h1>
+                    <p>FR76 3000 4000 0100 1234 5678 900</p>
+                </div>
+
+                <!-- Solde et état du compte -->
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>Solde actuel</h3>
+                        <div class="card-value" id="solde-compte-courant">5 420,50 €</div>
+                        <div class="card-label">État: Actif</div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Découvert autorisé</h3>
+                        <div class="card-value">1 000,00 €</div>
+                        <div class="card-label">Non utilisé</div>
+                    </div>
+                </div>
+
+                <div class="nav-tabs">
+                    <div class="nav-tab active" data-tab="depot">Dépôt</div>
+                    <div class="nav-tab" data-tab="retrait">Retrait</div>
+                    <div class="nav-tab" data-tab="historique">Historique</div>
+                </div>
+
+                <!-- Formulaire de dépôt -->
+                <div class="card" id="depot-card">
+                    <h2>Effectuer un dépôt</h2>
+                    <form id="form-depot">
+                        <div class="form-group">
+                            <label for="montant-depot">Montant</label>
+                            <input type="number" id="montant-depot" name="montant-depot" placeholder="Ex: 100,00" min="0.01" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="date-depot">Date de l'opération</label>
+                            <input type="date" id="date-depot">
+                        </div>
+                        <button type="submit" class="btn-primary">Confirmer le dépôt</button>
+                    </form>
+                </div>
+
+                <!-- Formulaire de retrait -->
+                <div class="card" id="retrait-card" style="display:none">
+                    <h2>Effectuer un retrait</h2>
+                    <form id="form-retrait">
+                        <div class="form-group">
+                            <label for="montant-retrait">Montant</label>
+                            <input type="number" id="montant-retrait" name="montant-retrait" placeholder="Ex: 50,00" min="0.01" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="date-retrait">Date de l'opération</label>
+                            <input type="date" id="date-retrait">
+                        </div>
+                        <button type="submit" class="btn-primary">Confirmer le retrait</button>
+                    </form>
+                </div>
+
+                <!-- Historique des transactions -->
+                <div class="card" id="historique-card" style="display:none">
+                    <h2>Historique des transactions</h2>
+                    <form id="form-filtre-histo" style="display:flex; gap: 0.5rem; align-items: end; flex-wrap: wrap; margin-bottom: 0.75rem;">
+                        <div class="form-group">
+                            <label for="from-date">Du</label>
+                            <input type="date" id="from-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="to-date">Au</label>
+                            <input type="date" id="to-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="currency-select">Devise</label>
+                            <select id="currency-select"></select>
+                        </div>
+                        <button type="submit" class="btn-secondary">Filtrer</button>
+                    </form>
+                    <table class="table" id="historique-transactions">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Montant</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-transactions"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="footer">
+            <p>&copy; 2023 Banque Principale. Tous droits réservés.</p>
+        </footer>
+    </div>
+    
+    <script src="js/app.js"></script>
+    <script>
+      window.REAL_COMPTE_COURANT = true;
+      const COMPTE_API = 'api/compte'; // servlet CompteServlet -> EJB
+      let gUserId = null;
+      let gCurrency = 'MGA';
+
+      async function fetchJSON(url, options){
+        const res = await fetch(url, options);
+        const data = await res.json().catch(() => ({}));
+        if(!res.ok){ throw new Error(data.error || res.statusText || 'Erreur'); }
+        return data;
+      }
+
+      async function loadUser(){
+        const profile = await fetchJSON('api/profile');
+        gUserId = profile.userId;
+        try{
+          const uname = (profile && profile.username) ? String(profile.username) : '';
+          const role = (profile && profile.roleName) ? String(profile.roleName) : '';
+          const initials = uname ? uname.trim().split(/\s+/).map(s=>s[0]).join('').toUpperCase().slice(0,2) : 'U';
+          const av = document.getElementById('nav-user-avatar'); if(av) av.textContent = initials;
+          const nm = document.getElementById('nav-user-name'); if(nm) nm.textContent = uname || 'Utilisateur';
+          const rl = document.getElementById('nav-user-role'); if(rl) rl.textContent = role || 'Client';
+        }catch(e){}
+      }
+
+      async function loadCompte(){
+        const data = await fetchJSON(`${COMPTE_API}/solde`);
+        const solde = (data && data.solde!=null) ? Number(data.solde) : null;
+        if(solde!=null){
+          document.getElementById('solde-compte-courant').textContent = solde.toLocaleString('fr-FR', {style:'currency', currency:'EUR'});
+        }
+      }
+
+      function renderTransactions(list){
+        const tbody = document.getElementById('tbody-transactions');
+        tbody.innerHTML = '';
+        (list||[]).forEach(t => {
+          const tr = document.createElement('tr');
+          const dateStr = t.dateTransaction ? new Date(t.dateTransaction).toLocaleDateString('fr-FR') : '';
+          const montant = Number(t.montant||0);
+          tr.innerHTML = `
+            <td>${dateStr}</td>
+            <td class="${montant<0?'montant-negatif':'montant-positif'}">${formatCurrency(montant, gCurrency)}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      async function loadHistorique(){
+        const from = (document.getElementById('from-date')?.value||'');
+        const to = (document.getElementById('to-date')?.value||'');
+        const q = new URLSearchParams();
+        if(from) q.set('from', from);
+        if(to) q.set('to', to);
+        if(gCurrency) q.set('currency', gCurrency);
+        const url = `${COMPTE_API}/transactions${q.toString()?('?' + q.toString()):''}`;
+        const data = await fetchJSON(url);
+        renderTransactions(data||[]);
+      }
+
+      function showTab(name){
+        const depot = document.getElementById('depot-card');
+        const retrait = document.getElementById('retrait-card');
+        const hist = document.getElementById('historique-card');
+        depot.style.display = (name==='depot') ? '' : 'none';
+        retrait.style.display = (name==='retrait') ? '' : 'none';
+        hist.style.display = (name==='historique') ? '' : 'none';
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.tab===name));
+      }
+
+      function bindTabs(){
+        document.querySelectorAll('.nav-tab').forEach(tab => tab.addEventListener('click', async () => {
+          const name = tab.dataset.tab;
+          showTab(name);
+          if(name==='historique') await loadHistorique();
+        }));
+      }
+
+      function formatCurrency(value, code){
+        const num = Number(value);
+        if(!Number.isFinite(num)) return `${value}`;
+        try{
+          // Force 4 decimals regardless of currency defaults
+          const opts = { minimumFractionDigits: 4, maximumFractionDigits: 4 };
+          // Using number format + code to keep consistency
+          return `${num.toLocaleString('fr-FR', opts)} ${code||'MGA'}`;
+        }catch(e){
+          return `${num.toFixed(4)} ${code||'MGA'}`;
+        }
+      }
+
+      async function loadCurrencies(){
+        try{
+          const res = await fetchJSON('api/currencies');
+          const sel = document.getElementById('currency-select');
+          const list = Array.isArray(res.currencies) ? res.currencies : [];
+          gCurrency = res.default || 'MGA';
+          sel.innerHTML = '';
+          list.forEach(code => {
+            const opt = document.createElement('option');
+            opt.value = code;
+            opt.textContent = code;
+            if(code === gCurrency) opt.selected = true;
+            sel.appendChild(opt);
+          });
+          sel.addEventListener('change', async () => {
+            gCurrency = sel.value || 'MGA';
+            await loadHistorique();
+          });
+        }catch(e){
+          // fallback default
+          const sel = document.getElementById('currency-select');
+          if(sel){ sel.innerHTML = '<option value="MGA">MGA</option>'; }
+          gCurrency = 'MGA';
+        }
+      }
+
+      function parseAmount(val){
+        if(val==null) return NaN;
+        if(typeof val !== 'string') return Number(val);
+        // remove spaces incl. non-breaking spaces, normalize comma to dot
+        const n = val.replace(/[\s\u00A0\u202F]/g, '').replace(',', '.');
+        const num = Number(n);
+        return Number.isFinite(num) ? num : NaN;
+      }
+
+      function bindForms(){
+        document.getElementById('form-depot').addEventListener('submit', async function(e){
+          e.preventDefault();
+          try{
+            const montant = document.getElementById('montant-depot').value;
+            const dateDepot = (document.getElementById('date-depot')?.value||'');
+            const body = new URLSearchParams({ action: 'depot', montant: String(montant), mode: '' });
+            if(dateDepot) body.set('date', dateDepot);
+            await fetchJSON(`${COMPTE_API}/`, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body });
+            this.reset();
+            await loadCompte();
+          }catch(err){ console.error(err); }
+        });
+
+        document.getElementById('form-retrait').addEventListener('submit', async function(e){
+          e.preventDefault();
+          try{
+            const montant = document.getElementById('montant-retrait').value;
+            const dateRetrait = (document.getElementById('date-retrait')?.value||'');
+            const body = new URLSearchParams({ action: 'retrait', montant: String(montant), mode: '' });
+            if(dateRetrait) body.set('date', dateRetrait);
+            await fetchJSON(`${COMPTE_API}/`, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body });
+            this.reset();
+            await loadCompte();
+          }catch(err){ console.error(err); }
+        });
+
+        const filtre = document.getElementById('form-filtre-histo');
+        if(filtre){
+          filtre.addEventListener('submit', async (e) => { e.preventDefault(); await loadHistorique(); });
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        bindTabs();
+        bindForms();
+        showTab('depot');
+        try{
+          await loadUser();
+          await loadCompte();
+          await loadCurrencies();
+        }catch(err){ console.error(err); }
+      });
+    </script>
+</body>
+</html>

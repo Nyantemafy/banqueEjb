@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banque Principale - Compte Dépôt</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>Banque Principale</h1>
+                </div>
+                
+                <nav class="nav">
+                    <button class="menu-toggle" id="menuToggle">☰</button>
+                    
+                    <div class="nav-links" id="navLinks">
+                        <a href="dashboard.html" class="nav-link">Tableau de bord</a>
+                        <a href="compte-courant.html" class="nav-link">Compte Courant</a>
+                        <a href="compte-depot.html" class="nav-link active">Épargne</a>
+                        <a href="credit.html" class="nav-link">Crédits</a>
+                        <a href="admin.html" class="nav-link">Administration</a>
+                    </div>
+                    
+                    <div class="user-menu">
+                        <div class="dropdown">
+                            <div class="user-info">
+                                <div class="user-avatar" id="nav-user-avatar">JD</div>
+                                <div class="user-details">
+                                    <div class="user-name" id="nav-user-name">Jean D.</div>
+                                    <div class="user-role" id="nav-user-role">Client</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-menu">
+                                <a href="profil.html" class="dropdown-item">Mon profil</a>
+                                <div class="dropdown-divider"></div>
+                                <a href="index.html" class="dropdown-item">Déconnexion</a>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="dashboard">
+                <div class="dashboard-header">
+                    <h1>Compte Dépôt - Épargne</h1>
+                    <p>FR76 3000 4000 0100 1234 5678 901</p>
+                </div>
+
+                <!-- Solde et état du compte -->
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>Solde total épargne</h3>
+                        <div class="card-value" id="solde-compte-depot">12 500,75 €</div>
+                        <div class="card-label">État: Actif</div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Intérêts annuels</h3>
+                        <div class="card-value">+62,50 €</div>
+                        <div class="card-label">Estimation sur 12 mois</div>
+                    </div>
+                </div>
+
+                <div class="nav-tabs">
+                    <div class="nav-tab active" data-tab="produits">Produits d'épargne</div>
+                    <div class="nav-tab" data-tab="depot">Dépôt</div>
+                    <div class="nav-tab" data-tab="retrait">Retrait</div>
+                </div>
+
+                <!-- Détails des produits -->
+                <div class="card" id="produits-card">
+                    <h2>Mes produits d'épargne</h2>
+                    <div id="details-produits">
+                        <div class="produit-card">
+                            <h4>Livret A</h4>
+                            <p><strong>Solde:</strong> 8 000,00 €</p>
+                            <p><strong>Taux:</strong> 0.5%</p>
+                            <p><strong>Terme:</strong> Illimité</p>
+                            <p><strong>Intérêts cumulés:</strong> 40,00 €</p>
+                        </div>
+                        <div class="produit-card">
+                            <h4>LDDS</h4>
+                            <p><strong>Solde:</strong> 4 500,75 €</p>
+                            <p><strong>Taux:</strong> 0.75%</p>
+                            <p><strong>Terme:</strong> Illimité</p>
+                            <p><strong>Intérêts cumulés:</strong> 22,50 €</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulaire de dépôt -->
+                <div class="card" id="depot-card" style="display:none">
+                    <h2>Effectuer un dépôt</h2>
+                    <form id="form-depot-epargne">
+                        <div class="form-group">
+                            <label for="montant-depot-epargne">Montant</label>
+                            <input type="number" id="montant-depot-epargne" name="montant-depot-epargne" min="1" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="produit-depot">Produit d'épargne</label>
+                            <select id="produit-depot" name="produit-depot" required>
+                                <option value="">Sélectionnez un produit</option>
+                                <option value="livret-a">Livret A</option>
+                                <option value="ldds">LDDS</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary">Confirmer le dépôt</button>
+                    </form>
+                </div>
+
+                <!-- Formulaire de retrait -->
+                <div class="card" id="retrait-card" style="display:none">
+                    <h2>Effectuer un retrait</h2>
+                    <form id="form-retrait-epargne">
+                        <div class="form-group">
+                            <label for="montant-retrait-epargne">Montant</label>
+                            <input type="number" id="montant-retrait-epargne" name="montant-retrait-epargne" min="1" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="produit-retrait">Produit d'épargne</label>
+                            <select id="produit-retrait" name="produit-retrait" required>
+                                <option value="">Sélectionnez un produit</option>
+                                <option value="livret-a">Livret A</option>
+                                <option value="ldds">LDDS</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary">Confirmer le retrait</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="footer">
+            <p>&copy; 2023 Banque Principale. Tous droits réservés.</p>
+        </footer>
+    </div>
+    
+    <script src="js/app.js"></script>
+    <script>
+      const COMPTE_DEPOT_API = 'http://localhost:5000/api/depot'; // .NET API
+      let gUserId = null;
+      let gCompteDepotId = null;
+
+      async function fetchJSON(url, options){
+        const res = await fetch(url, options);
+        const data = await res.json().catch(() => ({}));
+        if(!res.ok){
+          const msg = data.error || res.statusText || 'Erreur';
+          throw new Error(msg);
+        }
+        return data;
+      }
+
+      async function loadUser(){
+        const profile = await fetchJSON('api/profile');
+        gUserId = profile.userId;
+        try{
+          const uname = (profile && profile.username) ? String(profile.username) : '';
+          const role = (profile && profile.roleName) ? String(profile.roleName) : '';
+          const initials = uname ? uname.trim().split(/\s+/).map(s=>s[0]).join('').toUpperCase().slice(0,2) : 'U';
+          const av = document.getElementById('nav-user-avatar'); if(av) av.textContent = initials;
+          const nm = document.getElementById('nav-user-name'); if(nm) nm.textContent = uname || 'Utilisateur';
+          const rl = document.getElementById('nav-user-role'); if(rl) rl.textContent = role || 'Client';
+        }catch(e){}
+      }
+
+      function renderProduits(list){
+        const container = document.getElementById('details-produits');
+        container.innerHTML = '';
+        if(!list || !list.length){
+          container.innerHTML = '<div class="produit-card"><p>Aucun produit</p></div>';
+          return;
+        }
+        list.forEach(p => {
+          const div = document.createElement('div');
+          div.className = 'produit-card';
+          div.innerHTML = `
+            <h4>${p.nom}</h4>
+            <p><strong>Solde:</strong> ${Number(p.solde).toLocaleString('fr-FR', {style:'currency', currency:'EUR'})}</p>
+            <p><strong>Taux:</strong> ${p.taux}%</p>
+            <p><strong>Terme:</strong> ${p.terme}</p>
+            <p><strong>Intérêts cumulés:</strong> ${Number(p.interetsCumules).toLocaleString('fr-FR', {style:'currency', currency:'EUR'})}</p>
+          `;
+          container.appendChild(div);
+        });
+      }
+
+      async function loadPage(){
+        try{
+          await loadUser();
+          if(!gUserId){ throw new Error('Utilisateur non authentifié'); }
+
+          // Compte info (pour obtenir IdCompteDepot)
+          const info = await fetchJSON(`${COMPTE_DEPOT_API}/info?userId=${gUserId}`);
+          if(info && info.idCompteDepot){ gCompteDepotId = info.idCompteDepot; }
+
+          // Produits
+          const produits = await fetchJSON(`${COMPTE_DEPOT_API}/produits?userId=${gUserId}`);
+          renderProduits(produits);
+        } catch(err){
+          alert('Erreur de chargement: ' + err.message);
+        }
+      }
+
+      function showTab(name){
+        const produits = document.getElementById('produits-card');
+        const depot = document.getElementById('depot-card');
+        const retrait = document.getElementById('retrait-card');
+        produits.style.display = (name === 'produits') ? '' : 'none';
+        depot.style.display = (name === 'depot') ? '' : 'none';
+        retrait.style.display = (name === 'retrait') ? '' : 'none';
+        document.querySelectorAll('.nav-tab').forEach(t => {
+          t.classList.toggle('active', t.dataset.tab === name);
+        });
+      }
+
+      function setupTabs(){
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+          tab.addEventListener('click', () => showTab(tab.dataset.tab));
+        });
+        // Default view
+        showTab('produits');
+      }
+
+      document.getElementById('form-depot-epargne').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        try{
+          if(!gCompteDepotId){ throw new Error('Compte dépôt introuvable'); }
+          const montant = Number(document.getElementById('montant-depot-epargne').value);
+          if(!montant || montant <= 0) throw new Error('Montant invalide');
+          const body = {
+            compteDepotId: gCompteDepotId,
+            montant: montant,
+            typeOperation: 'DEPOT',
+            description: 'Dépôt épargne'
+          };
+          const res = await fetchJSON(`${COMPTE_DEPOT_API}/operation`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+          });
+          alert('Dépôt effectué avec succès');
+          this.reset();
+          // Recharger les produits
+          const produits = await fetchJSON(`${COMPTE_DEPOT_API}/produits?userId=${gUserId}`);
+          renderProduits(produits);
+        }catch(err){
+          alert('Erreur dépôt: ' + err.message);
+        }
+      });
+
+      document.getElementById('form-retrait-epargne').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        try{
+          if(!gCompteDepotId){ throw new Error('Compte dépôt introuvable'); }
+          const montant = Number(document.getElementById('montant-retrait-epargne').value);
+          if(!montant || montant <= 0) throw new Error('Montant invalide');
+          const body = {
+            compteDepotId: gCompteDepotId,
+            montant: montant,
+            typeOperation: 'RETRAIT',
+            description: 'Retrait épargne'
+          };
+          const res = await fetchJSON(`${COMPTE_DEPOT_API}/operation`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+          });
+          alert('Retrait effectué avec succès');
+          this.reset();
+          const produits = await fetchJSON(`${COMPTE_DEPOT_API}/produits?userId=${gUserId}`);
+          renderProduits(produits);
+        }catch(err){
+          alert('Erreur retrait: ' + err.message);
+        }
+      });
+
+      // Charger au démarrage
+      window.addEventListener('DOMContentLoaded', () => { setupTabs(); loadPage(); });
+    </script>
+</body>
+</html>
