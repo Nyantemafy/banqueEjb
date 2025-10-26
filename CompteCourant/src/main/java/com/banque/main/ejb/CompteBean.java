@@ -9,6 +9,10 @@ import com.banque.comptecourant.entity.Direction;
 import com.banque.comptecourant.entity.Status;
 import com.banque.comptecourant.entity.Role;
 
+import com.banque.comptecourant.util.ChangeUtil;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -16,6 +20,7 @@ import javax.persistence.TypedQuery;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Stateless(name = "CompteCourantBean")
 public class CompteBean implements CompteRemote {
@@ -27,8 +32,8 @@ public class CompteBean implements CompteRemote {
     public CompteCourant getCompteByUserId(Integer userId) {
         try {
             TypedQuery<CompteCourant> query = em.createQuery(
-                "SELECT c FROM CompteCourant c WHERE c.utilisateur.idUser = :userId",
-                CompteCourant.class);
+                    "SELECT c FROM CompteCourant c WHERE c.utilisateur.idUser = :userId",
+                    CompteCourant.class);
             query.setParameter("userId", userId);
             query.setMaxResults(1);
             List<CompteCourant> list = query.getResultList();
@@ -105,7 +110,7 @@ public class CompteBean implements CompteRemote {
     @Override
     public List<CompteCourant> getAllComptes() {
         TypedQuery<CompteCourant> query = em.createQuery(
-            "SELECT c FROM CompteCourant c", CompteCourant.class);
+                "SELECT c FROM CompteCourant c", CompteCourant.class);
         return query.getResultList();
     }
 
@@ -143,11 +148,11 @@ public class CompteBean implements CompteRemote {
             transaction.setMontant(montant);
             transaction.setDateTransaction(new Date());
             transaction.setCompteCourant(compte);
-            
+
             // Trouver le type "DEPOT"
             Type type = getTypeByLibelle("DEPOT");
             transaction.setType(type);
-            
+
             em.persist(transaction);
             em.flush();
             return true;
@@ -180,11 +185,11 @@ public class CompteBean implements CompteRemote {
             transaction.setMontant(montant.negate());
             transaction.setDateTransaction(new Date());
             transaction.setCompteCourant(compte);
-            
+
             // Trouver le type "RETRAIT"
             Type type = getTypeByLibelle("RETRAIT");
             transaction.setType(type);
-            
+
             em.persist(transaction);
             return true;
         } catch (Exception e) {
@@ -196,8 +201,8 @@ public class CompteBean implements CompteRemote {
     @Override
     public List<Transaction> getTransactions(Integer compteId) {
         TypedQuery<Transaction> query = em.createQuery(
-            "SELECT t FROM Transaction t WHERE t.compteCourant.idCompteCourant = :compteId ORDER BY t.dateTransaction DESC",
-            Transaction.class);
+                "SELECT t FROM Transaction t WHERE t.compteCourant.idCompteCourant = :compteId ORDER BY t.dateTransaction DESC",
+                Transaction.class);
         query.setParameter("compteId", compteId);
         return query.getResultList();
     }
@@ -205,8 +210,8 @@ public class CompteBean implements CompteRemote {
     @Override
     public List<Transaction> getRecentTransactions(Integer compteId, int limit) {
         TypedQuery<Transaction> query = em.createQuery(
-            "SELECT t FROM Transaction t WHERE t.compteCourant.idCompteCourant = :compteId ORDER BY t.dateTransaction DESC",
-            Transaction.class);
+                "SELECT t FROM Transaction t WHERE t.compteCourant.idCompteCourant = :compteId ORDER BY t.dateTransaction DESC",
+                Transaction.class);
         query.setParameter("compteId", compteId);
         query.setMaxResults(limit);
         return query.getResultList();
@@ -214,11 +219,11 @@ public class CompteBean implements CompteRemote {
 
     @Override
     public Integer createUtilisateurEtCompte(String username,
-                                             String password,
-                                             Integer idRole,
-                                             Integer idDirection,
-                                             Integer idStatus,
-                                             BigDecimal soldeInitial) {
+            String password,
+            Integer idRole,
+            Integer idDirection,
+            Integer idStatus,
+            BigDecimal soldeInitial) {
         try {
             // Load linked entities
             Role role = em.find(Role.class, idRole);
@@ -253,11 +258,86 @@ public class CompteBean implements CompteRemote {
     private Type getTypeByLibelle(String libelle) {
         try {
             TypedQuery<Type> query = em.createQuery(
-                "SELECT t FROM Type t WHERE t.libelle = :libelle", Type.class);
+                    "SELECT t FROM Type t WHERE t.libelle = :libelle", Type.class);
             query.setParameter("libelle", libelle);
             return query.getSingleResult();
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    /**
+     * Récupère les transactions avec conversion de devise optionnelle
+     */
+    @Override
+    public List<Map<String, Object>> getTransactionsWithCurrency(Integer compteId, String targetCurrency) {
+        List<Transaction> transactions = getTransactions(compteId);
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        try {
+            // Tenter d'utiliser Change pour la conversion
+            com.banque.change.remote.ChangeRemote changeBean = ChangeUtil.getChangeBean();
+
+            for (Transaction t : transactions) {
+                Map<String, Object> row = new HashMap<>();
+                row.put("dateTransaction", t.getDateTransaction());
+
+                // Conversion du montant
+                if (targetCurrency != null && !targetCurrency.equals("MGA")) {
+                    BigDecimal converted = changeBean.convert(
+                            t.getMontant(),
+                            "MGA",
+                            targetCurrency,
+                            t.getDateTransaction());
+                    row.put("montant", converted);
+                    row.put("devise", targetCurrency);
+                } else {
+                    row.put("montant", t.getMontant());
+                    row.put("devise", "MGA");
+                }
+
+                result.add(row);
+            }
+        } catch (Exception e) {
+            // Fallback si Change n'est pas disponible
+            e.printStackTrace();
+            for (Transaction t : transactions) {
+                Map<String, Object> row = new HashMap<>();
+                row.put("dateTransaction", t.getDateTransaction());
+                row.put("montant", t.getMontant());
+                row.put("devise", "MGA");
+                result.add(row);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Récupère la liste des devises disponibles
+     */
+    @Override
+    public List<String> getAvailableCurrencies() {
+        try {
+            com.banque.change.remote.ChangeRemote changeBean = ChangeUtil.getChangeBean();
+            return changeBean.getCurrencies();
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Fallback
+            return java.util.Arrays.asList("MGA", "EUR", "USD", "KMF", "ZAR");
+        }
+    }
+
+    /**
+     * Récupère la devise par défaut
+     */
+    @Override
+    public String getDefaultCurrency() {
+        try {
+            com.banque.change.remote.ChangeRemote changeBean = ChangeUtil.getChangeBean();
+            return changeBean.getDefaultCurrency();
+        } catch (Exception e) {
+            return "MGA";
         }
     }
 
