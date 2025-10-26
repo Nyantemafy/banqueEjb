@@ -1,0 +1,16 @@
+services:
+  wildfly-change:
+    build: .
+    container_name: wildfly-change
+    ports:
+      - "8081:8080"
+      - "9990:9990"
+    volumes:
+      - ./deployments:/opt/jboss/wildfly/standalone/deployments
+    environment:
+      - JAVA_OPTS=-Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0
+
+      # ✅ ICI : JNDI variable utilisée par ton client
+      - CHANGE_JNDI=java:global/Change-1.0-SNAPSHOT/ChangeBean!com.banque.change.remote.ChangeRemote
+
+

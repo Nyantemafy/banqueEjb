@@ -3,7 +3,6 @@ package com.banque.central.util;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import java.util.Properties;
 
 public class EJBLocator {
 
@@ -56,10 +55,13 @@ public class EJBLocator {
     }
 
     public static Object lookupChangeBean() throws NamingException {
+        String envJndi = System.getenv("CHANGE_JNDI");
+        if (envJndi != null && !envJndi.trim().isEmpty()) {
+            return context.lookup(envJndi);
+        }
+
         String[] candidates = new String[] {
-            "java:global/Change/ChangeBean!com.banque.change.remote.ChangeRemote",
-            "java:global/Change-1.0-SNAPSHOT/ChangeBean!com.banque.change.remote.ChangeRemote",
-            "java:global/change/ChangeBean!com.banque.change.remote.ChangeRemote"
+                "java:global/Change-1.0-SNAPSHOT/ChangeBean!com.banque.change.remote.ChangeRemote",
         };
         NamingException last = null;
         for (String jndi : candidates) {
@@ -71,4 +73,5 @@ public class EJBLocator {
         }
         throw (last != null) ? last : new NamingException("Unable to locate ChangeBean via known JNDI names");
     }
+
 }
