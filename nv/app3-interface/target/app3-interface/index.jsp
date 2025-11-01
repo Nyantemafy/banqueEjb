@@ -1,6 +1,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.interface_app.model.Devise" %>
+<%
+    // Si la liste n'est pas chargée, rediriger vers le servlet
+    List<String> noms = (List<String>) request.getAttribute("noms");
+    if (noms == null) {
+        response.sendRedirect("deviseDetail");
+        return;
+    }
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -51,13 +59,10 @@
         <select name="devise" id="devise">
             <option value="">-- Choisir une devise --</option>
             <%
-                List<String> noms = (List<String>) request.getAttribute("noms");
-                if (noms != null) {
-                    for (String nom : noms) {
+                for (String nom : noms) {
             %>
                 <option value="<%= nom %>"><%= nom %></option>
             <%
-                    }
                 }
             %>
         </select>

@@ -18,13 +18,20 @@ public class MultiplicationServiceBean implements MultiplicationService {
             jndiProperties.put(Context.INITIAL_CONTEXT_FACTORY,
                     "org.wildfly.naming.client.WildFlyInitialContextFactory");
             jndiProperties.put(Context.PROVIDER_URL,
-                    "http-remoting://wildfly-docker:8081");
+                    "remote+http://127.0.0.1:8081");
             jndiProperties.put("jboss.naming.client.ejb.context", "true");
+            // Credentials of ApplicationRealm user configured in Docker WildFly
+            jndiProperties.put(Context.SECURITY_PRINCIPAL, "ejbuser");
+            jndiProperties.put(Context.SECURITY_CREDENTIALS, "ejbpass");
+            // Force username/password over remoting and disable local-user
+            jndiProperties.put("wildfly.naming.client.connect.options.org.xnio.Options.SASL_DISALLOWED_MECHANISMS", "JBOSS-LOCAL-USER");
+            jndiProperties.put("wildfly.naming.client.connect.options.org.xnio.Options.SASL_POLICY_NOPLAINTEXT", "false");
+            jndiProperties.put("wildfly.naming.client.connect.options.org.xnio.Options.SASL_POLICY_NOANONYMOUS", "true");
 
             Context context = new InitialContext(jndiProperties);
 
             return (DeviseService) context.lookup(
-                    "ejb:/app1-devises/DeviseServiceBean!com.devises.ejb.DeviseService");
+                    "ejb:/app1-lecture-devises/DeviseServiceBean!com.devises.ejb.DeviseService");
 
         } catch (Exception e) {
             e.printStackTrace();
