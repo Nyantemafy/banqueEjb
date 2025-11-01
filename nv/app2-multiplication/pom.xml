@@ -54,6 +54,13 @@
             </goals>
             <configuration>
               <classifier>classes</classifier>
+              <includes>
+                <include>com/multiplication/ejb/MultiplicationService.class</include>
+                <include>com/multiplication/model/**</include>
+              </includes>
+              <excludes>
+                <exclude>com/multiplication/ejb/*Bean.class</exclude>
+              </excludes>
             </configuration>
           </execution>
         </executions>
