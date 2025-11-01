@@ -5,13 +5,13 @@ services:
       dockerfile: docker/Dockerfile
     container_name: wildfly-docker
     ports:
+      - "8080:8080"
       - "8081:8081"
       - "9990:9990"
       - "4447:4447"
+      - "8009:8009"
     networks:
       - ejb-network
-    volumes:
-      - ./app1-lecture-devises/target/app1-devises.war:/opt/jboss/wildfly/standalone/deployments/app1-devises.war
     environment:
       - JAVA_OPTS=-Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0
 
