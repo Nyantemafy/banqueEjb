@@ -23,12 +23,19 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.wildfly</groupId>
+      <artifactId>wildfly-ejb-client-bom</artifactId>
+      <version>26.1.3.Final</version>
+      <type>pom</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>com.multiplication</groupId>
       <artifactId>app2-multiplication</artifactId>
       <version>1.0</version>
       <type>jar</type>
       <classifier>classes</classifier>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 
