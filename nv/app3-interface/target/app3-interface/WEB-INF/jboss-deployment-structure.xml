@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jboss-deployment-structure>
-  <deployment>
-    <dependencies>
-      <module name="org.jboss.as.ejb-client" services="import"/>
-    </dependencies>
-  </deployment>
+  <deployment/>
 </jboss-deployment-structure>
