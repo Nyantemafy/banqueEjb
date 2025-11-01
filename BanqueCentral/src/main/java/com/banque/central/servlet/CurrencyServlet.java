@@ -61,8 +61,6 @@ public class CurrencyServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             result.put("success", false);
             result.put("error", "Service de change non disponible");
-            result.put("default", "MGA");
-            result.put("currencies", Arrays.asList("MGA", "EUR", "USD", "KMF", "ZAR"));
             out.print(gson.toJson(result));
         }
     }

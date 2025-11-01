@@ -324,7 +324,7 @@ public class CompteBean implements CompteRemote {
         } catch (Exception e) {
             e.printStackTrace();
             // Fallback
-            return java.util.Arrays.asList("MGA", "EUR", "USD", "KMF", "ZAR");
+            throw new RuntimeException(e);
         }
     }
 
@@ -337,7 +337,7 @@ public class CompteBean implements CompteRemote {
             com.banque.change.remote.ChangeRemote changeBean = ChangeUtil.getChangeBean();
             return changeBean.getDefaultCurrency();
         } catch (Exception e) {
-            return "MGA";
+            throw new RuntimeException(e);
         }
     }
 

@@ -2,13 +2,14 @@ services:
   wildfly-change:
     build: .
     container_name: wildfly-change
+    command: ["/opt/jboss/wildfly/bin/standalone.sh", "-c", "standalone-full.xml", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]
     ports:
       - "8081:8080"
       - "9990:9990"
     volumes:
       - ./deployments:/opt/jboss/wildfly/standalone/deployments
     environment:
-      - JAVA_OPTS=-Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0
+      - JAVA_OPTS=-Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0 -Dwildfly.sasl.enable-plain-text=true -Dorg.wildfly.security.sasl.enable-plaintext=true
 
       # ✅ ICI : JNDI variable utilisée par ton client
       - CHANGE_JNDI=java:global/Change-1.0-SNAPSHOT/ChangeBean!com.banque.change.remote.ChangeRemote
