@@ -54,13 +54,6 @@
             </goals>
             <configuration>
               <classifier>classes</classifier>
-              <includes>
-                <include>com/multiplication/ejb/MultiplicationService.class</include>
-                <include>com/multiplication/model/**</include>
-              </includes>
-              <excludes>
-                <exclude>com/multiplication/ejb/*Bean.class</exclude>
-              </excludes>
             </configuration>
           </execution>
         </executions>
@@ -69,12 +62,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.3.1</version>
-        <configuration>
-          <packagingExcludes>
-            WEB-INF/classes/com/multiplication/ejb/MultiplicationService.class,
-            WEB-INF/classes/com/multiplication/model/**
-          </packagingExcludes>
-        </configuration>
       </plugin>
     </plugins>
   </build>

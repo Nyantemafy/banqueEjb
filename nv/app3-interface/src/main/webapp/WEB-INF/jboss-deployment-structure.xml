@@ -2,7 +2,7 @@
 <jboss-deployment-structure>
   <deployment>
     <dependencies>
-      <module name="com.multiplication.api"/>
+      <module name="deployment.app2-multiplication.war"/>
     </dependencies>
   </deployment>
 </jboss-deployment-structure>
