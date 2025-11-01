@@ -1,0 +1,4 @@
+com\devises\servlet\DeviseServlet.class
+com\devises\ejb\DeviseServiceBean.class
+com\devises\model\Devise.class
+com\devises\ejb\DeviseService.class

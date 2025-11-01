@@ -1,0 +1,4 @@
+com\multiplication\ejb\MultiplicationService.class
+com\multiplication\ejb\MultiplicationServiceBean.class
+com\multiplication\servlet\MultiplicationServlet.class
+com\multiplication\model\Devise.class
