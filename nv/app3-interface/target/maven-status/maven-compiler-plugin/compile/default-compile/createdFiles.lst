@@ -1,0 +1,4 @@
+com\interface_app\ejb\InterfaceService.class
+com\interface_app\ejb\InterfaceServiceBean.class
+com\interface_app\servlet\InterfaceServlet.class
+com\interface_app\model\Devise.class
