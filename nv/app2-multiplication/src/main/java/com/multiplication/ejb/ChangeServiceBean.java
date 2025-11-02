@@ -1,6 +1,6 @@
 package com.multiplication.ejb;
 
-import com.multiplication.dao.TransactionDAO;
+import com.multiplication.dao.TransactionDAORemote;
 import com.multiplication.metier.Change;
 import com.multiplication.model.Transaction;
 
@@ -19,12 +19,14 @@ import java.util.List;
 public class ChangeServiceBean implements ChangeService {
 
     @EJB
-    private TransactionDAO transactionDAO;
+    private TransactionDAORemote transactionDAO;
 
     @EJB
     private VirementService virementService;
 
-    private static final String CHANGE_FILE_PATH = "/opt/jboss/wildfly/standalone/deployments/changes.txt";
+    private static final String CHANGE_FILE_PATH =
+            System.getProperty("jboss.server.data.dir", System.getProperty("java.io.tmpdir"))
+                    + java.io.File.separator + "changes.txt";
 
     public Change effectuerChange(BigDecimal montant, String deviseSource,
                                   String deviseCible, BigDecimal tauxChange) {

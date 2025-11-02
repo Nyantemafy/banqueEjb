@@ -141,8 +141,9 @@ public class Virement implements Serializable {
      * @return true si le plafond est respecté
      */
     public boolean verifierPlafondJournalier(BigDecimal montantDejaVireAujourdhui) {
-        if (montant == null)
+        if (montant == null) {
             return false;
+        }
 
         BigDecimal montantTotal = montantDejaVireAujourdhui.add(montant);
         if (montantTotal.compareTo(PLAFOND_JOURNALIER) > 0) {

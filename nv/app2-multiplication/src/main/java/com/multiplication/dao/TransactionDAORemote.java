@@ -13,4 +13,6 @@ public interface TransactionDAORemote {
     List<Transaction> findAll();
     List<Transaction> findEnAttente();
     List<Transaction> findByCompte(Integer idCompte);
+    List<Transaction> findAllVirements();
+    List<Transaction> findVirementsEnAttente();
 }

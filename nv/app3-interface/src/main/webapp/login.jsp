@@ -101,7 +101,7 @@
         <form method="post" action="<%= request.getContextPath() %>/login">
             <div class="form-group">
                 <label for="username">Nom d'utilisateur</label>
-                <input type="text" id="username" name="username" required>
+                <input type="text" id="username" name="username" required autofocus>
             </div>
             
             <div class="form-group">

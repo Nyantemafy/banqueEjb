@@ -1,5 +1,6 @@
 com\multiplication\ejb\VirementServiceBean.class
 com\multiplication\model\Utilisateur.class
+com\multiplication\ejb\AuthenticationService.class
 com\multiplication\ejb\ChangeService.class
 com\multiplication\ejb\ChangeServiceBean.class
 com\multiplication\model\Action.class
@@ -10,10 +11,12 @@ com\multiplication\session\SessionInfo.class
 com\multiplication\ejb\AuthenticationServiceBean.class
 com\multiplication\model\ActionRole.class
 com\multiplication\metier\Change.class
+com\multiplication\dao\CompteCourantDAORemote.class
 com\multiplication\metier\Virement.class
 com\multiplication\ejb\MultiplicationServiceBean$1.class
 com\multiplication\dao\TransactionDAO.class
 com\multiplication\dao\UtilisateurDAO.class
+com\multiplication\dao\UtilisateurDAORemote.class
 com\multiplication\model\Type.class
 com\multiplication\model\Direction.class
 com\multiplication\model\CompteCourant.class

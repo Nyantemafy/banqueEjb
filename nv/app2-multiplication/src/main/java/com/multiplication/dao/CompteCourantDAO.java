@@ -2,6 +2,7 @@ package com.multiplication.dao;
 
 import com.multiplication.model.CompteCourant;
 import javax.ejb.Stateless;
+import javax.ejb.Remote;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -9,8 +10,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-@Stateless
-public class CompteCourantDAO {
+@Stateless(name = "CompteCourantDAOApp2")
+@Remote(CompteCourantDAORemote.class)
+public class CompteCourantDAO implements CompteCourantDAORemote {
 
     @PersistenceContext(unitName = "BanquePU")
     private EntityManager em;

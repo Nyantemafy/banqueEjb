@@ -1,6 +1,7 @@
 package com.interface_app.servlet;
 
-import com.multiplication.ejb.AuthenticationServiceBean;
+import com.multiplication.dao.UtilisateurDAORemote;
+import com.multiplication.model.Utilisateur;
 import com.multiplication.session.SessionInfo;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
@@ -14,13 +15,13 @@ import java.io.IOException;
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 
-    @EJB
-    private AuthenticationServiceBean authService;
+    @EJB(lookup = "ejb:/app2-multiplication/UtilisateurDAOApp2!com.multiplication.dao.UtilisateurDAORemote")
+    private UtilisateurDAORemote utilisateurDAO;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        req.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(req, resp);
+        req.getRequestDispatcher("/login.jsp").forward(req, resp);
     }
 
     @Override
@@ -29,25 +30,34 @@ public class LoginServlet extends HttpServlet {
         String username = req.getParameter("username");
         String password = req.getParameter("password");
 
-        SessionInfo sessionInfo = authService.login(username, password);
+        // Récupérer l'utilisateur
+        Utilisateur user = utilisateurDAO.findByUsername(username);
 
-        if (sessionInfo != null) {
-            // Stocker les informations dans la session HTTP
-            HttpSession session = req.getSession();
-            session.setAttribute("sessionInfo", sessionInfo);
-            session.setAttribute("authService", authService);
+        if (user != null) {
+            // Utiliser la méthode d'authentification de l'entité Utilisateur
+            // qui crée la SessionInfo Stateful avec toutes les infos
+            SessionInfo sessionInfo = user.authentifier(username, password);
 
-            // Rediriger selon le rôle
-            if (sessionInfo.isAdmin()) {
-                resp.sendRedirect(req.getContextPath() + "/admin/dashboard");
-            } else if (sessionInfo.isAgent()) {
-                resp.sendRedirect(req.getContextPath() + "/agent/dashboard");
-            } else {
-                resp.sendRedirect(req.getContextPath() + "/client/dashboard");
+            if (sessionInfo != null) {
+                // Stocker les informations dans la session HTTP
+                HttpSession session = req.getSession();
+                session.setAttribute("sessionInfo", sessionInfo);
+
+                // Rediriger selon le rôle (les infos sont dans sessionInfo, pas besoin de
+                // requête DB)
+                if (sessionInfo.isAdmin()) {
+                    resp.sendRedirect(req.getContextPath() + "/admin/dashboard");
+                } else if (sessionInfo.isAgent()) {
+                    resp.sendRedirect(req.getContextPath() + "/agent/dashboard");
+                } else {
+                    resp.sendRedirect(req.getContextPath() + "/client/dashboard");
+                }
+                return;
             }
-        } else {
-            req.setAttribute("error", "Nom d'utilisateur ou mot de passe incorrect");
-            req.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(req, resp);
         }
+
+        // Échec de l'authentification
+        req.setAttribute("error", "Nom d'utilisateur ou mot de passe incorrect");
+        req.getRequestDispatcher("/login.jsp").forward(req, resp);
     }
 }

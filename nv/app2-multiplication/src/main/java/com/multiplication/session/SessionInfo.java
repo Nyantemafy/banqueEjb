@@ -9,8 +9,10 @@ import java.util.List;
 
 /**
  * Classe Stateful contenant les informations de session utilisateur
- * Ces informations sont chargées une seule fois lors de l'authentification
+ * Ces informations sont chargées UNE SEULE FOIS lors de l'authentification
  * et sont ensuite disponibles en mémoire sans requête à la base de données
+ * 
+ * Cela évite de faire des requêtes répétées à chaque vérification de permission
  */
 public class SessionInfo implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -18,8 +20,8 @@ public class SessionInfo implements Serializable {
     private Integer idUser;
     private String username;
     private Role role;
-    private List<ActionRole> actionRoles;
-    private List<Direction> directions;
+    private List<ActionRole> actionRoles; // TOUS les ActionRole de l'utilisateur
+    private List<Direction> directions; // TOUTES les Directions de l'utilisateur
     private Status status;
     private Long loginTimestamp;
 
@@ -29,10 +31,12 @@ public class SessionInfo implements Serializable {
 
     /**
      * Vérifie si l'utilisateur a une permission spécifique
+     * AUCUNE requête DB nécessaire, tout est en mémoire
      */
     public boolean hasPermission(String actionLibelle, String tableName) {
-        if (actionRoles == null || actionRoles.isEmpty())
+        if (actionRoles == null || actionRoles.isEmpty()) {
             return false;
+        }
 
         for (ActionRole ar : actionRoles) {
             if (ar.getAction().getLibelle().equals(actionLibelle)
@@ -45,6 +49,7 @@ public class SessionInfo implements Serializable {
 
     /**
      * Vérifie si l'utilisateur est Admin
+     * AUCUNE requête DB nécessaire
      */
     public boolean isAdmin() {
         return role != null && "ADMIN".equals(role.getLibelle());
@@ -52,6 +57,7 @@ public class SessionInfo implements Serializable {
 
     /**
      * Vérifie si l'utilisateur est Agent
+     * AUCUNE requête DB nécessaire
      */
     public boolean isAgent() {
         return role != null && "AGENT".equals(role.getLibelle());
@@ -59,6 +65,7 @@ public class SessionInfo implements Serializable {
 
     /**
      * Vérifie si l'utilisateur est Client
+     * AUCUNE requête DB nécessaire
      */
     public boolean isClient() {
         return role != null && "CLIENT".equals(role.getLibelle());
@@ -66,6 +73,7 @@ public class SessionInfo implements Serializable {
 
     /**
      * Obtient le niveau de direction de l'utilisateur
+     * AUCUNE requête DB nécessaire
      */
     public Integer getNiveauDirection() {
         if (directions != null && !directions.isEmpty()) {

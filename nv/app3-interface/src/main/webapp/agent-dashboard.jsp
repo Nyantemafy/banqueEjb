@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.banque.session.SessionInfo" %>
+<%@ page import="com.multiplication.session.SessionInfo" %>
 <%
     SessionInfo sessionInfo = (SessionInfo) session.getAttribute("sessionInfo");
     if (sessionInfo == null) {
@@ -124,6 +124,20 @@
                 grid-template-columns: 1fr;
             }
         }
+        
+        a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        small {
+            color: #777;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
@@ -134,7 +148,7 @@
                     <h1>🏦 Bienvenue, <%= sessionInfo.getUsername() %></h1>
                     <p>Agent Bancaire</p>
                 </div>
-                <a href="<%= request.getContextPath() %>/logout" style="color: white;">Déconnexion</a>
+                <a href="<%= request.getContextPath() %>/logout">Déconnexion</a>
             </div>
         </div>
     </div>
@@ -179,7 +193,7 @@
                             <option value="AR">AR (Ariary)</option>
                             <option value="EUR">EUR (Euro)</option>
                             <option value="USD">USD (Dollar)</option>
-                            <option value="GBP">GBP (Livre)</option>
+                            <option value="GBP">GBP (Livre Sterling)</option>
                             <option value="JPY">JPY (Yen)</option>
                             <option value="CHF">CHF (Franc Suisse)</option>
                         </select>
@@ -210,28 +224,62 @@
                             <option value="AR">AR (Ariary)</option>
                             <option value="EUR">EUR (Euro)</option>
                             <option value="USD">USD (Dollar)</option>
-                            <option value="GBP">GBP (Livre)</option>
+                            <option value="GBP">GBP (Livre Sterling)</option>
                             <option value="JPY">JPY (Yen)</option>
                             <option value="CHF">CHF (Franc Suisse)</option>
                         </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="taux">Taux de change</label>
-                        <input type="number" id="taux" name="taux" step="0.000001" required>
-                        <small>Ex: 0.00020 pour convertir AR en EUR</small>
                     </div>
                     
                     <button type="submit">Changer la devise</button>
                 </form>
             </div>
         </div>
+
+        <div class="card">
+            <h2>📝 Ajouter un cours (journal des changes)</h2>
+            <form method="post" action="<%= request.getContextPath() %>/agent/dashboard" style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 10px; align-items: end;">
+                <input type="hidden" name="action" value="ajouterCours">
+                <div class="form-group">
+                    <label for="deviseSource">Devise source</label>
+                    <select id="deviseSource" name="deviseSource" required>
+                        <option value="AR">AR</option>
+                        <option value="EUR">EUR</option>
+                        <option value="USD">USD</option>
+                        <option value="GBP">GBP</option>
+                        <option value="JPY">JPY</option>
+                        <option value="CHF">CHF</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="deviseCible">Devise cible</label>
+                    <select id="deviseCible" name="deviseCible" required>
+                        <option value="AR">AR</option>
+                        <option value="EUR">EUR</option>
+                        <option value="USD">USD</option>
+                        <option value="GBP">GBP</option>
+                        <option value="JPY">JPY</option>
+                        <option value="CHF">CHF</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="montantCours">Montant de référence</label>
+                    <input type="number" id="montantCours" name="montantCours" step="0.01" placeholder="Ex: 100.00" required />
+                </div>
+                <div>
+                    <button type="submit">Ajouter au journal</button>
+                </div>
+            </form>
+            <small>Le taux est calculé automatiquement à partir des derniers cours (app1). L'entrée est écrite dans changes.txt.</small>
+        </div>
         
         <div class="card">
             <h2>ℹ️ Informations</h2>
-            <p><strong>Plafond journalier :</strong> 10.000.000 AR</p>
+            <p><strong>Plafond journalier :</strong> 10.000.000 AR par compte</p>
             <p><strong>Votre rôle :</strong> <%= sessionInfo.getRole().getLibelle() %></p>
-            <p><strong>Direction :</strong> <%= sessionInfo.getDirections().get(0).getLibelle() %> (Niveau <%= sessionInfo.getNiveauDirection() %>)</p>
+            <% if (sessionInfo.getDirections() != null && !sessionInfo.getDirections().isEmpty()) { %>
+                <p><strong>Direction :</strong> <%= sessionInfo.getDirections().get(0).getLibelle() %> 
+                   (Niveau <%= sessionInfo.getNiveauDirection() %>)</p>
+            <% } %>
         </div>
     </div>
 </body>

@@ -1,7 +1,10 @@
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\dao\CompteCourantDAO.java
+C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\dao\CompteCourantDAORemote.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\dao\TransactionDAO.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\dao\TransactionDAORemote.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\dao\UtilisateurDAO.java
+C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\dao\UtilisateurDAORemote.java
+C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\ejb\AuthenticationService.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\ejb\AuthenticationServiceBean.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\ejb\ChangeService.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\ejb\ChangeServiceBean.java

@@ -34,6 +34,10 @@ public class Utilisateur implements Serializable {
     @JoinColumn(name = "id_status")
     private Status status;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_role")
+    private Role role;
+
     @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL)
     private List<CompteCourant> compteCourants;
 
@@ -48,48 +52,60 @@ public class Utilisateur implements Serializable {
 
     /**
      * Authentifie l'utilisateur et crée une session Stateful
+     * Toutes les informations nécessaires sont chargées une seule fois
      * 
      * @param usernameInput username saisi
      * @param passwordInput mot de passe saisi
      * @return SessionInfo contenant les informations de session ou null si échec
      */
     public SessionInfo authentifier(String usernameInput, String passwordInput) {
-        if (this.username.equals(usernameInput) && this.password.equals(passwordInput)) {
-            if (this.status != null && "Actif".equals(this.status.getLibelle())) {
-                // Créer la session avec toutes les informations
-                SessionInfo session = new SessionInfo();
-                session.setIdUser(this.idUser);
-                session.setUsername(this.username);
-                session.setRole(this.actionRole != null ? this.actionRole.getRole() : null);
-
-                // Récupérer tous les ActionRole de l'utilisateur
-                List<ActionRole> actionRoles = new ArrayList<>();
-                if (this.actionRole != null) {
-                    actionRoles.add(this.actionRole);
-                }
-                session.setActionRoles(actionRoles);
-
-                // Récupérer la direction
-                List<Direction> directions = new ArrayList<>();
-                if (this.direction != null) {
-                    directions.add(this.direction);
-                }
-                session.setDirections(directions);
-
-                session.setStatus(this.status);
-
-                return session;
-            }
+        // Vérification des credentials
+        if (!this.username.equals(usernameInput) || !this.password.equals(passwordInput)) {
+            return null;
         }
-        return null;
+
+        // Vérification du statut
+        if (this.status == null || !"Actif".equals(this.status.getLibelle())) {
+            return null;
+        }
+
+        // Création de la session avec TOUTES les informations
+        SessionInfo session = new SessionInfo();
+        session.setIdUser(this.idUser);
+        session.setUsername(this.username);
+        
+        // Charger le rôle principal depuis id_role si présent, sinon depuis actionRole
+        session.setRole(this.role != null ? this.role : (this.actionRole != null ? this.actionRole.getRole() : null));
+
+        // Charger TOUS les ActionRole de l'utilisateur
+        List<ActionRole> actionRoles = new ArrayList<>();
+        if (this.actionRole != null) {
+            actionRoles.add(this.actionRole);
+            // Si l'utilisateur a plusieurs ActionRole, les charger ici
+            // Pour l'instant on suppose qu'il n'en a qu'un
+        }
+        session.setActionRoles(actionRoles);
+
+        // Charger TOUTES les Directions
+        List<Direction> directions = new ArrayList<>();
+        if (this.direction != null) {
+            directions.add(this.direction);
+        }
+        session.setDirections(directions);
+
+        // Charger le statut
+        session.setStatus(this.status);
+
+        return session;
     }
 
     /**
      * Vérifie si l'utilisateur a une permission spécifique
      */
     public boolean hasPermission(String actionLibelle, String tableName) {
-        if (this.actionRole == null)
+        if (this.actionRole == null) {
             return false;
+        }
 
         return this.actionRole.getAction().getLibelle().equals(actionLibelle)
                 && this.actionRole.getNomTable().equals(tableName);
@@ -144,6 +160,14 @@ public class Utilisateur implements Serializable {
         this.status = status;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     public List<CompteCourant> getCompteCourants() {
         return compteCourants;
     }
@@ -158,8 +182,8 @@ public class Utilisateur implements Serializable {
                 "idUser=" + idUser +
                 ", username='" + username + '\'' +
                 ", status=" + (status != null ? status.getLibelle() : "null") +
-                ", role="
-                + (actionRole != null && actionRole.getRole() != null ? actionRole.getRole().getLibelle() : "null") +
+                ", role=" + (actionRole != null && actionRole.getRole() != null ? 
+                    actionRole.getRole().getLibelle() : "null") +
                 '}';
     }
 }

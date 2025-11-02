@@ -2,6 +2,9 @@ INSERT INTO compteDepot (montant_initial, taux_interet, date_debut, date_fin, id
 (1000000, 5.5, '2025-01-01', '2025-12-31', 1, 1),
 (5000000, 6.2, '2025-02-01', '2026-02-01', 2, 1);
 
+INSERT INTO utilisateur (username, password, id_direction, id_status, id_role, id_actionrole)
+VALUES ('agent1', 'agent123', 3, 1, 3, NULL);
+
 INSERT INTO compteCourant (solde, date_ouverture, id_user, id_status)
 VALUES (0.00, CURRENT_DATE, 1, 1);
 

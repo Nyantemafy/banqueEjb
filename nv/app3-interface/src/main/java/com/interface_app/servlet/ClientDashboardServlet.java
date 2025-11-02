@@ -1,11 +1,11 @@
 package com.interface_app.servlet;
 
-import com.multiplication.dao.CompteCourantDAO;
-import com.multiplication.dao.TransactionDAO;
+import com.multiplication.dao.CompteCourantDAORemote;
+import com.multiplication.dao.TransactionDAORemote;
 import com.multiplication.model.CompteCourant;
 import com.multiplication.model.Transaction;
 import com.multiplication.session.SessionInfo;
-import com.multiplication.metier.Change;
+import com.devises.model.Change;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,18 +19,18 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import com.interface_app.model.Devise;
+import com.devises.model.Devise;
 import java.math.BigDecimal;
 import java.util.List;
 
 @WebServlet("/client/dashboard")
 public class ClientDashboardServlet extends HttpServlet {
 
-    @EJB
-    private CompteCourantDAO compteCourantDAO;
+    @EJB(lookup = "ejb:/app2-multiplication/CompteCourantDAOApp2!com.multiplication.dao.CompteCourantDAORemote")
+    private CompteCourantDAORemote compteCourantDAO;
 
-    @EJB
-    private TransactionDAO transactionDAO;
+    @EJB(lookup = "ejb:/app2-multiplication/TransactionDAOApp2!com.multiplication.dao.TransactionDAORemote")
+    private TransactionDAORemote transactionDAO;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -43,7 +43,8 @@ public class ClientDashboardServlet extends HttpServlet {
 
         SessionInfo sessionInfo = (SessionInfo) session.getAttribute("sessionInfo");
 
-        // Récupérer le compte du client
+        // Récupérer le compte du client (pas de requête supplémentaire, utiliser
+        // sessionInfo)
         List<CompteCourant> comptes = compteCourantDAO.findByUtilisateur(sessionInfo.getIdUser());
 
         if (!comptes.isEmpty()) {
@@ -55,9 +56,26 @@ public class ClientDashboardServlet extends HttpServlet {
             List<Transaction> transactions = transactionDAO.findByCompte(
                     compte.getIdCompteCourant());
             req.setAttribute("transactions", transactions);
+
+            // Optionnel: conversion d'affichage de la liste des transactions
+            String deviseAffichage = req.getParameter("deviseAffichage");
+            String dateCours = req.getParameter("dateCours"); // optionnel: yyyy-MM-dd
+            if (deviseAffichage != null && !deviseAffichage.trim().isEmpty()) {
+                try {
+                    BigDecimal tauxAffichage = getTauxChange(deviseAffichage, dateCours);
+                    req.setAttribute("deviseAffichage", deviseAffichage);
+                    req.setAttribute("tauxAffichage", tauxAffichage);
+                    if (dateCours != null && !dateCours.trim().isEmpty()) {
+                        req.setAttribute("dateCours", dateCours);
+                    }
+                } catch (Exception ex) {
+                    // En cas d'erreur de récupération du taux, on ignore et on reste en AR
+                    req.setAttribute("error", "Impossible de récupérer le taux pour " + deviseAffichage + ": " + ex.getMessage());
+                }
+            }
         }
 
-        req.getRequestDispatcher("/WEB-INF/jsp/client-dashboard.jsp").forward(req, resp);
+        req.getRequestDispatcher("/client-dashboard.jsp").forward(req, resp);
     }
 
     @Override
@@ -71,10 +89,10 @@ public class ClientDashboardServlet extends HttpServlet {
 
             try {
                 BigDecimal montant = new BigDecimal(montantStr);
-                BigDecimal taux = getTauxChange(devise); // Méthode à implémenter
+                BigDecimal taux = getTauxChange(devise);
 
-                Change change = new Change().effectuerChange(
-                        montant, "AR", devise, taux);
+                // Utiliser la méthode statique de Change pour effectuer la conversion
+                Change change = Change.effectuerChange(montant, "AR", devise, taux);
 
                 req.setAttribute("changeResult", change);
                 req.setAttribute("message", "Conversion effectuée: " +
@@ -87,11 +105,25 @@ public class ClientDashboardServlet extends HttpServlet {
         doGet(req, resp);
     }
 
+    /**
+     * Récupère le taux de change depuis app1 via REST
+     */
     private BigDecimal getTauxChange(String devise) {
+        return getTauxChange(devise, null);
+    }
+
+    /**
+     * Récupère le taux de change pour une devise et éventuellement une date (yyyy-MM-dd).
+     * Si dateCours est null ou vide, on récupère le dernier cours.
+     */
+    private BigDecimal getTauxChange(String devise, String dateCours) {
         String baseUrl = "http://127.0.0.1:8081/app1-devises/api";
         Client client = ClientBuilder.newClient();
         try {
             WebTarget target = client.target(baseUrl).path("devises").path(devise);
+            if (dateCours != null && !dateCours.trim().isEmpty()) {
+                target = target.queryParam("date", dateCours);
+            }
             Response resp = target.request(MediaType.APPLICATION_JSON_TYPE).get();
             if (resp.getStatus() == 200) {
                 Devise d = resp.readEntity(Devise.class);

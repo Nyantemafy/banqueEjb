@@ -1,11 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.banque.session.SessionInfo" %>
-<%@ page import="com.banque.entities.CompteCourant" %>
-<%@ page import="com.banque.entities.Transaction" %>
+<%@ page import="com.multiplication.session.SessionInfo" %>
+<%@ page import="com.multiplication.model.CompteCourant" %>
+<%@ page import="com.multiplication.model.Transaction" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.text.NumberFormat" %>
 <%@ page import="java.util.Locale" %>
+<%@ page import="java.math.BigDecimal" %>
+<%@ page import="java.text.DecimalFormat" %>
 <%
     SessionInfo sessionInfo = (SessionInfo) session.getAttribute("sessionInfo");
     if (sessionInfo == null) {
@@ -16,11 +18,15 @@
     List<Transaction> transactions = (List<Transaction>) request.getAttribute("transactions");
     NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("fr", "MG"));
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    BigDecimal tauxAffichage = (BigDecimal) request.getAttribute("tauxAffichage");
+    String deviseAffichage = (String) request.getAttribute("deviseAffichage");
+    String dateCours = (String) request.getAttribute("dateCours");
+    DecimalFormat df = new DecimalFormat("#,##0.00");
 %>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tableau de bord - Client</title>
+    <title>Mon Compte - Client</title>
     <style>
         * {
             margin: 0;
@@ -136,7 +142,7 @@
             font-weight: 600;
         }
         
-        .status-attente {
+        .status-en_attente {
             color: #ffc107;
             font-weight: 600;
         }
@@ -161,6 +167,15 @@
             border-radius: 5px;
             margin-bottom: 20px;
         }
+        
+        a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -171,7 +186,7 @@
                     <h1>🏦 Bienvenue, <%= sessionInfo.getUsername() %></h1>
                     <p>Client</p>
                 </div>
-                <a href="<%= request.getContextPath() %>/logout" style="color: white;">Déconnexion</a>
+                <a href="<%= request.getContextPath() %>/logout">Déconnexion</a>
             </div>
         </div>
     </div>
@@ -208,11 +223,11 @@
                             <label>Devise</label>
                             <select name="devise" required>
                                 <option value="">-- Choisir --</option>
-                                <option value="EUR">EUR</option>
-                                <option value="USD">USD</option>
-                                <option value="GBP">GBP</option>
-                                <option value="JPY">JPY</option>
-                                <option value="CHF">CHF</option>
+                                <option value="EUR">EUR (Euro)</option>
+                                <option value="USD">USD (Dollar)</option>
+                                <option value="GBP">GBP (Livre Sterling)</option>
+                                <option value="JPY">JPY (Yen)</option>
+                                <option value="CHF">CHF (Franc Suisse)</option>
                             </select>
                         </div>
                         <button type="submit">Convertir</button>
@@ -221,7 +236,21 @@
             </div>
             
             <div class="card">
-                <h2>Historique des transactions</h2>
+                <h2>📜 Historique des transactions</h2>
+                <form method="get" action="<%= request.getContextPath() %>/client/dashboard" style="margin: 10px 0; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <label for="deviseAffichage" style="color:#333;">Afficher les montants en:</label>
+                    <select id="deviseAffichage" name="deviseAffichage" style="padding:8px;">
+                        <option value="">AR (par défaut)</option>
+                        <option value="EUR" <%= "EUR".equals(deviseAffichage) ? "selected" : "" %>>EUR</option>
+                        <option value="USD" <%= "USD".equals(deviseAffichage) ? "selected" : "" %>>USD</option>
+                        <option value="GBP" <%= "GBP".equals(deviseAffichage) ? "selected" : "" %>>GBP</option>
+                        <option value="JPY" <%= "JPY".equals(deviseAffichage) ? "selected" : "" %>>JPY</option>
+                        <option value="CHF" <%= "CHF".equals(deviseAffichage) ? "selected" : "" %>>CHF</option>
+                    </select>
+                    <label for="dateCours" style="color:#333;">Date du cours (optionnel):</label>
+                    <input type="date" id="dateCours" name="dateCours" value="<%= dateCours != null ? dateCours : "" %>" style="padding:8px;" />
+                    <button type="submit">Appliquer</button>
+                </form>
                 <% if (transactions != null && !transactions.isEmpty()) { %>
                     <table>
                         <thead>
@@ -240,9 +269,20 @@
                                     <td>#<%= t.getIdTransaction() %></td>
                                     <td><%= dateFormat.format(t.getDateTransaction()) %></td>
                                     <td><%= t.getType().getLibelle() %></td>
-                                    <td><%= currencyFormat.format(t.getMontant()) %></td>
-                                    <td><%= t.getDevise() != null ? t.getDevise() : "AR" %></td>
-                                    <td class="status-<%= t.getStatut().toLowerCase() %>">
+                                    <td>
+                                        <%
+                                            if (tauxAffichage != null && deviseAffichage != null && !deviseAffichage.isEmpty()) {
+                                                BigDecimal montantConv = t.getMontant().multiply(tauxAffichage);
+                                                out.print(df.format(montantConv));
+                                            } else {
+                                                out.print(currencyFormat.format(t.getMontant()));
+                                            }
+                                        %>
+                                    </td>
+                                    <td>
+                                        <%= (tauxAffichage != null && deviseAffichage != null && !deviseAffichage.isEmpty()) ? deviseAffichage : (t.getDevise() != null ? t.getDevise() : "AR") %>
+                                    </td>
+                                    <td class="status-<%= t.getStatut().toLowerCase().replace("_", "-") %>">
                                         <%= t.getStatut() %>
                                     </td>
                                 </tr>

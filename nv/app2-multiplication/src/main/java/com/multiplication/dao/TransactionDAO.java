@@ -42,4 +42,18 @@ public class TransactionDAO implements TransactionDAORemote {
         q.setParameter("id", idCompte);
         return q.getResultList();
     }
+
+    public List<Transaction> findAllVirements() {
+        TypedQuery<Transaction> q = em.createQuery(
+                "SELECT t FROM Transaction t WHERE t.type.libelle = 'VIREMENT' ORDER BY t.idTransaction DESC",
+                Transaction.class);
+        return q.getResultList();
+    }
+
+    public List<Transaction> findVirementsEnAttente() {
+        TypedQuery<Transaction> q = em.createQuery(
+                "SELECT t FROM Transaction t WHERE t.type.libelle = 'VIREMENT' AND t.statut = 'EN_ATTENTE' ORDER BY t.idTransaction DESC",
+                Transaction.class);
+        return q.getResultList();
+    }
 }

@@ -1,7 +1,7 @@
 package com.multiplication.ejb;
 
-import com.multiplication.dao.CompteCourantDAO;
-import com.multiplication.dao.TransactionDAO;
+import com.multiplication.dao.CompteCourantDAORemote;
+import com.multiplication.dao.TransactionDAORemote;
 import com.multiplication.model.CompteCourant;
 import com.multiplication.model.Transaction;
 import com.multiplication.model.Type;
@@ -16,11 +16,11 @@ import java.util.Date;
 
 @Stateless
 public class VirementServiceBean implements VirementService {
-    @EJB
-    private CompteCourantDAO compteCourantDAO;
+    @EJB(lookup = "ejb:/app2-multiplication/CompteCourantDAOApp2!com.multiplication.dao.CompteCourantDAORemote")
+    private CompteCourantDAORemote compteCourantDAO;
 
-    @EJB
-    private com.multiplication.dao.TransactionDAORemote transactionDAO;
+    @EJB(lookup = "ejb:/app2-multiplication/TransactionDAOApp2!com.multiplication.dao.TransactionDAORemote")
+    private TransactionDAORemote transactionDAO;
 
     /**
      * Effectue un virement avec tous les contrôles
@@ -64,15 +64,7 @@ public class VirementServiceBean implements VirementService {
             throw new IllegalArgumentException("Compte bénéficiaire introuvable");
         }
 
-        // Vérifier le solde
-        if (!compteEmet.debiter(virement.getMontant())) {
-            throw new IllegalArgumentException("Solde insuffisant");
-        }
-
-        // Créditer le bénéficiaire
-        compteBenef.crediter(virement.getMontant());
-
-        // Créer la transaction
+        // Créer la transaction (EN_ATTENTE). Les mouvements de solde seront effectués à la validation admin
         Type typeVirement = new Type();
         typeVirement.setIdType(3); // VIREMENT
 
@@ -82,12 +74,10 @@ public class VirementServiceBean implements VirementService {
         transaction.setType(typeVirement);
         transaction.setCompteBeneficiaire(compteBeneficiaire);
         transaction.setDevise(devise);
-        transaction.setStatut("VALIDE");
+        transaction.setStatut("EN_ATTENTE");
         transaction.setDateTransaction(virement.getDateVirement());
 
-        // Sauvegarder
-        compteCourantDAO.update(compteEmet);
-        compteCourantDAO.update(compteBenef);
+        // Sauvegarder uniquement la transaction en attente
         transactionDAO.create(transaction);
 
         return transaction;
@@ -170,6 +160,20 @@ public class VirementServiceBean implements VirementService {
             throw new IllegalStateException("La transaction ne peut être validée");
         }
 
+        // Récupérer les comptes pour effectuer les mouvements
+        CompteCourant compteEmetteur = transaction.getCompteCourant();
+        CompteCourant compteBeneficiaire = compteCourantDAO.findById(
+                Integer.parseInt(transaction.getCompteBeneficiaire()));
+
+        // Vérifier solde et effectuer mouvements
+        if (!compteEmetteur.debiter(transaction.getMontant())) {
+            throw new IllegalArgumentException("Solde insuffisant");
+        }
+        compteBeneficiaire.crediter(transaction.getMontant());
+
+        // Mettre à jour les soldes et statut
+        compteCourantDAO.update(compteEmetteur);
+        compteCourantDAO.update(compteBeneficiaire);
         transaction.setStatut("VALIDE");
         transactionDAO.update(transaction);
     }

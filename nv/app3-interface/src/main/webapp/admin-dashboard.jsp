@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.banque.session.SessionInfo" %>
-<%@ page import="com.banque.entities.Transaction" %>
+<%@ page import="com.multiplication.session.SessionInfo" %>
+<%@ page import="com.multiplication.model.Transaction" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.text.NumberFormat" %>
@@ -167,6 +167,15 @@
             font-weight: bold;
             margin: 10px 0;
         }
+        
+        a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -177,7 +186,7 @@
                     <h1>🏦 Bienvenue, <%= sessionInfo.getUsername() %></h1>
                     <p>Administrateur</p>
                 </div>
-                <a href="<%= request.getContextPath() %>/logout" style="color: white;">Déconnexion</a>
+                <a href="<%= request.getContextPath() %>/logout">Déconnexion</a>
             </div>
         </div>
     </div>

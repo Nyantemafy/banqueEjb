@@ -7,8 +7,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
-@Stateless
-public class UtilisateurDAO {
+@Stateless(name = "UtilisateurDAOApp2")
+public class UtilisateurDAO implements UtilisateurDAORemote {
 
     @PersistenceContext(unitName = "BanquePU")
     private EntityManager em;

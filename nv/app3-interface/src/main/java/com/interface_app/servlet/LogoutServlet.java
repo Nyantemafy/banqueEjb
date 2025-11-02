@@ -1,6 +1,5 @@
 package com.interface_app.servlet;
 
-import com.multiplication.ejb.AuthenticationServiceBean;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,15 +17,7 @@ public class LogoutServlet extends HttpServlet {
         HttpSession session = req.getSession(false);
 
         if (session != null) {
-            // Récupérer le service d'authentification depuis la session
-            AuthenticationServiceBean sessionAuthService = (AuthenticationServiceBean) session.getAttribute("authService");
-
-            // Déconnecter l'utilisateur du service Stateful
-            if (sessionAuthService != null) {
-                sessionAuthService.logout();
-            }
-
-            // Invalider la session HTTP
+            // Invalider la session HTTP et les données Stateful associées
             session.invalidate();
         }
 

@@ -183,3 +183,7 @@ SELECT setval(pg_get_serial_sequence('comptecourant','id_comptecourant'),
 SELECT setval(pg_get_serial_sequence('transaction','id_transaction'),
               COALESCE((SELECT MAX(id_transaction) FROM transaction),0)+1,
               false);
+
+
+
+

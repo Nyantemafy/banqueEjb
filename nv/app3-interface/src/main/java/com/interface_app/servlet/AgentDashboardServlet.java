@@ -13,6 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.math.BigDecimal;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import com.devises.model.Devise;
 
 @WebServlet("/agent/dashboard")
 public class AgentDashboardServlet extends HttpServlet {
@@ -39,7 +45,7 @@ public class AgentDashboardServlet extends HttpServlet {
             return;
         }
 
-        req.getRequestDispatcher("/WEB-INF/jsp/agent-dashboard.jsp").forward(req, resp);
+        req.getRequestDispatcher("/agent-dashboard.jsp").forward(req, resp);
     }
 
     @Override
@@ -55,6 +61,7 @@ public class AgentDashboardServlet extends HttpServlet {
                 String devise = req.getParameter("devise");
                 String date = req.getParameter("date");
 
+                // Effectuer le virement (tous les contrôles sont dans le service)
                 Transaction transaction = virementService.effectuerVirement(
                         Integer.parseInt(compteEmetteur),
                         compteBeneficiaire,
@@ -64,33 +71,61 @@ public class AgentDashboardServlet extends HttpServlet {
 
                 req.setAttribute("message", "Virement effectué avec succès. Référence: " +
                         transaction.getIdTransaction());
-            } else if ("changerDevise".equals(action) || "correctionAvant".equals(action)) {
+
+            } else if ("changerDevise".equals(action)) {
                 String idTransaction = req.getParameter("idTransaction");
                 String nouvelleDevise = req.getParameter("nouvelleDevise");
-                String taux = req.getParameter("taux");
-
+                // Déterminer un taux automatique (dernier cours) en supposant la devise source AR
+                BigDecimal tauxAuto = getTauxDernier("AR", nouvelleDevise);
+                // Changer la devise d'une transaction en attente (correction avant)
                 changeService.correctionAvant(
                         Integer.parseInt(idTransaction),
                         nouvelleDevise,
-                        new BigDecimal(taux));
+                        tauxAuto);
 
-                req.setAttribute("message", "Correction avant appliquée: devise modifiée");
-            } else if ("correctionApres".equals(action)) {
-                String idTransaction = req.getParameter("idTransaction");
-                String nouvelleDevise = req.getParameter("nouvelleDevise");
-                String taux = req.getParameter("taux");
+                req.setAttribute("message", "Devise modifiée avec succès");
+            } else if ("ajouterCours".equals(action)) {
+                String deviseSource = req.getParameter("deviseSource");
+                String deviseCible = req.getParameter("deviseCible");
+                String montant = req.getParameter("montantCours");
 
-                changeService.correctionApres(
-                        Integer.parseInt(idTransaction),
-                        nouvelleDevise,
-                        new BigDecimal(taux));
-
-                req.setAttribute("message", "Correction après appliquée: annulation et nouvelle opération");
+                // Calcul du taux entre source et cible en se basant sur le dernier cours (référencé AR)
+                BigDecimal taux = getTauxDernier(deviseSource, deviseCible);
+                changeService.effectuerChange(new BigDecimal(montant), deviseSource, deviseCible, taux);
+                req.setAttribute("message", "Nouveau cours enregistré dans le fichier de changes");
             }
         } catch (Exception e) {
             req.setAttribute("error", "Erreur: " + e.getMessage());
         }
 
         doGet(req, resp);
+    }
+
+    private BigDecimal getTauxDernier(String deviseSource, String deviseCible) {
+        // Si même devise
+        if (deviseSource.equalsIgnoreCase(deviseCible)) return BigDecimal.ONE;
+
+        // Récupère cours par rapport à AR, puis calcule source->cible = cours(cible)/cours(source)
+        BigDecimal coursSource = getCoursDernier(deviseSource);
+        BigDecimal coursCible = getCoursDernier(deviseCible);
+        if (coursSource.compareTo(BigDecimal.ZERO) == 0) return BigDecimal.ONE;
+        return coursCible.divide(coursSource, 8, java.math.RoundingMode.HALF_UP);
+    }
+
+    private BigDecimal getCoursDernier(String devise) {
+        if ("AR".equalsIgnoreCase(devise)) return BigDecimal.ONE; // base
+        String baseUrl = "http://127.0.0.1:8081/app1-devises/api";
+        Client client = ClientBuilder.newClient();
+        try {
+            WebTarget target = client.target(baseUrl).path("devises").path(devise);
+            Response resp = target.request(MediaType.APPLICATION_JSON_TYPE).get();
+            if (resp.getStatus() == 200) {
+                Devise d = resp.readEntity(Devise.class);
+                return BigDecimal.valueOf(d.getCours());
+            }
+            return BigDecimal.ONE;
+        } finally {
+            client.close();
+        }
     }
 }

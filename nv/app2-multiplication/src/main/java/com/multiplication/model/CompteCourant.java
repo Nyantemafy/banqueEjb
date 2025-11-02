@@ -57,6 +57,14 @@ public class CompteCourant implements Serializable {
 
     /**
      * Effectue un virement depuis ce compte
+     * Tous les paramètres sont des String car ils viennent de l'interface
+     * Les traitements et cast se font dans cette méthode
+     * 
+     * @param compte compte émetteur
+     * @param compteBeneficiaire compte qui va recevoir
+     * @param montant montant à virer
+     * @param devise devise du virement
+     * @param date date du virement
      * @return Objet Virement avec les contrôles effectués
      */
     public Virement virer(String compte, String compteBeneficiaire, 

@@ -34,20 +34,21 @@ public class AdminDashboardServlet extends HttpServlet {
 
         SessionInfo sessionInfo = (SessionInfo) session.getAttribute("sessionInfo");
 
+        // Vérifier le rôle (pas besoin de requête DB, tout est dans sessionInfo)
         if (!sessionInfo.isAdmin()) {
             resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 
-        // Récupérer toutes les transactions en attente
-        List<Transaction> transactionsEnAttente = transactionDAO.findEnAttente();
+        // Récupérer tous les virements en attente
+        List<Transaction> transactionsEnAttente = transactionDAO.findVirementsEnAttente();
         req.setAttribute("transactionsEnAttente", transactionsEnAttente);
 
-        // Récupérer toutes les transactions
-        List<Transaction> toutesTransactions = transactionDAO.findAll();
+        // Récupérer tous les virements (tous statuts)
+        List<Transaction> toutesTransactions = transactionDAO.findAllVirements();
         req.setAttribute("toutesTransactions", toutesTransactions);
 
-        req.getRequestDispatcher("/WEB-INF/jsp/admin-dashboard.jsp").forward(req, resp);
+        req.getRequestDispatcher("/admin-dashboard.jsp").forward(req, resp);
     }
 
     @Override
@@ -60,14 +61,19 @@ public class AdminDashboardServlet extends HttpServlet {
             Integer idTransaction = Integer.parseInt(idTransactionStr);
 
             if ("valider".equals(action)) {
+                // Valider une transaction en attente
                 virementService.validerVirement(idTransaction);
                 req.setAttribute("message", "Transaction validée avec succès");
+
             } else if ("annulerAvant".equals(action)) {
+                // Annuler une transaction en attente
                 virementService.annulerVirementAvant(idTransaction);
                 req.setAttribute("message", "Transaction annulée");
+
             } else if ("annulerApres".equals(action)) {
+                // Annuler une transaction validée (virement inverse)
                 virementService.annulerVirementApres(idTransaction);
-                req.setAttribute("message", "Transaction annulée avec virement inverse");
+                req.setAttribute("message", "Transaction annulée avec virement inverse effectué");
             }
         } catch (Exception e) {
             req.setAttribute("error", "Erreur: " + e.getMessage());

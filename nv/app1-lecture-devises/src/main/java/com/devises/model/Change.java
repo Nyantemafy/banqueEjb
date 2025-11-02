@@ -6,6 +6,7 @@ import java.util.Date;
 
 /**
  * Classe métier représentant une opération de change
+ * Placée dans app1-lecture-devises
  */
 public class Change implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -17,7 +18,7 @@ public class Change implements Serializable {
     private String deviseConverti;
     private BigDecimal tauxChange;
     private Date dateChange;
-    private String typeOperation; // "CORRECTION_AVANT" ou "CORRECTION_APRES"
+    private String typeOperation; // "CHANGE", "CORRECTION_AVANT" ou "CORRECTION_APRES"
     private String statut;
 
     public Change() {
