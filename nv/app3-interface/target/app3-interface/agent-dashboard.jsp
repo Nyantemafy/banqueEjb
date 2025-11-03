@@ -183,20 +183,20 @@
                         <select name="devise" required>
                             <option value="AR">AR (Ariary)</option>
                             <%
-                                java.util.List<String> listeDevises = (java.util.List<String>) request.getAttribute("listeDevises");
-                                if (listeDevises != null && !listeDevises.isEmpty()) {
-                                    for (String d : listeDevises) {
+                                java.util.List<com.devises.model.Devise> listeDevisesDedup = (java.util.List<com.devises.model.Devise>) request.getAttribute("listeDevisesDedup");
+                                if (listeDevisesDedup != null && !listeDevisesDedup.isEmpty()) {
+                                    for (com.devises.model.Devise dv : listeDevisesDedup) {
                             %>
-                                        <option value="<%= d %>"><%= d %></option>
+                                        <option value="<%= dv.getNomDevise() %>"><%= dv.getNomDevise() %> (<%= dv.getCours() %>)</option>
                             <%
                                     }
                                 } else {
                             %>
-                                    <option value="EUR">EUR</option>
-                                    <option value="USD">USD</option>
-                                    <option value="GBP">GBP</option>
-                                    <option value="JPY">JPY</option>
-                                    <option value="CHF">CHF</option>
+                                        <option value="EUR">EUR</option>
+                                        <option value="USD">USD</option>
+                                        <option value="GBP">GBP</option>
+                                        <option value="JPY">JPY</option>
+                                        <option value="CHF">CHF</option>
                             <%
                                 }
                             %>
@@ -227,19 +227,19 @@
                         <select name="nouvelleDevise" required>
                             <option value="AR">AR (Ariary)</option>
                             <%
-                                if (listeDevises != null && !listeDevises.isEmpty()) {
-                                    for (String d : listeDevises) {
+                                if (listeDevisesDedup != null && !listeDevisesDedup.isEmpty()) {
+                                    for (com.devises.model.Devise dv : listeDevisesDedup) {
                             %>
-                                        <option value="<%= d %>"><%= d %></option>
+                                        <option value="<%= dv.getNomDevise() %>"><%= dv.getNomDevise() %> (<%= dv.getCours() %>)</option>
                             <%
                                     }
                                 } else {
                             %>
-                                    <option value="EUR">EUR</option>
-                                    <option value="USD">USD</option>
-                                    <option value="GBP">GBP</option>
-                                    <option value="JPY">JPY</option>
-                                    <option value="CHF">CHF</option>
+                                        <option value="EUR">EUR</option>
+                                        <option value="USD">USD</option>
+                                        <option value="GBP">GBP</option>
+                                        <option value="JPY">JPY</option>
+                                        <option value="CHF">CHF</option>
                             <%
                                 }
                             %>
@@ -260,10 +260,10 @@
                     <select name="deviseSource" required>
                         <option value="AR">AR</option>
                         <%
-                            if (listeDevises != null && !listeDevises.isEmpty()) {
-                                for (String d : listeDevises) {
+                            if (listeDevisesDedup != null && !listeDevisesDedup.isEmpty()) {
+                                for (com.devises.model.Devise dv : listeDevisesDedup) {
                         %>
-                                    <option value="<%= d %>"><%= d %></option>
+                                    <option value="<%= dv.getNomDevise() %>"><%= dv.getNomDevise() %> (<%= dv.getCours() %>)</option>
                         <%
                                 }
                             } else {
@@ -283,10 +283,10 @@
                     <select name="deviseCible" required>
                         <option value="AR">AR</option>
                         <%
-                            if (listeDevises != null && !listeDevises.isEmpty()) {
-                                for (String d : listeDevises) {
+                            if (listeDevisesDedup != null && !listeDevisesDedup.isEmpty()) {
+                                for (com.devises.model.Devise dv : listeDevisesDedup) {
                         %>
-                                    <option value="<%= d %>"><%= d %></option>
+                                    <option value="<%= dv.getNomDevise() %>"><%= dv.getNomDevise() %> (<%= dv.getCours() %>)</option>
                         <%
                                 }
                             } else {

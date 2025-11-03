@@ -210,11 +210,11 @@
                             <select name="devise" required>
                                 <option value="">-- Choisir --</option>
                                 <%
-                                    java.util.List<String> listeDevises = (java.util.List<String>) request.getAttribute("listeDevises");
-                                    if (listeDevises != null && !listeDevises.isEmpty()) {
-                                        for (String d : listeDevises) {
+                                    java.util.List<com.devises.model.Devise> listeDevisesDedup = (java.util.List<com.devises.model.Devise>) request.getAttribute("listeDevisesDedup");
+                                    if (listeDevisesDedup != null && !listeDevisesDedup.isEmpty()) {
+                                        for (com.devises.model.Devise dv : listeDevisesDedup) {
                                 %>
-                                            <option value="<%= d %>"><%= d %></option>
+                                            <option value="<%= dv.getNomDevise() %>"><%= dv.getNomDevise() %> (<%= dv.getCours() %>)</option>
                                 <%
                                         }
                                     } else {
@@ -242,10 +242,12 @@
                         <select name="deviseAffichage">
                             <option value="">AR (par défaut)</option>
                             <%
-                                if (listeDevises != null && !listeDevises.isEmpty()) {
-                                    for (String d : listeDevises) {
+                                java.util.List<com.devises.model.Devise> listeDevisesDedup2 = (java.util.List<com.devises.model.Devise>) request.getAttribute("listeDevisesDedup");
+                                if (listeDevisesDedup2 != null && !listeDevisesDedup2.isEmpty()) {
+                                    for (com.devises.model.Devise dv : listeDevisesDedup2) {
+                                        String code = dv.getNomDevise();
                             %>
-                                        <option value="<%= d %>" <%= d.equals(deviseAffichage) ? "selected" : "" %>><%= d %></option>
+                                        <option value="<%= code %>" <%= code.equals(deviseAffichage) ? "selected" : "" %>><%= code %> (<%= dv.getCours() %>)</option>
                             <%
                                     }
                                 } else {

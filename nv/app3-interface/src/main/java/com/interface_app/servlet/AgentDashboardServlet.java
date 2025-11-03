@@ -53,7 +53,15 @@ public class AgentDashboardServlet extends HttpServlet {
             List<Devise> all = getAllDevises();
             List<String> noms = new ArrayList<>();
             for (Devise d : all) noms.add(d.getNomDevise());
+            // Dédupliquer en gardant la dernière occurrence par code
+            java.util.LinkedHashMap<String, Devise> lastBy = new java.util.LinkedHashMap<>();
+            for (Devise d : all) {
+                lastBy.put(d.getNomDevise(), d);
+            }
+            List<Devise> dedup = new ArrayList<>(lastBy.values());
             req.setAttribute("listeDevises", noms);
+            req.setAttribute("listeDevisesObj", all);
+            req.setAttribute("listeDevisesDedup", dedup);
         } catch (Exception ignored) {}
 
         req.getRequestDispatcher("/agent-dashboard.jsp").forward(req, resp);

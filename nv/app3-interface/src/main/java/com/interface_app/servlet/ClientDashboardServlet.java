@@ -85,7 +85,15 @@ public class ClientDashboardServlet extends HttpServlet {
             for (Devise d : all) {
                 noms.add(d.getNomDevise());
             }
+            // Map last occurrence per code
+            java.util.LinkedHashMap<String, Devise> lastByCode = new java.util.LinkedHashMap<>();
+            for (Devise d : all) {
+                lastByCode.put(d.getNomDevise(), d);
+            }
+            List<Devise> dedup = new ArrayList<>(lastByCode.values());
             req.setAttribute("listeDevises", noms);
+            req.setAttribute("listeDevisesObj", all);
+            req.setAttribute("listeDevisesDedup", dedup);
         } catch (Exception ex) {
             // En cas d'erreur, on ignore et on laisse les options par défaut côté JSP si présentes
         }
