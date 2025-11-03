@@ -10,133 +10,124 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tableau de bord - Agent</title>
+    <title>Agent</title>
     <style>
-        * {
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8f9fa;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
-        }
-        
+
         .header {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: #2c3e50;
             color: white;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 1rem;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 1rem;
         }
-        
+
         .welcome {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .card {
             background: white;
-            border-radius: 10px;
-            padding: 30px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        
+
         h2 {
             color: #333;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f5576c;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #ddd;
         }
-        
+
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 1rem;
         }
-        
+
         label {
             display: block;
-            margin-bottom: 5px;
-            color: #555;
+            margin-bottom: 0.5rem;
             font-weight: 500;
         }
-        
+
         input, select {
             width: 100%;
-            padding: 12px;
+            padding: 0.5rem;
             border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
+            border-radius: 3px;
         }
-        
-        input:focus, select:focus {
-            outline: none;
-            border-color: #f5576c;
-        }
-        
+
         button {
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: #3498db;
             color: white;
             border: none;
-            border-radius: 5px;
-            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 3px;
             cursor: pointer;
-            transition: transform 0.2s;
-            font-size: 14px;
         }
-        
+
         button:hover {
-            transform: translateY(-2px);
+            background: #2980b9;
         }
-        
+
         .message {
             background: #d4edda;
             color: #155724;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            padding: 1rem;
+            border-radius: 3px;
+            margin-bottom: 1rem;
         }
-        
+
         .error {
             background: #f8d7da;
             color: #721c24;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            padding: 1rem;
+            border-radius: 3px;
+            margin-bottom: 1rem;
         }
-        
+
         .two-column {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 1rem;
         }
-        
-        @media (max-width: 768px) {
-            .two-column {
-                grid-template-columns: 1fr;
-            }
+
+        .grid-form {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
         }
-        
-        a {
+
+        .logout {
             color: white;
             text-decoration: none;
         }
-        
-        a:hover {
+
+        .logout:hover {
             text-decoration: underline;
         }
-        
+
         small {
             color: #777;
-            font-size: 12px;
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 768px) {
+            .two-column, .grid-form {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -145,10 +136,10 @@
         <div class="container">
             <div class="welcome">
                 <div>
-                    <h1>🏦 Bienvenue, <%= sessionInfo.getUsername() %></h1>
+                    <h1>Bienvenue, <%= sessionInfo.getUsername() %></h1>
                     <p>Agent Bancaire</p>
                 </div>
-                <a href="<%= request.getContextPath() %>/logout">Déconnexion</a>
+                <a href="<%= request.getContextPath() %>/logout" class="logout">Déconnexion</a>
             </div>
         </div>
     </div>
@@ -168,40 +159,53 @@
         
         <div class="two-column">
             <div class="card">
-                <h2>💸 Effectuer un virement</h2>
+                <h2>Effectuer un virement</h2>
                 <form method="post" action="<%= request.getContextPath() %>/agent/dashboard">
                     <input type="hidden" name="action" value="effectuerVirement">
                     
                     <div class="form-group">
-                        <label for="compteEmetteur">Compte émetteur (ID)</label>
-                        <input type="number" id="compteEmetteur" name="compteEmetteur" required>
+                        <label>Compte émetteur (ID)</label>
+                        <input type="number" name="compteEmetteur" required>
                     </div>
                     
                     <div class="form-group">
-                        <label for="compteBeneficiaire">Compte bénéficiaire (ID)</label>
-                        <input type="number" id="compteBeneficiaire" name="compteBeneficiaire" required>
+                        <label>Compte bénéficiaire (ID)</label>
+                        <input type="number" name="compteBeneficiaire" required>
                     </div>
                     
                     <div class="form-group">
-                        <label for="montant">Montant</label>
-                        <input type="number" id="montant" name="montant" step="0.01" required>
+                        <label>Montant</label>
+                        <input type="number" name="montant" step="0.01" required>
                     </div>
                     
                     <div class="form-group">
-                        <label for="devise">Devise</label>
-                        <select id="devise" name="devise" required>
+                        <label>Devise</label>
+                        <select name="devise" required>
                             <option value="AR">AR (Ariary)</option>
-                            <option value="EUR">EUR (Euro)</option>
-                            <option value="USD">USD (Dollar)</option>
-                            <option value="GBP">GBP (Livre Sterling)</option>
-                            <option value="JPY">JPY (Yen)</option>
-                            <option value="CHF">CHF (Franc Suisse)</option>
+                            <%
+                                java.util.List<String> listeDevises = (java.util.List<String>) request.getAttribute("listeDevises");
+                                if (listeDevises != null && !listeDevises.isEmpty()) {
+                                    for (String d : listeDevises) {
+                            %>
+                                        <option value="<%= d %>"><%= d %></option>
+                            <%
+                                    }
+                                } else {
+                            %>
+                                    <option value="EUR">EUR</option>
+                                    <option value="USD">USD</option>
+                                    <option value="GBP">GBP</option>
+                                    <option value="JPY">JPY</option>
+                                    <option value="CHF">CHF</option>
+                            <%
+                                }
+                            %>
                         </select>
                     </div>
                     
                     <div class="form-group">
-                        <label for="date">Date du virement</label>
-                        <input type="date" id="date" name="date" required>
+                        <label>Date du virement</label>
+                        <input type="date" name="date" required>
                     </div>
                     
                     <button type="submit">Effectuer le virement</button>
@@ -209,24 +213,36 @@
             </div>
             
             <div class="card">
-                <h2>💱 Changer la devise d'une transaction</h2>
+                <h2>Changer la devise d'une transaction</h2>
                 <form method="post" action="<%= request.getContextPath() %>/agent/dashboard">
                     <input type="hidden" name="action" value="changerDevise">
                     
                     <div class="form-group">
-                        <label for="idTransaction">ID Transaction</label>
-                        <input type="number" id="idTransaction" name="idTransaction" required>
+                        <label>ID Transaction</label>
+                        <input type="number" name="idTransaction" required>
                     </div>
                     
                     <div class="form-group">
-                        <label for="nouvelleDevise">Nouvelle devise</label>
-                        <select id="nouvelleDevise" name="nouvelleDevise" required>
+                        <label>Nouvelle devise</label>
+                        <select name="nouvelleDevise" required>
                             <option value="AR">AR (Ariary)</option>
-                            <option value="EUR">EUR (Euro)</option>
-                            <option value="USD">USD (Dollar)</option>
-                            <option value="GBP">GBP (Livre Sterling)</option>
-                            <option value="JPY">JPY (Yen)</option>
-                            <option value="CHF">CHF (Franc Suisse)</option>
+                            <%
+                                if (listeDevises != null && !listeDevises.isEmpty()) {
+                                    for (String d : listeDevises) {
+                            %>
+                                        <option value="<%= d %>"><%= d %></option>
+                            <%
+                                    }
+                                } else {
+                            %>
+                                    <option value="EUR">EUR</option>
+                                    <option value="USD">USD</option>
+                                    <option value="GBP">GBP</option>
+                                    <option value="JPY">JPY</option>
+                                    <option value="CHF">CHF</option>
+                            <%
+                                }
+                            %>
                         </select>
                     </div>
                     
@@ -236,44 +252,68 @@
         </div>
 
         <div class="card">
-            <h2>📝 Ajouter un cours (journal des changes)</h2>
-            <form method="post" action="<%= request.getContextPath() %>/agent/dashboard" style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 10px; align-items: end;">
+            <h2>Ajouter un cours</h2>
+            <form method="post" action="<%= request.getContextPath() %>/agent/dashboard" class="grid-form">
                 <input type="hidden" name="action" value="ajouterCours">
                 <div class="form-group">
-                    <label for="deviseSource">Devise source</label>
-                    <select id="deviseSource" name="deviseSource" required>
+                    <label>Devise source</label>
+                    <select name="deviseSource" required>
                         <option value="AR">AR</option>
-                        <option value="EUR">EUR</option>
-                        <option value="USD">USD</option>
-                        <option value="GBP">GBP</option>
-                        <option value="JPY">JPY</option>
-                        <option value="CHF">CHF</option>
+                        <%
+                            if (listeDevises != null && !listeDevises.isEmpty()) {
+                                for (String d : listeDevises) {
+                        %>
+                                    <option value="<%= d %>"><%= d %></option>
+                        <%
+                                }
+                            } else {
+                        %>
+                                <option value="EUR">EUR</option>
+                                <option value="USD">USD</option>
+                                <option value="GBP">GBP</option>
+                                <option value="JPY">JPY</option>
+                                <option value="CHF">CHF</option>
+                        <%
+                            }
+                        %>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="deviseCible">Devise cible</label>
-                    <select id="deviseCible" name="deviseCible" required>
+                    <label>Devise cible</label>
+                    <select name="deviseCible" required>
                         <option value="AR">AR</option>
-                        <option value="EUR">EUR</option>
-                        <option value="USD">USD</option>
-                        <option value="GBP">GBP</option>
-                        <option value="JPY">JPY</option>
-                        <option value="CHF">CHF</option>
+                        <%
+                            if (listeDevises != null && !listeDevises.isEmpty()) {
+                                for (String d : listeDevises) {
+                        %>
+                                    <option value="<%= d %>"><%= d %></option>
+                        <%
+                                }
+                            } else {
+                        %>
+                                <option value="EUR">EUR</option>
+                                <option value="USD">USD</option>
+                                <option value="GBP">GBP</option>
+                                <option value="JPY">JPY</option>
+                                <option value="CHF">CHF</option>
+                        <%
+                            }
+                        %>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="montantCours">Montant de référence</label>
-                    <input type="number" id="montantCours" name="montantCours" step="0.01" placeholder="Ex: 100.00" required />
+                    <label>Montant de référence</label>
+                    <input type="number" name="montantCours" step="0.01" placeholder="Ex: 100.00" required />
                 </div>
                 <div>
                     <button type="submit">Ajouter au journal</button>
                 </div>
             </form>
-            <small>Le taux est calculé automatiquement à partir des derniers cours (app1). L'entrée est écrite dans changes.txt.</small>
+            <small>Le taux est calculé automatiquement à partir des derniers cours.</small>
         </div>
         
         <div class="card">
-            <h2>ℹ️ Informations</h2>
+            <h2>Informations</h2>
             <p><strong>Plafond journalier :</strong> 10.000.000 AR par compte</p>
             <p><strong>Votre rôle :</strong> <%= sessionInfo.getRole().getLibelle() %></p>
             <% if (sessionInfo.getDirections() != null && !sessionInfo.getDirections().isEmpty()) { %>

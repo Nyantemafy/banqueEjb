@@ -4,93 +4,89 @@
 <head>
     <title>Connexion - Système Bancaire</title>
     <style>
-        * {
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f5f5f5;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-        
+
         .login-container {
             background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 400px;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 350px;
         }
-        
+
         h1 {
-            color: #333;
-            margin-bottom: 30px;
+            color: #2c3e50;
             text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
         }
-        
+
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 1rem;
         }
-        
+
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 0.5rem;
             color: #555;
             font-weight: 500;
         }
-        
+
         input[type="text"],
         input[type="password"] {
             width: 100%;
-            padding: 12px;
+            padding: 0.75rem;
             border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: 4px;
             font-size: 14px;
-            transition: border-color 0.3s;
         }
-        
+
         input[type="text"]:focus,
         input[type="password"]:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #3498db;
         }
-        
+
         button {
             width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0.75rem;
+            background: #3498db;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             font-size: 16px;
-            font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s;
+            margin-top: 0.5rem;
         }
-        
+
         button:hover {
-            transform: translateY(-2px);
+            background: #2980b9;
         }
-        
+
         .error {
-            background: #fee;
-            color: #c33;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            background: #e74c3c;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
             text-align: center;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <h1>🏦 Système Bancaire</h1>
+        <h1>Connexion</h1>
         
         <% if (request.getAttribute("error") != null) { %>
             <div class="error">
@@ -101,7 +97,7 @@
         <form method="post" action="<%= request.getContextPath() %>/login">
             <div class="form-group">
                 <label for="username">Nom d'utilisateur</label>
-                <input type="text" id="username" name="username" required autofocus>
+                <input type="text" id="username" name="username" required>
             </div>
             
             <div class="form-group">

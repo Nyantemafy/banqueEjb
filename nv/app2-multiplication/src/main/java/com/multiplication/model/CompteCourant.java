@@ -77,9 +77,6 @@ public class CompteCourant implements Serializable {
                 .devise(devise)
                 .dateVirement(date)
                 .build();
-
-        // Le virement contient déjà les contrôles unitaires effectués
-        // Les contrôles complexes (plafond) seront effectués dans le service
         
         return virement;
     }

@@ -22,7 +22,6 @@ public class VirementComplet extends Virement implements Serializable {
      */
     public static VirementComplet fromVirement(Virement virement) {
         VirementComplet virementComplet = new VirementComplet();
-        // Les champs du virement de base restent accessibles via les getters hérités
         return virementComplet;
     }
 

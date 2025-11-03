@@ -12,8 +12,10 @@ services:
       - "8009:8009"
     networks:
       - ejb-network
+    volumes:
+      - ./wildfly-data:/opt/jboss/wildfly/standalone/data:rw
     environment:
-      - JAVA_OPTS=-Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0
+      - JAVA_OPTS=-Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0 -Ddevises.file=/opt/jboss/wildfly/standalone/data/devises.txt
 
 networks:
   ejb-network:

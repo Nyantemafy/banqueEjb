@@ -19,6 +19,9 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import com.devises.model.Devise;
+import java.util.List;
+import java.util.ArrayList;
+import javax.ws.rs.core.GenericType;
 
 @WebServlet("/agent/dashboard")
 public class AgentDashboardServlet extends HttpServlet {
@@ -44,6 +47,14 @@ public class AgentDashboardServlet extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
+
+        // Charger la liste des devises depuis app1 pour alimenter les listes déroulantes
+        try {
+            List<Devise> all = getAllDevises();
+            List<String> noms = new ArrayList<>();
+            for (Devise d : all) noms.add(d.getNomDevise());
+            req.setAttribute("listeDevises", noms);
+        } catch (Exception ignored) {}
 
         req.getRequestDispatcher("/agent-dashboard.jsp").forward(req, resp);
     }
@@ -124,6 +135,21 @@ public class AgentDashboardServlet extends HttpServlet {
                 return BigDecimal.valueOf(d.getCours());
             }
             return BigDecimal.ONE;
+        } finally {
+            client.close();
+        }
+    }
+
+    private java.util.List<Devise> getAllDevises() {
+        String baseUrl = "http://127.0.0.1:8081/app1-devises/api";
+        Client client = ClientBuilder.newClient();
+        try {
+            WebTarget target = client.target(baseUrl).path("devises");
+            Response resp = target.request(MediaType.APPLICATION_JSON_TYPE).get();
+            if (resp.getStatus() == 200) {
+                return resp.readEntity(new GenericType<java.util.List<Devise>>() {});
+            }
+            return new ArrayList<>();
         } finally {
             client.close();
         }

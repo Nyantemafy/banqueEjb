@@ -26,155 +26,141 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Mon Compte - Client</title>
+    <title>Mon Compte</title>
     <style>
-        * {
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8f9fa;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
-        }
-        
+
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #2c3e50;
             color: white;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 1rem;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 1rem;
         }
-        
+
         .welcome {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .card {
             background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        
+
         .solde-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #3498db;
             color: white;
             text-align: center;
-            padding: 40px;
         }
-        
+
         .solde-amount {
-            font-size: 48px;
+            font-size: 2rem;
             font-weight: bold;
-            margin: 20px 0;
+            margin: 1rem 0;
         }
-        
-        .conversion-form {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            align-items: flex-end;
-        }
-        
+
         .form-group {
-            flex: 1;
+            margin-bottom: 1rem;
         }
-        
+
         label {
             display: block;
-            margin-bottom: 5px;
-            color: white;
+            margin-bottom: 0.5rem;
             font-weight: 500;
         }
-        
+
         input, select {
             width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            font-size: 14px;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 3px;
         }
-        
+
         button {
-            padding: 10px 20px;
-            background: white;
-            color: #667eea;
+            background: #3498db;
+            color: white;
             border: none;
-            border-radius: 5px;
-            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 3px;
             cursor: pointer;
-            transition: transform 0.2s;
         }
-        
+
         button:hover {
-            transform: translateY(-2px);
+            background: #2980b9;
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 1rem;
         }
-        
+
         th, td {
-            padding: 12px;
+            padding: 0.75rem;
             text-align: left;
             border-bottom: 1px solid #eee;
         }
-        
+
         th {
             background: #f8f9fa;
             font-weight: 600;
-            color: #555;
         }
-        
-        .status-valide {
-            color: #28a745;
-            font-weight: 600;
-        }
-        
-        .status-en_attente {
-            color: #ffc107;
-            font-weight: 600;
-        }
-        
-        .status-annule {
-            color: #dc3545;
-            font-weight: 600;
-        }
-        
+
+        .status-valide { color: #27ae60; }
+        .status-en_attente { color: #f39c12; }
+        .status-annule { color: #e74c3c; }
+
         .message {
             background: #d4edda;
             color: #155724;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            padding: 1rem;
+            border-radius: 3px;
+            margin-bottom: 1rem;
         }
-        
+
         .error {
             background: #f8d7da;
             color: #721c24;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            padding: 1rem;
+            border-radius: 3px;
+            margin-bottom: 1rem;
         }
-        
-        a {
+
+        .logout {
             color: white;
             text-decoration: none;
         }
-        
-        a:hover {
+
+        .logout:hover {
             text-decoration: underline;
+        }
+
+        .grid-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .flex-form {
+            display: flex;
+            gap: 1rem;
+            align-items: end;
+            flex-wrap: wrap;
+            margin: 1rem 0;
         }
     </style>
 </head>
@@ -183,10 +169,10 @@
         <div class="container">
             <div class="welcome">
                 <div>
-                    <h1>🏦 Bienvenue, <%= sessionInfo.getUsername() %></h1>
+                    <h1>Bienvenue, <%= sessionInfo.getUsername() %></h1>
                     <p>Client</p>
                 </div>
-                <a href="<%= request.getContextPath() %>/logout">Déconnexion</a>
+                <a href="<%= request.getContextPath() %>/logout" class="logout">Déconnexion</a>
             </div>
         </div>
     </div>
@@ -214,7 +200,7 @@
                 
                 <form method="post" action="<%= request.getContextPath() %>/client/dashboard">
                     <input type="hidden" name="action" value="convertir">
-                    <div class="conversion-form">
+                    <div class="grid-form">
                         <div class="form-group">
                             <label>Montant à convertir</label>
                             <input type="number" name="montant" step="0.01" required>
@@ -223,34 +209,64 @@
                             <label>Devise</label>
                             <select name="devise" required>
                                 <option value="">-- Choisir --</option>
-                                <option value="EUR">EUR (Euro)</option>
-                                <option value="USD">USD (Dollar)</option>
-                                <option value="GBP">GBP (Livre Sterling)</option>
-                                <option value="JPY">JPY (Yen)</option>
-                                <option value="CHF">CHF (Franc Suisse)</option>
+                                <%
+                                    java.util.List<String> listeDevises = (java.util.List<String>) request.getAttribute("listeDevises");
+                                    if (listeDevises != null && !listeDevises.isEmpty()) {
+                                        for (String d : listeDevises) {
+                                %>
+                                            <option value="<%= d %>"><%= d %></option>
+                                <%
+                                        }
+                                    } else {
+                                %>
+                                        <option value="EUR">EUR</option>
+                                        <option value="USD">USD</option>
+                                        <option value="GBP">GBP</option>
+                                        <option value="JPY">JPY</option>
+                                        <option value="CHF">CHF</option>
+                                <%
+                                    }
+                                %>
                             </select>
                         </div>
-                        <button type="submit">Convertir</button>
                     </div>
+                    <button type="submit">Convertir</button>
                 </form>
             </div>
             
             <div class="card">
-                <h2>📜 Historique des transactions</h2>
-                <form method="get" action="<%= request.getContextPath() %>/client/dashboard" style="margin: 10px 0; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                    <label for="deviseAffichage" style="color:#333;">Afficher les montants en:</label>
-                    <select id="deviseAffichage" name="deviseAffichage" style="padding:8px;">
-                        <option value="">AR (par défaut)</option>
-                        <option value="EUR" <%= "EUR".equals(deviseAffichage) ? "selected" : "" %>>EUR</option>
-                        <option value="USD" <%= "USD".equals(deviseAffichage) ? "selected" : "" %>>USD</option>
-                        <option value="GBP" <%= "GBP".equals(deviseAffichage) ? "selected" : "" %>>GBP</option>
-                        <option value="JPY" <%= "JPY".equals(deviseAffichage) ? "selected" : "" %>>JPY</option>
-                        <option value="CHF" <%= "CHF".equals(deviseAffichage) ? "selected" : "" %>>CHF</option>
-                    </select>
-                    <label for="dateCours" style="color:#333;">Date du cours (optionnel):</label>
-                    <input type="date" id="dateCours" name="dateCours" value="<%= dateCours != null ? dateCours : "" %>" style="padding:8px;" />
+                <h2>Historique des transactions</h2>
+                <form method="get" action="<%= request.getContextPath() %>/client/dashboard" class="flex-form">
+                    <div class="form-group">
+                        <label>Afficher en:</label>
+                        <select name="deviseAffichage">
+                            <option value="">AR (par défaut)</option>
+                            <%
+                                if (listeDevises != null && !listeDevises.isEmpty()) {
+                                    for (String d : listeDevises) {
+                            %>
+                                        <option value="<%= d %>" <%= d.equals(deviseAffichage) ? "selected" : "" %>><%= d %></option>
+                            <%
+                                    }
+                                } else {
+                            %>
+                                        <option value="EUR" <%= "EUR".equals(deviseAffichage) ? "selected" : "" %>>EUR</option>
+                                        <option value="USD" <%= "USD".equals(deviseAffichage) ? "selected" : "" %>>USD</option>
+                                        <option value="GBP" <%= "GBP".equals(deviseAffichage) ? "selected" : "" %>>GBP</option>
+                                        <option value="JPY" <%= "JPY".equals(deviseAffichage) ? "selected" : "" %>>JPY</option>
+                                        <option value="CHF" <%= "CHF".equals(deviseAffichage) ? "selected" : "" %>>CHF</option>
+                            <%
+                                }
+                            %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date du cours:</label>
+                        <input type="date" name="dateCours" value="<%= dateCours != null ? dateCours : "" %>" />
+                    </div>
                     <button type="submit">Appliquer</button>
                 </form>
+                
                 <% if (transactions != null && !transactions.isEmpty()) { %>
                     <table>
                         <thead>
@@ -292,6 +308,32 @@
                 <% } else { %>
                     <p>Aucune transaction pour le moment.</p>
                 <% } %>
+            </div>
+
+            <div class="card">
+                <h2>Ajouter une devise</h2>
+                <form method="post" action="<%= request.getContextPath() %>/client/dashboard" class="grid-form">
+                    <input type="hidden" name="action" value="ajouterDevise" />
+                    <div class="form-group">
+                        <label>Nom devise</label>
+                        <input type="text" name="nomDevise" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Date début</label>
+                        <input type="date" name="dateDebut" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Date fin</label>
+                        <input type="date" name="dateFin" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Cours</label>
+                        <input type="number" name="cours" step="0.0001" required />
+                    </div>
+                    <div>
+                        <button type="submit">Enregistrer</button>
+                    </div>
+                </form>
             </div>
         <% } else { %>
             <div class="card">

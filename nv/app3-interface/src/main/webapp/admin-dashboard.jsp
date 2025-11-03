@@ -19,162 +19,130 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tableau de bord - Administrateur</title>
+    <title>Administrateur</title>
     <style>
-        * {
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8f9fa;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
-        }
-        
+
         .header {
-            background: linear-gradient(135deg, #FA8BFF 0%, #2BD2FF 52%, #2BFF88 100%);
+            background: #2c3e50;
             color: white;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 1rem;
         }
-        
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 1rem;
         }
-        
+
         .welcome {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .card {
             background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        
+
         h2 {
             color: #333;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #2BD2FF;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #ddd;
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
         }
-        
+
         th, td {
-            padding: 12px;
+            padding: 0.75rem;
             text-align: left;
             border-bottom: 1px solid #eee;
         }
-        
+
         th {
             background: #f8f9fa;
             font-weight: 600;
-            color: #555;
         }
-        
-        .status-valide {
-            color: #28a745;
-            font-weight: 600;
-        }
-        
-        .status-en_attente {
-            color: #ffc107;
-            font-weight: 600;
-        }
-        
-        .status-annule {
-            color: #dc3545;
-            font-weight: 600;
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 5px;
-        }
-        
+
+        .status-valide { color: #27ae60; }
+        .status-en_attente { color: #f39c12; }
+        .status-annule { color: #e74c3c; }
+
         .btn {
-            padding: 6px 12px;
+            padding: 0.4rem 0.8rem;
             border: none;
-            border-radius: 4px;
-            font-size: 12px;
+            border-radius: 3px;
+            font-size: 0.875rem;
             cursor: pointer;
-            transition: transform 0.2s;
+            margin-right: 0.25rem;
         }
-        
-        .btn:hover {
-            transform: translateY(-1px);
-        }
-        
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-        
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-        
-        .btn-warning {
-            background: #ffc107;
-            color: #333;
-        }
-        
+
+        .btn-success { background: #27ae60; color: white; }
+        .btn-danger { background: #e74c3c; color: white; }
+        .btn-warning { background: #f39c12; color: white; }
+
         .message {
             background: #d4edda;
             color: #155724;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            padding: 1rem;
+            border-radius: 3px;
+            margin-bottom: 1rem;
         }
-        
+
         .error {
             background: #f8d7da;
             color: #721c24;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            padding: 1rem;
+            border-radius: 3px;
+            margin-bottom: 1rem;
         }
-        
+
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
+            gap: 1rem;
+            margin-bottom: 1rem;
         }
-        
+
         .stat-card {
-            background: linear-gradient(135deg, #FA8BFF 0%, #2BD2FF 100%);
+            background: #3498db;
             color: white;
-            padding: 20px;
-            border-radius: 10px;
+            padding: 1.5rem;
+            border-radius: 5px;
             text-align: center;
         }
-        
+
         .stat-number {
-            font-size: 36px;
+            font-size: 2rem;
             font-weight: bold;
-            margin: 10px 0;
+            margin: 0.5rem 0;
         }
-        
-        a {
+
+        .logout {
             color: white;
             text-decoration: none;
         }
-        
-        a:hover {
+
+        .logout:hover {
             text-decoration: underline;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.25rem;
         }
     </style>
 </head>
@@ -183,10 +151,10 @@
         <div class="container">
             <div class="welcome">
                 <div>
-                    <h1>🏦 Bienvenue, <%= sessionInfo.getUsername() %></h1>
+                    <h1>Bienvenue, <%= sessionInfo.getUsername() %></h1>
                     <p>Administrateur</p>
                 </div>
-                <a href="<%= request.getContextPath() %>/logout">Déconnexion</a>
+                <a href="<%= request.getContextPath() %>/logout" class="logout">Déconnexion</a>
             </div>
         </div>
     </div>
@@ -211,7 +179,7 @@
                     <%= transactionsEnAttente != null ? transactionsEnAttente.size() : 0 %>
                 </div>
             </div>
-            <div class="stat-card" style="background: linear-gradient(135deg, #2BFF88 0%, #2BD2FF 100%);">
+            <div class="stat-card">
                 <div>Total transactions</div>
                 <div class="stat-number">
                     <%= toutesTransactions != null ? toutesTransactions.size() : 0 %>
@@ -220,7 +188,7 @@
         </div>
         
         <div class="card">
-            <h2>⏳ Transactions en attente de validation</h2>
+            <h2>Transactions en attente de validation</h2>
             <% if (transactionsEnAttente != null && !transactionsEnAttente.isEmpty()) { %>
                 <table>
                     <thead>
@@ -250,12 +218,12 @@
                                         <form method="post" action="<%= request.getContextPath() %>/admin/dashboard" style="display: inline;">
                                             <input type="hidden" name="action" value="valider">
                                             <input type="hidden" name="idTransaction" value="<%= t.getIdTransaction() %>">
-                                            <button type="submit" class="btn btn-success">✓ Valider</button>
+                                            <button type="submit" class="btn btn-success">Valider</button>
                                         </form>
                                         <form method="post" action="<%= request.getContextPath() %>/admin/dashboard" style="display: inline;">
                                             <input type="hidden" name="action" value="annulerAvant">
                                             <input type="hidden" name="idTransaction" value="<%= t.getIdTransaction() %>">
-                                            <button type="submit" class="btn btn-danger">✗ Annuler</button>
+                                            <button type="submit" class="btn btn-danger">Annuler</button>
                                         </form>
                                     </div>
                                 </td>
@@ -269,7 +237,7 @@
         </div>
         
         <div class="card">
-            <h2>📊 Toutes les transactions</h2>
+            <h2>Toutes les transactions</h2>
             <% if (toutesTransactions != null && !toutesTransactions.isEmpty()) { %>
                 <table>
                     <thead>
@@ -301,7 +269,7 @@
                                         <form method="post" action="<%= request.getContextPath() %>/admin/dashboard" style="display: inline;">
                                             <input type="hidden" name="action" value="annulerApres">
                                             <input type="hidden" name="idTransaction" value="<%= t.getIdTransaction() %>">
-                                            <button type="submit" class="btn btn-warning">↩ Annuler (inverse)</button>
+                                            <button type="submit" class="btn btn-warning">Annuler</button>
                                         </form>
                                     <% } %>
                                 </td>

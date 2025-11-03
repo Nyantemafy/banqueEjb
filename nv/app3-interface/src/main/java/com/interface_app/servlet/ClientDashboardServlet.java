@@ -22,6 +22,9 @@ import javax.ws.rs.core.Response;
 import com.devises.model.Devise;
 import java.math.BigDecimal;
 import java.util.List;
+import javax.ws.rs.client.Entity;
+import java.util.ArrayList;
+import javax.ws.rs.core.GenericType;
 
 @WebServlet("/client/dashboard")
 public class ClientDashboardServlet extends HttpServlet {
@@ -75,6 +78,18 @@ public class ClientDashboardServlet extends HttpServlet {
             }
         }
 
+        // Récupérer la liste des devises disponibles depuis app1 pour les listes déroulantes
+        try {
+            List<Devise> all = getAllDevises();
+            List<String> noms = new ArrayList<>();
+            for (Devise d : all) {
+                noms.add(d.getNomDevise());
+            }
+            req.setAttribute("listeDevises", noms);
+        } catch (Exception ex) {
+            // En cas d'erreur, on ignore et on laisse les options par défaut côté JSP si présentes
+        }
+
         req.getRequestDispatcher("/client-dashboard.jsp").forward(req, resp);
     }
 
@@ -99,6 +114,35 @@ public class ClientDashboardServlet extends HttpServlet {
                         change.getMontantConverti() + " " + devise);
             } catch (Exception e) {
                 req.setAttribute("error", "Erreur lors de la conversion: " + e.getMessage());
+            }
+        }
+        else if ("ajouterDevise".equals(action)) {
+            String nomDevise = req.getParameter("nomDevise");
+            String dateDebut = req.getParameter("dateDebut");
+            String dateFin = req.getParameter("dateFin");
+            String coursStr = req.getParameter("cours");
+
+            try {
+                double cours = new BigDecimal(coursStr).doubleValue();
+                Devise devise = new Devise(nomDevise, dateDebut, dateFin, cours);
+
+                String baseUrl = "http://127.0.0.1:8081/app1-devises/api";
+                Client client = ClientBuilder.newClient();
+                try {
+                    WebTarget target = client.target(baseUrl).path("devises");
+                    Response apiResp = target
+                            .request(MediaType.APPLICATION_JSON_TYPE)
+                            .post(Entity.entity(devise, MediaType.APPLICATION_JSON_TYPE));
+                    if (apiResp.getStatus() == 201) {
+                        req.setAttribute("message", "Devise ajoutée avec succès.");
+                    } else {
+                        req.setAttribute("error", "Échec de l'ajout de la devise (" + apiResp.getStatus() + ")");
+                    }
+                } finally {
+                    client.close();
+                }
+            } catch (Exception e) {
+                req.setAttribute("error", "Erreur lors de l'ajout de la devise: " + e.getMessage());
             }
         }
 
@@ -130,6 +174,21 @@ public class ClientDashboardServlet extends HttpServlet {
                 return BigDecimal.valueOf(d.getCours());
             }
             return BigDecimal.ONE;
+        } finally {
+            client.close();
+        }
+    }
+
+    private List<Devise> getAllDevises() {
+        String baseUrl = "http://127.0.0.1:8081/app1-devises/api";
+        Client client = ClientBuilder.newClient();
+        try {
+            WebTarget target = client.target(baseUrl).path("devises");
+            Response resp = target.request(MediaType.APPLICATION_JSON_TYPE).get();
+            if (resp.getStatus() == 200) {
+                return resp.readEntity(new GenericType<List<Devise>>() {});
+            }
+            return new ArrayList<>();
         } finally {
             client.close();
         }

@@ -7,3 +7,5 @@ com\interface_app\servlet\ClientDashboardServlet.class
 com\interface_app\servlet\LogoutServlet.class
 com\interface_app\servlet\AdminDashboardServlet.class
 com\interface_app\ejb\InterfaceServiceBean.class
+com\interface_app\servlet\ClientDashboardServlet$1.class
+com\interface_app\servlet\AgentDashboardServlet$1.class

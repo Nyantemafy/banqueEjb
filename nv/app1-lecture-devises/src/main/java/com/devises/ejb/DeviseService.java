@@ -9,4 +9,6 @@ public interface DeviseService {
     List<Devise> getAllDevises();
 
     Devise getDeviseByNom(String nom);
+
+    void addDevise(Devise devise);
 }
