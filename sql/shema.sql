@@ -187,3 +187,76 @@ SELECT setval(pg_get_serial_sequence('transaction','id_transaction'),
 
 
 
+CREATE TABLE banque (
+    id_banque SERIAL PRIMARY KEY,
+    nom_banque VARCHAR(100) NOT NULL,
+    code_banque VARCHAR(20) UNIQUE NOT NULL
+);
+
+ALTER TABLE comptecourant
+ADD COLUMN id_banque INTEGER REFERENCES banque(id_banque);
+
+ALTER TABLE type RENAME TO mouvement;
+
+ALTER TABLE mouvement ADD COLUMN source VARCHAR(100);
+
+CREATE TABLE actionhistorique (
+    id_actionhistorique SERIAL PRIMARY KEY,
+    intitule VARCHAR(50) NOT NULL
+);
+
+-- Exemple d'insertion :
+INSERT INTO actionhistorique (intitule) VALUES
+('CREATION'),
+('VALIDATION'),
+('ANNULATION'),
+('SUPPRESSION');
+
+CREATE TABLE historique (
+    id_historique VARCHAR(20) PRIMARY KEY,
+    objet VARCHAR(50) NOT NULL, -- VIREMENT, DEPOT, RETRAIT
+    date_heure TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    id_user INTEGER REFERENCES utilisateur(id_user),
+    id_actionhistorique INTEGER REFERENCES actionhistorique(id_actionhistorique)
+);
+
+CREATE OR REPLACE FUNCTION generate_historique_id()
+RETURNS TRIGGER AS $$
+DECLARE
+    prefix TEXT;
+    seq_num INT;
+BEGIN
+    IF NEW.objet = 'VIREMENT' THEN
+        prefix := 'VIR-';
+    ELSIF NEW.objet = 'DEPOT' THEN
+        prefix := 'DEP-';
+    ELSIF NEW.objet = 'RETRAIT' THEN
+        prefix := 'RET-';
+    ELSE
+        prefix := 'HIS-';
+    END IF;
+
+    SELECT nextval('historique_seq') INTO seq_num;
+
+    NEW.id_historique := prefix || LPAD(seq_num::TEXT, 6, '0');
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE SEQUENCE historique_seq START 1;
+
+CREATE TRIGGER historique_id_trigger
+BEFORE INSERT ON historique
+FOR EACH ROW
+EXECUTE FUNCTION generate_historique_id();
+
+CREATE TABLE configuration_frais_bancaire (
+    id_frais SERIAL PRIMARY KEY,
+    type_compte VARCHAR(50) NOT NULL,          -- ex: 'compteCourant', 'compteDepot', 'compteEpargne', etc.
+    montant_inf NUMERIC(15,2) NOT NULL,        -- borne inférieure du montant
+    montant_sup NUMERIC(15,2) NOT NULL,        -- borne supérieure du montant
+    frais_montant NUMERIC(15,2),               -- frais fixes en valeur absolue (ex: 1000 Ar)
+    frais_pourcentage NUMERIC(5,2),            -- frais variables en % (ex: 1.5 pour 1,5%)
+    devise VARCHAR(10) DEFAULT 'AR'            -- pour gérer éventuellement plusieurs devises
+);

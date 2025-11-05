@@ -2,9 +2,17 @@ package com.multiplication.ejb;
 
 import com.multiplication.dao.CompteCourantDAORemote;
 import com.multiplication.dao.TransactionDAORemote;
+import com.multiplication.dao.HistoriqueDAORemote;
+import com.multiplication.dao.ActionHistoriqueDAORemote;
+import com.multiplication.dao.UtilisateurDAORemote;
+import com.multiplication.dao.VirementDAORemote;
 import com.multiplication.model.CompteCourant;
 import com.multiplication.model.Transaction;
 import com.multiplication.model.Type;
+import com.multiplication.model.Historique;
+import com.multiplication.model.ActionHistorique;
+import com.multiplication.model.Utilisateur;
+import com.multiplication.model.VirementRef;
 import com.multiplication.metier.Virement;
 import com.multiplication.metier.VirementComplet;
 import javax.ejb.EJB;
@@ -22,11 +30,23 @@ public class VirementServiceBean implements VirementService {
     @EJB(lookup = "ejb:/app2-multiplication/TransactionDAOApp2!com.multiplication.dao.TransactionDAORemote")
     private TransactionDAORemote transactionDAO;
 
+    @EJB(lookup = "ejb:/app2-multiplication/HistoriqueDAOApp2!com.multiplication.dao.HistoriqueDAORemote")
+    private HistoriqueDAORemote historiqueDAO;
+
+    @EJB(lookup = "ejb:/app2-multiplication/ActionHistoriqueDAOApp2!com.multiplication.dao.ActionHistoriqueDAORemote")
+    private ActionHistoriqueDAORemote actionHistoriqueDAO;
+
+    @EJB(lookup = "ejb:/app2-multiplication/UtilisateurDAOApp2!com.multiplication.dao.UtilisateurDAORemote")
+    private UtilisateurDAORemote utilisateurDAO;
+
+    @EJB(lookup = "ejb:/app2-multiplication/VirementDAOApp2!com.multiplication.dao.VirementDAORemote")
+    private VirementDAORemote virementDAO;
+
     /**
      * Effectue un virement avec tous les contrôles
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public Transaction effectuerVirement(Integer idCompteEmetteur, String compteBeneficiaire,
+    public Transaction effectuerVirement(Integer idUser, Integer idCompteEmetteur, String compteBeneficiaire,
             String montant, String devise, String date) {
         // Récupérer le compte émetteur
         CompteCourant compteEmet = compteCourantDAO.findById(idCompteEmetteur);
@@ -77,8 +97,35 @@ public class VirementServiceBean implements VirementService {
         transaction.setStatut("EN_ATTENTE");
         transaction.setDateTransaction(virement.getDateVirement());
 
-        // Sauvegarder uniquement la transaction en attente
-        transactionDAO.create(transaction);
+        // Sauvegarder uniquement la transaction en attente (récupérer l'instance persistée avec ID)
+        transaction = transactionDAO.create(transaction);
+
+        // Créer la référence virement pour générer le code VIR-XXXXXX
+        VirementRef vref = new VirementRef();
+        // S'assurer que l'ID transaction est présent
+        if (transaction.getIdTransaction() == null) {
+            throw new IllegalStateException("ID transaction non généré");
+        }
+        vref.setTransaction(transaction);
+        vref = virementDAO.create(vref);
+
+        // Journaliser l'historique de CREATION (objet = code virement VIR-XXXXXX)
+        try {
+            Utilisateur user = utilisateurDAO.findById(idUser);
+            ActionHistorique act = actionHistoriqueDAO.findByIntitule("CREATION");
+            Historique h = new Historique();
+            String objet = vref != null ? vref.getCodeVirement() : null;
+            if (objet == null || objet.isEmpty()) {
+                objet = transaction.getIdTransaction() != null
+                        ? String.format("VIR-%06d", transaction.getIdTransaction())
+                        : "VIREMENT";
+            }
+            h.setObjet(objet);
+            h.setDateHeure(new Date());
+            h.setUtilisateur(user);
+            h.setActionHistorique(act);
+            historiqueDAO.create(h);
+        } catch (Exception ignored) {}
 
         return transaction;
     }
@@ -150,7 +197,7 @@ public class VirementServiceBean implements VirementService {
      * Valide un virement en attente (pour admin)
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void validerVirement(Integer idTransaction) {
+    public void validerVirement(Integer idUser, Integer idTransaction) {
         Transaction transaction = transactionDAO.findById(idTransaction);
         if (transaction == null) {
             throw new IllegalArgumentException("Transaction introuvable");
@@ -176,5 +223,18 @@ public class VirementServiceBean implements VirementService {
         compteCourantDAO.update(compteBeneficiaire);
         transaction.setStatut("VALIDE");
         transactionDAO.update(transaction);
+
+        // Journaliser l'historique de VALIDATION (objet = code virement VIR-XXXXXX)
+        try {
+            Utilisateur user = utilisateurDAO.findById(idUser);
+            ActionHistorique act = actionHistoriqueDAO.findByIntitule("VALIDATION");
+            Historique h = new Historique();
+            VirementRef vref = virementDAO.findByTransactionId(transaction.getIdTransaction());
+            h.setObjet(vref != null ? vref.getCodeVirement() : String.format("VIR-%06d", transaction.getIdTransaction()));
+            h.setDateHeure(new Date());
+            h.setUtilisateur(user);
+            h.setActionHistorique(act);
+            historiqueDAO.create(h);
+        } catch (Exception ignored) {}
     }
 }

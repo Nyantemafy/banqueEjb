@@ -7,7 +7,7 @@ import java.util.List;
 
 @Remote
 public interface TransactionDAORemote {
-    void create(Transaction transaction);
+    public Transaction create(Transaction transaction);
     Transaction findById(Integer id);
     Transaction update(Transaction transaction);
     List<Transaction> findAll();

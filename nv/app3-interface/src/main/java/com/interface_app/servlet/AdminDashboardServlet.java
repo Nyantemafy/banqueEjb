@@ -4,6 +4,8 @@ import com.multiplication.dao.TransactionDAORemote;
 import com.multiplication.ejb.VirementService;
 import com.multiplication.session.SessionInfo;
 import com.multiplication.model.Transaction;
+import com.multiplication.dao.HistoriqueDAORemote;
+import com.multiplication.model.Historique;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,6 +24,9 @@ public class AdminDashboardServlet extends HttpServlet {
 
     @EJB(lookup = "ejb:/app2-multiplication/VirementServiceBean!com.multiplication.ejb.VirementService")
     private VirementService virementService;
+
+    @EJB(lookup = "ejb:/app2-multiplication/HistoriqueDAOApp2!com.multiplication.dao.HistoriqueDAORemote")
+    private HistoriqueDAORemote historiqueDAO;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -48,6 +53,10 @@ public class AdminDashboardServlet extends HttpServlet {
         List<Transaction> toutesTransactions = transactionDAO.findAllVirements();
         req.setAttribute("toutesTransactions", toutesTransactions);
 
+        // Récupérer historiques récents
+        List<Historique> historiques = historiqueDAO.findRecent(50);
+        req.setAttribute("historiques", historiques);
+
         req.getRequestDispatcher("/admin-dashboard.jsp").forward(req, resp);
     }
 
@@ -62,7 +71,8 @@ public class AdminDashboardServlet extends HttpServlet {
 
             if ("valider".equals(action)) {
                 // Valider une transaction en attente
-                virementService.validerVirement(idTransaction);
+                SessionInfo sessionInfo = (SessionInfo) req.getSession(false).getAttribute("sessionInfo");
+                virementService.validerVirement(sessionInfo.getIdUser(), idTransaction);
                 req.setAttribute("message", "Transaction validée avec succès");
 
             } else if ("annulerAvant".equals(action)) {

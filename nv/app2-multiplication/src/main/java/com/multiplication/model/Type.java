@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Table(name = "type")
+@Table(name = "mouvement")
 public class Type implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -16,6 +16,9 @@ public class Type implements Serializable {
 
     @Column(name = "libelle", nullable = false, length = 50)
     private String libelle;
+
+    @Column(name = "source", length = 100)
+    private String source;
 
     @OneToMany(mappedBy = "type", cascade = CascadeType.ALL)
     private List<Transaction> transactions;
@@ -43,6 +46,14 @@ public class Type implements Serializable {
 
     public void setLibelle(String libelle) {
         this.libelle = libelle;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
     public List<Transaction> getTransactions() {

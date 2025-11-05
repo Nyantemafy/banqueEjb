@@ -81,7 +81,9 @@ public class AgentDashboardServlet extends HttpServlet {
                 String date = req.getParameter("date");
 
                 // Effectuer le virement (tous les contrôles sont dans le service)
+                SessionInfo sessionInfo = (SessionInfo) req.getSession(false).getAttribute("sessionInfo");
                 Transaction transaction = virementService.effectuerVirement(
+                        sessionInfo.getIdUser(),
                         Integer.parseInt(compteEmetteur),
                         compteBeneficiaire,
                         montant,

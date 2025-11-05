@@ -2,6 +2,7 @@
 <%@ page import="com.multiplication.session.SessionInfo" %>
 <%@ page import="com.multiplication.model.Transaction" %>
 <%@ page import="java.util.List" %>
+<%@ page import="com.multiplication.model.Historique" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.text.NumberFormat" %>
 <%@ page import="java.util.Locale" %>
@@ -15,6 +16,7 @@
     List<Transaction> toutesTransactions = (List<Transaction>) request.getAttribute("toutesTransactions");
     NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("fr", "MG"));
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    List<Historique> historiques = (List<Historique>) request.getAttribute("historiques");
 %>
 <!DOCTYPE html>
 <html>
@@ -279,6 +281,36 @@
                 </table>
             <% } else { %>
                 <p>Aucune transaction.</p>
+            <% } %>
+        </div>
+
+        <div class="card">
+            <h2>Historique des actions</h2>
+            <% if (historiques != null && !historiques.isEmpty()) { %>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date/Heure</th>
+                            <th>Objet</th>
+                            <th>Action</th>
+                            <th>Utilisateur</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (Historique h : historiques) { %>
+                            <tr>
+                                <td><%= h.getIdHistorique() %></td>
+                                <td><%= h.getDateHeure() != null ? new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(h.getDateHeure()) : "" %></td>
+                                <td><%= h.getObjet() %></td>
+                                <td><%= h.getActionHistorique() != null ? h.getActionHistorique().getIntitule() : "" %></td>
+                                <td><%= h.getUtilisateur() != null ? h.getUtilisateur().getUsername() : "" %></td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <p>Aucun historique.</p>
             <% } %>
         </div>
     </div>

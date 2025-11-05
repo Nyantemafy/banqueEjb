@@ -13,8 +13,10 @@ public class TransactionDAO implements TransactionDAORemote {
     @PersistenceContext(unitName = "BanquePU")
     private EntityManager em;
 
-    public void create(Transaction transaction) {
+    public Transaction create(Transaction transaction) {
         em.persist(transaction);
+        em.flush(); // s'assurer que id_transaction est généré
+        return transaction;
     }
 
     public Transaction findById(Integer id) {
