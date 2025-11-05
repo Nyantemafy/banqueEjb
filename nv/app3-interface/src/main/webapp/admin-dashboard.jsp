@@ -293,6 +293,7 @@
                             <th>ID</th>
                             <th>Date/Heure</th>
                             <th>Objet</th>
+                            <th>Frais</th>
                             <th>Action</th>
                             <th>Utilisateur</th>
                         </tr>
@@ -303,6 +304,7 @@
                                 <td><%= h.getIdHistorique() %></td>
                                 <td><%= h.getDateHeure() != null ? new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(h.getDateHeure()) : "" %></td>
                                 <td><%= h.getObjet() %></td>
+                                <td><%= h.getFrais() != null ? currencyFormat.format(h.getFrais()) : "-" %></td>
                                 <td><%= h.getActionHistorique() != null ? h.getActionHistorique().getIntitule() : "" %></td>
                                 <td><%= h.getUtilisateur() != null ? h.getUtilisateur().getUsername() : "" %></td>
                             </tr>

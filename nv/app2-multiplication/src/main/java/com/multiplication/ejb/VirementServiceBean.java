@@ -6,6 +6,7 @@ import com.multiplication.dao.HistoriqueDAORemote;
 import com.multiplication.dao.ActionHistoriqueDAORemote;
 import com.multiplication.dao.UtilisateurDAORemote;
 import com.multiplication.dao.VirementDAORemote;
+import com.multiplication.dao.ConfigurationFraisDAORemote;
 import com.multiplication.model.CompteCourant;
 import com.multiplication.model.Transaction;
 import com.multiplication.model.Type;
@@ -20,6 +21,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 @Stateless
@@ -41,6 +43,9 @@ public class VirementServiceBean implements VirementService {
 
     @EJB(lookup = "ejb:/app2-multiplication/VirementDAOApp2!com.multiplication.dao.VirementDAORemote")
     private VirementDAORemote virementDAO;
+
+    @EJB(lookup = "ejb:/app2-multiplication/ConfigurationFraisDAOApp2!com.multiplication.dao.ConfigurationFraisDAORemote")
+    private ConfigurationFraisDAORemote configurationFraisDAO;
 
     /**
      * Effectue un virement avec tous les contrôles
@@ -109,7 +114,7 @@ public class VirementServiceBean implements VirementService {
         vref.setTransaction(transaction);
         vref = virementDAO.create(vref);
 
-        // Journaliser l'historique de CREATION (objet = code virement VIR-XXXXXX)
+        // Journaliser l'historique de CREATION (objet = code virement VIR-XXXXXX, frais enregistrés séparément)
         try {
             Utilisateur user = utilisateurDAO.findById(idUser);
             ActionHistorique act = actionHistoriqueDAO.findByIntitule("CREATION");
@@ -120,6 +125,12 @@ public class VirementServiceBean implements VirementService {
                         ? String.format("VIR-%06d", transaction.getIdTransaction())
                         : "VIREMENT";
             }
+            // Calcul frais prévisionnels et enregistrement dans la colonne dédiée
+            BigDecimal fraisPrev = configurationFraisDAO.computeFrais("compteCourant", transaction.getDevise(), transaction.getMontant());
+            if (fraisPrev != null && fraisPrev.compareTo(BigDecimal.ZERO) > 0) {
+                h.setFrais(fraisPrev.setScale(2, RoundingMode.HALF_UP));
+            }
+            if (objet.length() > 50) objet = objet.substring(0, 50);
             h.setObjet(objet);
             h.setDateHeure(new Date());
             h.setUtilisateur(user);
@@ -212,8 +223,10 @@ public class VirementServiceBean implements VirementService {
         CompteCourant compteBeneficiaire = compteCourantDAO.findById(
                 Integer.parseInt(transaction.getCompteBeneficiaire()));
 
-        // Vérifier solde et effectuer mouvements
-        if (!compteEmetteur.debiter(transaction.getMontant())) {
+        // Calcul des frais et vérification solde
+        BigDecimal frais = configurationFraisDAO.computeFrais("compteCourant", transaction.getDevise(), transaction.getMontant());
+        BigDecimal debitTotal = transaction.getMontant().add(frais);
+        if (!compteEmetteur.debiter(debitTotal)) {
             throw new IllegalArgumentException("Solde insuffisant");
         }
         compteBeneficiaire.crediter(transaction.getMontant());
@@ -224,13 +237,18 @@ public class VirementServiceBean implements VirementService {
         transaction.setStatut("VALIDE");
         transactionDAO.update(transaction);
 
-        // Journaliser l'historique de VALIDATION (objet = code virement VIR-XXXXXX)
+        // Journaliser l'historique de VALIDATION (objet = code virement VIR-XXXXXX, frais enregistrés séparément)
         try {
             Utilisateur user = utilisateurDAO.findById(idUser);
             ActionHistorique act = actionHistoriqueDAO.findByIntitule("VALIDATION");
             Historique h = new Historique();
             VirementRef vref = virementDAO.findByTransactionId(transaction.getIdTransaction());
-            h.setObjet(vref != null ? vref.getCodeVirement() : String.format("VIR-%06d", transaction.getIdTransaction()));
+            String objet = (vref != null ? vref.getCodeVirement() : String.format("VIR-%06d", transaction.getIdTransaction()));
+            if (objet.length() > 50) objet = objet.substring(0, 50);
+            h.setObjet(objet);
+            if (frais != null) {
+                h.setFrais(frais.setScale(2, RoundingMode.HALF_UP));
+            }
             h.setDateHeure(new Date());
             h.setUtilisateur(user);
             h.setActionHistorique(act);

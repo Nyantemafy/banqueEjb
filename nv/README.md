@@ -137,12 +137,3 @@ je veux une projet purement oriente objet, dans la classe utilisateur met une fo
 
 
 
-CREATE TABLE virement (
-    id_virement SERIAL PRIMARY KEY,
-    id_transaction INTEGER UNIQUE NOT NULL
-        REFERENCES transaction(id_transaction) ON DELETE CASCADE,
-    code_virement VARCHAR(20)
-        GENERATED ALWAYS AS ('VIR-' || lpad(id_virement::text, 6, '0')) STORED
-);
-
-CREATE INDEX idx_virement_code ON virement(code_virement);

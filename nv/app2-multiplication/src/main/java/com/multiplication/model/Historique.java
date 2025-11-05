@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "historique")
@@ -28,6 +29,9 @@ public class Historique implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_actionhistorique")
     private ActionHistorique actionHistorique;
+
+    @Column(name = "frais", precision = 15, scale = 2)
+    private BigDecimal frais;
 
     public String getIdHistorique() {
         return idHistorique;
@@ -67,6 +71,14 @@ public class Historique implements Serializable {
 
     public void setActionHistorique(ActionHistorique actionHistorique) {
         this.actionHistorique = actionHistorique;
+    }
+
+    public BigDecimal getFrais() {
+        return frais;
+    }
+
+    public void setFrais(BigDecimal frais) {
+        this.frais = frais;
     }
 
     @PrePersist

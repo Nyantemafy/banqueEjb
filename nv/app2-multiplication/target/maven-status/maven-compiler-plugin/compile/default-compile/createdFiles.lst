@@ -17,11 +17,14 @@ com\multiplication\ejb\AuthenticationServiceBean.class
 com\multiplication\model\ActionRole.class
 com\multiplication\metier\Change.class
 com\multiplication\dao\CompteCourantDAORemote.class
+com\multiplication\model\ConfigurationFraisBancaire.class
 com\multiplication\dao\HistoriqueDAO.class
 com\multiplication\metier\Virement.class
 com\multiplication\model\VirementRef.class
 com\multiplication\dao\ActionHistoriqueDAO.class
+com\multiplication\dao\ConfigurationFraisDAORemote.class
 com\multiplication\dao\HistoriqueDAORemote.class
+com\multiplication\dao\ConfigurationFraisDAO.class
 com\multiplication\ejb\MultiplicationServiceBean$1.class
 com\multiplication\dao\TransactionDAO.class
 com\multiplication\dao\UtilisateurDAO.class

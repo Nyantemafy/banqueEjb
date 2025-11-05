@@ -254,9 +254,20 @@ EXECUTE FUNCTION generate_historique_id();
 CREATE TABLE configuration_frais_bancaire (
     id_frais SERIAL PRIMARY KEY,
     type_compte VARCHAR(50) NOT NULL,          -- ex: 'compteCourant', 'compteDepot', 'compteEpargne', etc.
-    montant_inf NUMERIC(15,2) NOT NULL,        -- borne inférieure du montant
+    montant_inf NUMERIC(15,2) NOT NULL,        -- borne inférieure du mon
+    tant
     montant_sup NUMERIC(15,2) NOT NULL,        -- borne supérieure du montant
     frais_montant NUMERIC(15,2),               -- frais fixes en valeur absolue (ex: 1000 Ar)
     frais_pourcentage NUMERIC(5,2),            -- frais variables en % (ex: 1.5 pour 1,5%)
     devise VARCHAR(10) DEFAULT 'AR'            -- pour gérer éventuellement plusieurs devises
 );
+
+CREATE TABLE virement (
+    id_virement SERIAL PRIMARY KEY,
+    id_transaction INTEGER UNIQUE NOT NULL
+        REFERENCES transaction(id_transaction) ON DELETE CASCADE,
+    code_virement VARCHAR(20)
+        GENERATED ALWAYS AS ('VIR-' || lpad(id_virement::text, 6, '0')) STORED
+);
+
+CREATE INDEX idx_virement_code ON virement(code_virement);

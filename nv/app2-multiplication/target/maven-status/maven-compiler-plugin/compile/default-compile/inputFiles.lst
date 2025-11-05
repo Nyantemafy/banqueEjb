@@ -2,6 +2,8 @@ C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\dao\ActionHistoriqueDAORemote.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\dao\CompteCourantDAO.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\dao\CompteCourantDAORemote.java
+C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\dao\ConfigurationFraisDAO.java
+C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\dao\ConfigurationFraisDAORemote.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\dao\HistoriqueDAO.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\dao\HistoriqueDAORemote.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\dao\TransactionDAO.java
@@ -25,6 +27,7 @@ C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\model\ActionHistorique.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\model\ActionRole.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\model\CompteCourant.java
+C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\model\ConfigurationFraisBancaire.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\model\Devise.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\model\Direction.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\model\Historique.java
