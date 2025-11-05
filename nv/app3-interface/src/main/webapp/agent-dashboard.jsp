@@ -164,13 +164,37 @@
                     <input type="hidden" name="action" value="effectuerVirement">
                     
                     <div class="form-group">
-                        <label>Compte émetteur (ID)</label>
-                        <input type="number" name="compteEmetteur" required>
+                        <label>Compte émetteur</label>
+                        <select name="compteEmetteur" required>
+                            <%
+                                java.util.List<com.multiplication.model.CompteCourant> comptesEmetteur = (java.util.List<com.multiplication.model.CompteCourant>) request.getAttribute("comptesEmetteur");
+                                if (comptesEmetteur != null && !comptesEmetteur.isEmpty()) {
+                                    for (com.multiplication.model.CompteCourant c : comptesEmetteur) {
+                            %>
+                                        <option value="<%= c.getIdCompteCourant() %>"><%= (c.getUtilisateur() != null ? c.getUtilisateur().getUsername() : ("#" + c.getIdCompteCourant())) %> — <%= c.getSolde() %> AR</option>
+                            <%
+                                    }
+                                }
+                            %>
+                        </select>
+                        <small>Vos comptes seulement</small>
                     </div>
                     
                     <div class="form-group">
-                        <label>Compte bénéficiaire (ID)</label>
-                        <input type="number" name="compteBeneficiaire" required>
+                        <label>Compte bénéficiaire</label>
+                        <select name="compteBeneficiaire" required>
+                            <%
+                                java.util.List<com.multiplication.model.CompteCourant> comptesBeneficiaire = (java.util.List<com.multiplication.model.CompteCourant>) request.getAttribute("comptesBeneficiaire");
+                                if (comptesBeneficiaire != null && !comptesBeneficiaire.isEmpty()) {
+                                    for (com.multiplication.model.CompteCourant c : comptesBeneficiaire) {
+                            %>
+                                        <option value="<%= c.getIdCompteCourant() %>"><%= (c.getUtilisateur() != null ? c.getUtilisateur().getUsername() : ("#" + c.getIdCompteCourant())) %> — <%= c.getSolde() %> AR</option>
+                            <%
+                                    }
+                                }
+                            %>
+                        </select>
+                        <small>Tous les comptes disponibles</small>
                     </div>
                     
                     <div class="form-group">

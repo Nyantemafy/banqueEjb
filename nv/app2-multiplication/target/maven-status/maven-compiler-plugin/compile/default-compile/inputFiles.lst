@@ -10,6 +10,8 @@ C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\dao\TransactionDAORemote.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\dao\UtilisateurDAO.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\dao\UtilisateurDAORemote.java
+C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\dao\ValidationVirementDAO.java
+C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\dao\ValidationVirementDAORemote.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\dao\VirementDAO.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\dao\VirementDAORemote.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\ejb\AuthenticationService.java
@@ -36,6 +38,7 @@ C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\model\Transaction.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\model\Type.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\model\Utilisateur.java
+C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\model\ValidationVirement.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\model\VirementRef.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\servlet\MultiplicationServlet.java
 C:\Users\Ny Antema\OneDrive\Documents\devoir\s5\banqueEjb\nv\app2-multiplication\src\main\java\com\multiplication\session\SessionInfo.java

@@ -271,3 +271,11 @@ CREATE TABLE virement (
 );
 
 CREATE INDEX idx_virement_code ON virement(code_virement);
+
+CREATE TABLE validation_virement (
+  id_validation SERIAL PRIMARY KEY,
+  id_object VARCHAR(50) NOT NULL UNIQUE,
+  date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  status VARCHAR(20) NOT NULL,
+  etat VARCHAR(100) NOT NULL
+);

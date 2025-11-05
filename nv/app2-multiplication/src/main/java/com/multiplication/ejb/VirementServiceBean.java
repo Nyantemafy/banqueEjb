@@ -7,6 +7,7 @@ import com.multiplication.dao.ActionHistoriqueDAORemote;
 import com.multiplication.dao.UtilisateurDAORemote;
 import com.multiplication.dao.VirementDAORemote;
 import com.multiplication.dao.ConfigurationFraisDAORemote;
+import com.multiplication.dao.ValidationVirementDAORemote;
 import com.multiplication.model.CompteCourant;
 import com.multiplication.model.Transaction;
 import com.multiplication.model.Type;
@@ -46,6 +47,9 @@ public class VirementServiceBean implements VirementService {
 
     @EJB(lookup = "ejb:/app2-multiplication/ConfigurationFraisDAOApp2!com.multiplication.dao.ConfigurationFraisDAORemote")
     private ConfigurationFraisDAORemote configurationFraisDAO;
+
+    @EJB(lookup = "ejb:/app2-multiplication/ValidationVirementDAOApp2!com.multiplication.dao.ValidationVirementDAORemote")
+    private ValidationVirementDAORemote validationVirementDAO;
 
     /**
      * Effectue un virement avec tous les contrôles
@@ -218,41 +222,75 @@ public class VirementServiceBean implements VirementService {
             throw new IllegalStateException("La transaction ne peut être validée");
         }
 
-        // Récupérer les comptes pour effectuer les mouvements
-        CompteCourant compteEmetteur = transaction.getCompteCourant();
-        CompteCourant compteBeneficiaire = compteCourantDAO.findById(
-                Integer.parseInt(transaction.getCompteBeneficiaire()));
+        // Déterminer le rôle du validateur
+        Utilisateur userRole = utilisateurDAO.findById(idUser);
+        String roleLib = (userRole != null && userRole.getRole() != null) ? userRole.getRole().getLibelle() : null;
 
-        // Calcul des frais et vérification solde
-        BigDecimal frais = configurationFraisDAO.computeFrais("compteCourant", transaction.getDevise(), transaction.getMontant());
-        BigDecimal debitTotal = transaction.getMontant().add(frais);
-        if (!compteEmetteur.debiter(debitTotal)) {
-            throw new IllegalArgumentException("Solde insuffisant");
-        }
-        compteBeneficiaire.crediter(transaction.getMontant());
+        // Récupérer l'objet (VIR-XXXXXX)
+        VirementRef vrefForObj = virementDAO.findByTransactionId(transaction.getIdTransaction());
+        String objetCode = (vrefForObj != null ? vrefForObj.getCodeVirement() : String.format("VIR-%06d", transaction.getIdTransaction()));
 
-        // Mettre à jour les soldes et statut
-        compteCourantDAO.update(compteEmetteur);
-        compteCourantDAO.update(compteBeneficiaire);
-        transaction.setStatut("VALIDE");
-        transactionDAO.update(transaction);
+        if ("ADMIN".equalsIgnoreCase(roleLib)) {
+            // ADMIN: effectuer les mouvements et valider définitivement
+            CompteCourant compteEmetteur = transaction.getCompteCourant();
+            CompteCourant compteBeneficiaire = compteCourantDAO.findById(
+                    Integer.parseInt(transaction.getCompteBeneficiaire()));
 
-        // Journaliser l'historique de VALIDATION (objet = code virement VIR-XXXXXX, frais enregistrés séparément)
-        try {
-            Utilisateur user = utilisateurDAO.findById(idUser);
-            ActionHistorique act = actionHistoriqueDAO.findByIntitule("VALIDATION");
-            Historique h = new Historique();
-            VirementRef vref = virementDAO.findByTransactionId(transaction.getIdTransaction());
-            String objet = (vref != null ? vref.getCodeVirement() : String.format("VIR-%06d", transaction.getIdTransaction()));
-            if (objet.length() > 50) objet = objet.substring(0, 50);
-            h.setObjet(objet);
-            if (frais != null) {
-                h.setFrais(frais.setScale(2, RoundingMode.HALF_UP));
+            BigDecimal frais = configurationFraisDAO.computeFrais("compteCourant", transaction.getDevise(), transaction.getMontant());
+            BigDecimal debitTotal = transaction.getMontant().add(frais);
+            if (!compteEmetteur.debiter(debitTotal)) {
+                throw new IllegalArgumentException("Solde insuffisant");
             }
-            h.setDateHeure(new Date());
-            h.setUtilisateur(user);
-            h.setActionHistorique(act);
-            historiqueDAO.create(h);
-        } catch (Exception ignored) {}
+            compteBeneficiaire.crediter(transaction.getMontant());
+
+            compteCourantDAO.update(compteEmetteur);
+            compteCourantDAO.update(compteBeneficiaire);
+            transaction.setStatut("VALIDE");
+            transactionDAO.update(transaction);
+
+            // Historique VALIDATION (frais réels)
+            try {
+                ActionHistorique act = actionHistoriqueDAO.findByIntitule("VALIDATION");
+                Historique h = new Historique();
+                String objet = objetCode;
+                if (objet.length() > 50) objet = objet.substring(0, 50);
+                h.setObjet(objet);
+                if (frais != null) {
+                    h.setFrais(frais.setScale(2, RoundingMode.HALF_UP));
+                }
+                h.setDateHeure(new Date());
+                h.setUtilisateur(userRole);
+                h.setActionHistorique(act);
+                historiqueDAO.create(h);
+            } catch (Exception ignored) {}
+
+            // Upsert validation 117
+            try { validationVirementDAO.upsertValidation(objetCode, "ADMIN"); } catch (Exception ignored2) {}
+        } else {
+            // Rôle inférieur à ADMIN (ex: AGENT_SUP): enregistrer la validation sans mouvements
+            // Historique d'une validation intermédiaire
+            try {
+                ActionHistorique act = actionHistoriqueDAO.findByIntitule("VALIDATION");
+                Historique h = new Historique();
+                String objet = objetCode;
+                if (objet.length() > 50) objet = objet.substring(0, 50);
+                h.setObjet(objet);
+                // frais prévisionnels à titre informatif
+                BigDecimal fraisPrev = configurationFraisDAO.computeFrais("compteCourant", transaction.getDevise(), transaction.getMontant());
+                if (fraisPrev != null && fraisPrev.compareTo(BigDecimal.ZERO) > 0) {
+                    h.setFrais(fraisPrev.setScale(2, RoundingMode.HALF_UP));
+                }
+                h.setDateHeure(new Date());
+                h.setUtilisateur(userRole);
+                h.setActionHistorique(act);
+                historiqueDAO.create(h);
+            } catch (Exception ignored) {}
+
+            // Upsert validation (111 pour AGENT_SUP, 101 pour AGENT par défaut)
+            try { validationVirementDAO.upsertValidation(objetCode, roleLib); } catch (Exception ignored2) {}
+            // Ne pas changer le statut de la transaction: reste EN_ATTENTE pour continuer à s'afficher
+        }
+
+        // Fin de méthode
     }
 }

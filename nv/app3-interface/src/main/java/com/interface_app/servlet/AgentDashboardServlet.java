@@ -1,6 +1,8 @@
 package com.interface_app.servlet;
 
 import com.multiplication.ejb.VirementService;
+import com.multiplication.dao.CompteCourantDAORemote;
+import com.multiplication.model.CompteCourant;
 import com.multiplication.ejb.ChangeService;
 import com.multiplication.session.SessionInfo;
 import com.multiplication.model.Transaction;
@@ -32,6 +34,9 @@ public class AgentDashboardServlet extends HttpServlet {
     @EJB(lookup = "ejb:/app2-multiplication/ChangeServiceBeanApp2!com.multiplication.ejb.ChangeService")
     private ChangeService changeService;
 
+    @EJB(lookup = "ejb:/app2-multiplication/CompteCourantDAOApp2!com.multiplication.dao.CompteCourantDAORemote")
+    private CompteCourantDAORemote compteCourantDAO;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -62,6 +67,14 @@ public class AgentDashboardServlet extends HttpServlet {
             req.setAttribute("listeDevises", noms);
             req.setAttribute("listeDevisesObj", all);
             req.setAttribute("listeDevisesDedup", dedup);
+        } catch (Exception ignored) {}
+
+        // Charger les listes de comptes (émetteur: tous les comptes, bénéficiaire: tous)
+        try {
+            java.util.List<CompteCourant> comptesEmetteur = compteCourantDAO.findAll();
+            java.util.List<CompteCourant> comptesBeneficiaire = compteCourantDAO.findAll();
+            req.setAttribute("comptesEmetteur", comptesEmetteur);
+            req.setAttribute("comptesBeneficiaire", comptesBeneficiaire);
         } catch (Exception ignored) {}
 
         req.getRequestDispatcher("/agent-dashboard.jsp").forward(req, resp);

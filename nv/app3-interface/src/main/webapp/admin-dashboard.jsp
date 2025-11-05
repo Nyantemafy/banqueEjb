@@ -156,7 +156,11 @@
                     <h1>Bienvenue, <%= sessionInfo.getUsername() %></h1>
                     <p>Administrateur</p>
                 </div>
-                <a href="<%= request.getContextPath() %>/logout" class="logout">Déconnexion</a>
+
+                <div>
+                    <a href="<%= request.getContextPath() %>/admin/validations" class="logout" style="margin-right:12px;">Validations de virements</a>
+                    <a href="<%= request.getContextPath() %>/logout" class="logout">Déconnexion</a>
+                </div>
             </div>
         </div>
     </div>

@@ -43,9 +43,8 @@ public class LoginServlet extends HttpServlet {
                 HttpSession session = req.getSession();
                 session.setAttribute("sessionInfo", sessionInfo);
 
-                // Rediriger selon le rôle (les infos sont dans sessionInfo, pas besoin de
-                // requête DB)
-                if (sessionInfo.isAdmin()) {
+                // Rediriger selon le rôle (ADMIN et AGENT_SUP vont au dashboard admin)
+                if (sessionInfo.isAdmin() || sessionInfo.isAgentSup()) {
                     resp.sendRedirect(req.getContextPath() + "/admin/dashboard");
                 } else if (sessionInfo.isAgent()) {
                     resp.sendRedirect(req.getContextPath() + "/agent/dashboard");

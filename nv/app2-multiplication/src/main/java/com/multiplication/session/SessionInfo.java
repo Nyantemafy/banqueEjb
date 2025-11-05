@@ -64,6 +64,14 @@ public class SessionInfo implements Serializable {
     }
 
     /**
+     * Vérifie si l'utilisateur est Agent supérieur
+     * AUCUNE requête DB nécessaire
+     */
+    public boolean isAgentSup() {
+        return role != null && "AGENT_SUP".equals(role.getLibelle());
+    }
+
+    /**
      * Vérifie si l'utilisateur est Client
      * AUCUNE requête DB nécessaire
      */

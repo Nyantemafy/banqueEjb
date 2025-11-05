@@ -28,6 +28,7 @@ public class AdminDashboardServlet extends HttpServlet {
     @EJB(lookup = "ejb:/app2-multiplication/HistoriqueDAOApp2!com.multiplication.dao.HistoriqueDAORemote")
     private HistoriqueDAORemote historiqueDAO;
 
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -39,8 +40,8 @@ public class AdminDashboardServlet extends HttpServlet {
 
         SessionInfo sessionInfo = (SessionInfo) session.getAttribute("sessionInfo");
 
-        // Vérifier le rôle (pas besoin de requête DB, tout est dans sessionInfo)
-        if (!sessionInfo.isAdmin()) {
+        // Vérifier le rôle (autoriser ADMIN et AGENT_SUP, sans requête DB)
+        if (!(sessionInfo.isAdmin() || sessionInfo.isAgentSup())) {
             resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
@@ -56,6 +57,7 @@ public class AdminDashboardServlet extends HttpServlet {
         // Récupérer historiques récents
         List<Historique> historiques = historiqueDAO.findRecent(50);
         req.setAttribute("historiques", historiques);
+
 
         req.getRequestDispatcher("/admin-dashboard.jsp").forward(req, resp);
     }
