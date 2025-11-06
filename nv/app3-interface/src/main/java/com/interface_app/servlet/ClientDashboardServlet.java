@@ -2,6 +2,7 @@ package com.interface_app.servlet;
 
 import com.multiplication.dao.CompteCourantDAORemote;
 import com.multiplication.dao.TransactionDAORemote;
+import com.multiplication.dao.ConfigurationFraisDAORemote;
 import com.multiplication.model.CompteCourant;
 import com.multiplication.model.Transaction;
 import com.multiplication.session.SessionInfo;
@@ -35,6 +36,9 @@ public class ClientDashboardServlet extends HttpServlet {
     @EJB(lookup = "ejb:/app2-multiplication/TransactionDAOApp2!com.multiplication.dao.TransactionDAORemote")
     private TransactionDAORemote transactionDAO;
 
+    @EJB(lookup = "ejb:/app2-multiplication/ConfigurationFraisDAOApp2!com.multiplication.dao.ConfigurationFraisDAORemote")
+    private ConfigurationFraisDAORemote configurationFraisDAO;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -42,6 +46,31 @@ public class ClientDashboardServlet extends HttpServlet {
         if (session == null || session.getAttribute("sessionInfo") == null) {
             resp.sendRedirect(req.getContextPath() + "/login");
             return;
+        }
+        else if ("simulerVirement".equals(action)) {
+            String devise = req.getParameter("devise");
+            String montantSouhaiteStr = req.getParameter("montantSouhaite");
+            try {
+                BigDecimal netSouhaite = new BigDecimal(montantSouhaiteStr);
+                BigDecimal montantAEnvoyer = computeMontantPourRecevoir("compteCourant", devise, netSouhaite);
+                BigDecimal fraisTotal = configurationFraisDAO.computeFrais("compteCourant", devise, montantAEnvoyer);
+                java.math.BigDecimal prc = java.math.BigDecimal.ZERO;
+                java.math.BigDecimal fixe = java.math.BigDecimal.ZERO;
+                com.multiplication.model.ConfigurationFraisBancaire cfg = configurationFraisDAO.findApplicable("compteCourant", devise, montantAEnvoyer);
+                if (cfg != null) {
+                    if (cfg.getFraisPourcentage() != null) prc = cfg.getFraisPourcentage();
+                    if (cfg.getFraisMontant() != null) fixe = cfg.getFraisMontant();
+                }
+                req.setAttribute("sim_netSouhaite", netSouhaite);
+                req.setAttribute("sim_montantAEnvoyer", montantAEnvoyer);
+                req.setAttribute("sim_fraisTotal", fraisTotal);
+                req.setAttribute("sim_fraisPourcentage", prc);
+                req.setAttribute("sim_fraisFixe", fixe);
+                req.setAttribute("sim_devise", devise);
+                req.setAttribute("message", "Simulation calculée.");
+            } catch (Exception e) {
+                req.setAttribute("error", "Erreur simulation: " + e.getMessage());
+            }
         }
 
         SessionInfo sessionInfo = (SessionInfo) session.getAttribute("sessionInfo");

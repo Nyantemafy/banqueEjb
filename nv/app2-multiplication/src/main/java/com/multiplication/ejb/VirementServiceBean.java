@@ -182,8 +182,13 @@ public class VirementServiceBean implements VirementService {
         CompteCourant compteBeneficiaire = compteCourantDAO.findById(
                 Integer.parseInt(transactionOriginale.getCompteBeneficiaire()));
 
-        // Faire le virement inverse
-        compteBeneficiaire.debiter(transactionOriginale.getMontant());
+        // Faire le virement inverse en respectant la nouvelle règle des frais (bénéficiaire a reçu montant - frais)
+        BigDecimal fraisOriginal = configurationFraisDAO.computeFrais("compteCourant", transactionOriginale.getDevise(), transactionOriginale.getMontant());
+        BigDecimal montantNetCredite = transactionOriginale.getMontant().subtract(fraisOriginal);
+        if (montantNetCredite.compareTo(BigDecimal.ZERO) < 0) {
+            montantNetCredite = BigDecimal.ZERO;
+        }
+        compteBeneficiaire.debiter(montantNetCredite);
         compteEmetteur.crediter(transactionOriginale.getMontant());
 
         // Marquer la transaction originale comme annulée
@@ -237,11 +242,16 @@ public class VirementServiceBean implements VirementService {
                     Integer.parseInt(transaction.getCompteBeneficiaire()));
 
             BigDecimal frais = configurationFraisDAO.computeFrais("compteCourant", transaction.getDevise(), transaction.getMontant());
-            BigDecimal debitTotal = transaction.getMontant().add(frais);
-            if (!compteEmetteur.debiter(debitTotal)) {
+            // Nouveau comportement: le compte émetteur est débité uniquement du montant,
+            // et le bénéficiaire reçoit le montant diminué des frais.
+            BigDecimal montantCredite = transaction.getMontant().subtract(frais);
+            if (montantCredite.compareTo(BigDecimal.ZERO) < 0) {
+                throw new IllegalArgumentException("Les frais dépassent le montant du virement");
+            }
+            if (!compteEmetteur.debiter(transaction.getMontant())) {
                 throw new IllegalArgumentException("Solde insuffisant");
             }
-            compteBeneficiaire.crediter(transaction.getMontant());
+            compteBeneficiaire.crediter(montantCredite);
 
             compteCourantDAO.update(compteEmetteur);
             compteCourantDAO.update(compteBeneficiaire);
